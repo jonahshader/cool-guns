@@ -16,7 +16,7 @@ public class CoolGuns extends Game {
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
 	}
-// test commit
+
 	@Override
 	public void render () {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
