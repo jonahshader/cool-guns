@@ -6,7 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
+// test modifification idkjdfklhjsdfhjsdafhjikjil;kae
 public class CoolGuns extends Game {
 	SpriteBatch batch;
 	Texture img;
