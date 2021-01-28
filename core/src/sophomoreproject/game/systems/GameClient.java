@@ -1,4 +1,4 @@
 package sophomoreproject.game.systems;
 
-public class Server {
+public class GameClient {
 }
