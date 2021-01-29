@@ -8,12 +8,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class LoginScreen implements Screen {
     private SpriteBatch batch;
-    private InputMultiplexer inputMultiplexer;
 
-    public LoginScreen(SpriteBatch batch, InputMultiplexer inputMultiplexer) {
+    public LoginScreen(SpriteBatch batch) {
         this.batch = batch;
-        this.inputMultiplexer = inputMultiplexer;
-        inputMultiplexer.clear();
     }
 
     @Override
