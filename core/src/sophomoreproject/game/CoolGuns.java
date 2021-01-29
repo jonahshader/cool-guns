@@ -1,34 +1,37 @@
 package sophomoreproject.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import sophomoreproject.game.screens.LoginScreen;
 
 public class CoolGuns extends Game {
-	SpriteBatch batch;
-	Texture img;
+    private InputMultiplexer inputMultiplexer;
+	private SpriteBatch batch;
 	
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+		inputMultiplexer = new InputMultiplexer();
+	    batch = new SpriteBatch();
+
+
+		// set input processor to the input multiplexer.
+        // this allows multiple objects to handle input at the same time
+        Gdx.input.setInputProcessor(inputMultiplexer);
+
+        // change screen to a new instance of LoginScreen
+        setScreen(new LoginScreen(batch, inputMultiplexer));
 	}
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
+	    super.render();
 	}
 	
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
+		super.dispose();
 	}
 }
