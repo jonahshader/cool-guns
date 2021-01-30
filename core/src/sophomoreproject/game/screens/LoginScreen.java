@@ -1,10 +1,17 @@
 package sophomoreproject.game.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+/**
+ * this is the screen that first pops up when you launch the game.
+ * it will ask the user to register or login to an account.
+ * if the account already exists and user clicks "register", display "Account already exists!"
+ * if the account doesn't exist and user clicks "login", display "Account doesn't exist!"
+ * if the user attempts to register an account without a username or a password, display "Invalid username/password!"
+ */
 
 public class LoginScreen implements Screen {
     private SpriteBatch batch;
