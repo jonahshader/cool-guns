@@ -24,7 +24,6 @@ public class ServerLauncher {
             // create server
             ServerNetwork server = new ServerNetwork(port);
 
-
             try {
                 while(true) {
                     Thread.sleep(20);
