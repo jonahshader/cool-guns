@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  */
 
 public abstract class GameObject {
-    enum ServerUpdateFrequency {
+    public enum ServerUpdateFrequency {
         CONSTANT,
         ONCE,
         SEND_ONLY
@@ -18,6 +18,5 @@ public abstract class GameObject {
     long getNetworkID() { return networkID; }
     ServerUpdateFrequency getUpdateFrequency() { return updateFrequency; }
 
-    abstract void run(float dt);
-    abstract void draw(SpriteBatch sb);
+    public abstract void run(float dt);
 }
