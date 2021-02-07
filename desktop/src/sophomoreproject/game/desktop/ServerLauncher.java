@@ -10,9 +10,7 @@ public class ServerLauncher {
     public static void main(String[] args) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        String ip;
         int port = -1;
-
         try {
             System.out.print("Enter port: ");
             port = Integer.parseInt(reader.readLine());

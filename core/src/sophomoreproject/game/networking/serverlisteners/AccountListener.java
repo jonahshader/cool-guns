@@ -20,7 +20,7 @@ public class AccountListener extends Listener {
             RequestNewAccount packet = (RequestNewAccount) o; // cast object to more specific class
             ReplyAccountEvent rae;
             if (accounts.tryAddAccount(packet.username, packet.password)) {
-                long accountID = accounts.tryGetAccountID(packet.username, packet.password);
+                int accountID = accounts.tryGetAccountID(packet.username, packet.password);
                 // success
                 rae = new ReplyAccountEvent(ReplyAccountEvent.AccountEvent.ACCOUNT_CREATED, accountID);
             } else {
@@ -31,7 +31,7 @@ public class AccountListener extends Listener {
             c.sendTCP(rae);
         } else if (o instanceof RequestLogin) {
             RequestLogin packet = (RequestLogin) o;
-            long accountID = accounts.tryGetAccountID(packet.username, packet.password);
+            int accountID = accounts.tryGetAccountID(packet.username, packet.password);
             ReplyAccountEvent rae;
             if (accountID < 0) {
                 // ERROR. login failed

@@ -16,6 +16,8 @@ public class ServerNetwork {
     private Server server;
     private Accounts accounts;
 
+    private long lastNanos;
+
     public ServerNetwork(int port) {
         // try to load accounts file
         accounts = Accounts.loadFromFile();
@@ -25,6 +27,7 @@ public class ServerNetwork {
         }
 
         server = new Server();
+        server.start();
         RegisterPackets.registerPackets(server.getKryo());
         try {
             server.bind(port, port);
@@ -32,8 +35,16 @@ public class ServerNetwork {
             e.printStackTrace();
         }
 
+
         // add listeners to server
         server.addListener(new AccountListener(accounts));
+
+        lastNanos = System.nanoTime();
+    }
+
+    public void update() {
+        long nanos = System.nanoTime();
+        double dt = nanos - lastNanos;
     }
 
 }

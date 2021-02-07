@@ -22,5 +22,4 @@ public class PhysicsObject extends GameObject {
         velocity.mulAdd(acceleration, dt); // integrate acceleration
         position.mulAdd(velocity, dt);     // integrate velocity
     }
-
 }

@@ -9,9 +9,9 @@ public class ReplyAccountEvent {
     }
 
     public AccountEvent event;
-    public long accountID;
+    public int accountID;
 
-    public ReplyAccountEvent(AccountEvent event, long accountID) {
+    public ReplyAccountEvent(AccountEvent event, int accountID) {
         this.event = event;
         this.accountID = accountID;
     }

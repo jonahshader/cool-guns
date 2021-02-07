@@ -35,7 +35,7 @@ public class Accounts implements Serializable {
      * @param password account password
      * @return -1: failed. any other non negative number is a successful id being returned
      */
-    public long tryGetAccountID(String username, String password) {
+    public int tryGetAccountID(String username, String password) {
         if (accounts.containsKey(username)) {
             Account account = accounts.get(username);
             if (account.password.equals(password)) {
