@@ -2,6 +2,7 @@ package sophomoreproject.game.interfaces;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -17,26 +18,15 @@ public abstract class GameObject implements Comparable<GameObject>{
     protected int networkID;
     protected ServerUpdateFrequency updateFrequency;
 
-    int getNetworkID() { return networkID; }
-    ServerUpdateFrequency getUpdateFrequency() { return updateFrequency; }
+    public int getNetworkID() { return networkID; }
+    public ServerUpdateFrequency getUpdateFrequency() { return updateFrequency; }
 
+    public abstract void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer);
+    public abstract void addCreatePacketToBuffer(ArrayList<Object> createPacketBuffer);
     public abstract void run(float dt);
 
     @Override
     public int compareTo(GameObject o) {
         return networkID - o.networkID;
     }
-
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        GameObject that = (GameObject) o;
-//        return networkID == that.networkID;
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(networkID);
-//    }
 }
