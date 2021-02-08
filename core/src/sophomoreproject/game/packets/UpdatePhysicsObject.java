@@ -1,10 +1,22 @@
 package sophomoreproject.game.packets;
 
+import com.badlogic.gdx.math.Vector2;
+
 public class UpdatePhysicsObject {
-    public long netID;
+    public int netID;
     public float x, y, xVel, yVel, xAccel, yAccel;
 
-    public UpdatePhysicsObject(long netID, float x, float y, float xVel, float yVel, float xAccel, float yAccel) {
+    public UpdatePhysicsObject(int netID, Vector2 position, Vector2 velocity, Vector2 acceleration) {
+        this.netID = netID;
+        x = position.x;
+        y = position.y;
+        xVel = velocity.x;
+        yVel = velocity.y;
+        xAccel = acceleration.x;
+        yAccel = acceleration.y;
+    }
+
+    public UpdatePhysicsObject(int netID, float x, float y, float xVel, float yVel, float xAccel, float yAccel) {
         this.netID = netID;
         this.x = x;
         this.y = y;
