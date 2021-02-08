@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.interfaces.GameObject;
 
-public class PhysicsObject extends GameObject {
+abstract public class PhysicsObject extends GameObject {
     public final Vector2 position;
     public final Vector2 velocity;
     public final Vector2 acceleration;
@@ -14,9 +14,6 @@ public class PhysicsObject extends GameObject {
         this.velocity = velocity;
         this.acceleration = acceleration;
     }
-
-    @Override
-    public void run(float dt) { }
 
     public void updatePhysics(float dt) {
         velocity.mulAdd(acceleration, dt); // integrate acceleration

@@ -13,8 +13,6 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 //TODO: https://www.gamedevelopment.blog/asset-manager-libgdx-tutorial/
 
 
-
-
 public final class CustomAssetManager {
     private static CustomAssetManager instance;
 
@@ -45,33 +43,28 @@ public final class CustomAssetManager {
         manager.load(menuFont, BitmapFont.class);
     }
 
- /*   public BitmapFont fontHelper(String filepath, float scale) {
+ //is this necessary?
+    /*   public BitmapFont fontHelper(String filepath, float scale) {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator();
 
     }
 */
 
-       // Particle Effects
+/*    // Particle Effects
     public final String somePE = "graphics/effects/PE1";
-
 
     public void loadParticleEffects(){
         ParticleEffectParameter pef = new ParticleEffectParameter();
         pef.atlasFile = "images/images.pack";
         manager.load(somePE, ParticleEffect.class, pef);
     }
+*/
 
-
-
-    private CustomAssetManager() {
-        // load assets here
-    }
 
     public static CustomAssetManager getInstance() {
         if (instance == null) {
             instance = new CustomAssetManager();
         }
-
         return instance;
     }
 
