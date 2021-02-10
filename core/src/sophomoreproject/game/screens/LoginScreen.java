@@ -18,6 +18,7 @@ public class LoginScreen implements Screen {
 
     public LoginScreen(SpriteBatch batch) {
         this.batch = batch;
+
     }
 
     @Override

@@ -2,14 +2,15 @@ package sophomoreproject.game.singletons;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.assets.loaders.ParticleEffectLoader.ParticleEffectParameter;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 
 //TODO: https://www.gamedevelopment.blog/asset-manager-libgdx-tutorial/
-
-
 
 
 public final class CustomAssetManager {
@@ -25,30 +26,45 @@ public final class CustomAssetManager {
     }
 
     //Sounds
-/*    public final String testSound = "audio/music/"
+    public final String openSound = "audio/sounds/open.wav";
+    public final String closeSound = "audio/sounds/open.wav";
+    public final String menuSound = "audio/sounds/menu_mouse.wav";
 
     public void loadSounds() {
-        manager.load(testSound, Sound.class);
+        manager.load(openSound, Sound.class);
+        manager.load(closeSound, Sound.class);
+        manager.load(menuSound, Sound.class);
     }
-*/
 
- /*   public BitmapFont fontHelper(String filepath, float scale) {
+    //fonts
+    public final String menuFont = "graphics/fonts/myfont.ttf";
+
+    public void loadFonts() {
+        manager.load(menuFont, BitmapFont.class);
+    }
+
+ //is this necessary?
+    /*   public BitmapFont fontHelper(String filepath, float scale) {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator();
 
     }
 */
 
+/*    // Particle Effects
+    public final String somePE = "graphics/effects/PE1";
 
-
-    private CustomAssetManager() {
-        // load assets here
+    public void loadParticleEffects(){
+        ParticleEffectParameter pef = new ParticleEffectParameter();
+        pef.atlasFile = "images/images.pack";
+        manager.load(somePE, ParticleEffect.class, pef);
     }
+*/
+
 
     public static CustomAssetManager getInstance() {
         if (instance == null) {
             instance = new CustomAssetManager();
         }
-
         return instance;
     }
 

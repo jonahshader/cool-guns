@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.HashMap;
 
 public class Accounts implements Serializable {
+    private static final String PATH_TO_ACCOUNTS = "accounts.data";
     private HashMap<String, Account> accounts;
 
     public Accounts() {
@@ -24,6 +25,7 @@ public class Accounts implements Serializable {
             Account newAccount = new Account(username, password, accounts.size());
             // add account object to hash map
             accounts.put(username, newAccount);
+            saveAccountsToFile();
             return true;
         }
     }
@@ -33,7 +35,7 @@ public class Accounts implements Serializable {
      * @param password account password
      * @return -1: failed. any other non negative number is a successful id being returned
      */
-    public long tryGetAccountID(String username, String password) {
+    public int tryGetAccountID(String username, String password) {
         if (accounts.containsKey(username)) {
             Account account = accounts.get(username);
             if (account.password.equals(password)) {
@@ -46,12 +48,11 @@ public class Accounts implements Serializable {
     }
 
     /**
-     * @param filePathAndName path and name of serialized Accounts object to load
      * @return null: failed, else success
      */
-    public static Accounts loadFromFile(String filePathAndName) {
+    public static Accounts loadFromFile() {
         try {
-            FileInputStream fIn = new FileInputStream(filePathAndName);
+            FileInputStream fIn = new FileInputStream(PATH_TO_ACCOUNTS);
             ObjectInputStream objIn = new ObjectInputStream(fIn);
             Object obj = objIn.readObject();
 
@@ -66,12 +67,11 @@ public class Accounts implements Serializable {
     }
 
     /**
-     * @param filePathAndName
      * @return true: success, false: fail
      */
-    public boolean saveAccountsToFile(String filePathAndName) {
+    public boolean saveAccountsToFile() {
         try {
-            FileOutputStream fOut = new FileOutputStream(filePathAndName);
+            FileOutputStream fOut = new FileOutputStream(PATH_TO_ACCOUNTS);
             ObjectOutputStream objOut = new ObjectOutputStream(fOut);
             objOut.writeObject(this);
             return true;
