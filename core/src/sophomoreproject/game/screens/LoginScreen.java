@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import sophomoreproject.game.javafx.LoginWindow;
 
 /**
  * this is the screen that first pops up when you launch the game.
@@ -18,7 +19,7 @@ public class LoginScreen implements Screen {
 
     public LoginScreen(SpriteBatch batch) {
         this.batch = batch;
-
+        LoginWindow.launch();
     }
 
     @Override
