@@ -11,6 +11,7 @@ public final class ClientNetwork {
     private static ClientNetwork instance = null;
     private final Client client;
     private boolean connected = false;
+    private int accountID = -1;
 
     private ClientNetwork() {
         client = new Client();
@@ -48,6 +49,10 @@ public final class ClientNetwork {
 
     public void removeListener(Listener listener) {
         client.removeListener(listener);
+    }
+
+    public int getAccountID() {
+        return accountID;
     }
 
     public static ClientNetwork getInstance() {

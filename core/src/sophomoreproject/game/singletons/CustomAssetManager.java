@@ -1,13 +1,9 @@
 package sophomoreproject.game.singletons;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.assets.loaders.ParticleEffectLoader.ParticleEffectParameter;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 
 //TODO: https://www.gamedevelopment.blog/asset-manager-libgdx-tutorial/
@@ -19,10 +15,10 @@ public final class CustomAssetManager {
     public final AssetManager manager = new AssetManager();
 
     //Textures
-    public final String spritePack = "graphics/spritesheets/sprites.pack";
+    public static final String SPRITE_PACK = "graphics/spritesheets/sprites.pack";
 
     public void loadImages() {
-        manager.load(spritePack, TextureAtlas.class);
+        manager.load(SPRITE_PACK, TextureAtlas.class);
     }
 
     //Sounds

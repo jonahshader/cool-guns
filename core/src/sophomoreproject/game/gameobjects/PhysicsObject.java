@@ -17,6 +17,12 @@ public abstract class PhysicsObject extends GameObject {
         this.acceleration = acceleration;
     }
 
+    public PhysicsObject(float x, float y, float xVel, float yVel, float xAccel, float yAccel) {
+        this.position = new Vector2(x, y);
+        this.velocity = new Vector2(xVel, yVel);
+        this.acceleration = new Vector2(xAccel, yAccel);
+    }
+
     public void updatePhysics(float dt) {
         velocity.mulAdd(acceleration, dt); // integrate acceleration
         position.mulAdd(velocity, dt);     // integrate velocity

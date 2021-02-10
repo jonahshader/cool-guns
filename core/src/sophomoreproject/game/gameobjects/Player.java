@@ -27,6 +27,17 @@ public class Player extends PhysicsObject implements Renderable{
         }
     }
 
+    public Player(CreatePlayer packet) {
+        super(packet.u.x, packet.u.y,
+                packet.u.xVel, packet.u.yVel,
+                packet.u.xAccel, packet.u.yAccel);
+        this.accountId = packet.accountId;
+        if (texAtl == null) {
+            texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/stuff.pack");
+            playerTex = texAtl.findRegion("fronttroll");
+        }
+    }
+
     @Override
     public void addCreatePacketToBuffer(ArrayList<Object> createPacketBuffer) {
         createPacketBuffer.add(new CreatePlayer(this));

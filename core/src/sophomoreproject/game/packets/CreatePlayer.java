@@ -7,7 +7,6 @@ public class CreatePlayer {
     public UpdatePhysicsObject u;
     public int accountId;
 
-
     public CreatePlayer(Player toSend) {
         u = new UpdatePhysicsObject(toSend.getNetworkID(), toSend.position, toSend.velocity, toSend.acceleration);
         accountId = toSend.getAccountId();
