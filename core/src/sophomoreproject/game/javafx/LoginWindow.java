@@ -39,9 +39,9 @@ import javafx.stage.Stage;
             final Text actiontarget = new Text();
             gridp.add(actiontarget, 1, 6);
 
-//            button.setOnAction((ActionEvent) -> {
-//                actiontarget.setText("Test Successful");
-//            });
+            button.setOnAction((ActionEvent) -> {
+                actiontarget.setText("Test Successful");
+            });
 
             Text Desc = new Text("CoolGuns Login");
             Desc.setFont(Font.font("Times New Roman",25));
