@@ -1,9 +1,10 @@
 package sophomoreproject.game.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import sophomoreproject.game.CoolGuns;
+import sophomoreproject.game.javafx.LoginWindow;
 import sophomoreproject.game.networking.ClientNetwork;
+
 
 public class ConnectServerScreen implements Screen {
     ClientNetwork network;
@@ -12,9 +13,7 @@ public class ConnectServerScreen implements Screen {
     public ConnectServerScreen(CoolGuns game) {
         this.game = game;
         network = ClientNetwork.getInstance();
-        network.tryConnect();
-
-        game.setScreen(new LoginScreen());
+        LoginWindow.launch(LoginWindow.class);
     }
 
     @Override
