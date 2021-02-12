@@ -14,8 +14,16 @@ public class Menu implements InputProcessor {
         this.font = font;
     }
 
-    public void addMenuItem(MenuItem item) {
+    public void addMenuItem(String label, MenuAction action) {
         // TODO: add menu item to items arraylist
+
+        MenuItem newItem = new MenuItem(..., ..., items.get(items.size() - 1));
+
+        if (items.size() == 0) {
+
+        } else {
+
+        }
     }
 
     public void run(float dt) {

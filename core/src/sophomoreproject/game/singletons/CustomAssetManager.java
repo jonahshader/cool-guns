@@ -22,21 +22,21 @@ public final class CustomAssetManager {
     }
 
     //Sounds
-    public final String openSound = "audio/sounds/open.wav";
-    public final String closeSound = "audio/sounds/open.wav";
-    public final String menuSound = "audio/sounds/menu_mouse.wav";
+    public static final String OPEN_SOUND = "audio/sounds/open.wav";
+    public static final String CLOSE_SOUND = "audio/sounds/open.wav";
+    public static final String MENU_SOUND = "audio/sounds/menu_mouse.wav";
 
     public void loadSounds() {
-        manager.load(openSound, Sound.class);
-        manager.load(closeSound, Sound.class);
-        manager.load(menuSound, Sound.class);
+        manager.load(OPEN_SOUND, Sound.class);
+        manager.load(CLOSE_SOUND, Sound.class);
+        manager.load(MENU_SOUND, Sound.class);
     }
 
     //fonts
-    public final String menuFont = "graphics/fonts/myfont.ttf";
+    public static final String MENU_FONT = "graphics/fonts/myfont.ttf";
 
     public void loadFonts() {
-        manager.load(menuFont, BitmapFont.class);
+        manager.load(MENU_FONT, BitmapFont.class);
     }
 
  //is this necessary?
