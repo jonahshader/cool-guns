@@ -1,5 +1,6 @@
 package sophomoreproject.game.networking;
 
+import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import sophomoreproject.game.networking.serverlisteners.AccountListener;
 import sophomoreproject.game.packets.RegisterPackets;
@@ -37,6 +38,11 @@ public class ServerNetwork {
     }
 
     public void sendPacketsToAll(ArrayList<Object> packets) {
+        System.out.println("Server sent " + packets.size() + " packets!");
         for (Object o : packets) server.sendToAllTCP(o);
+    }
+
+    public void addListener(Listener listener) {
+        server.addListener(listener);
     }
 }

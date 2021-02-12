@@ -56,6 +56,7 @@ public final class CustomAssetManager {
     }
 */
 
+    private CustomAssetManager(){}
 
     public static CustomAssetManager getInstance() {
         if (instance == null) {

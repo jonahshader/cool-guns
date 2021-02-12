@@ -1,7 +1,11 @@
 package sophomoreproject.game.packets;
 
 public class RequestGameData {
-    long accountID;
+    int accountID;
+
+    public RequestGameData(int accountID) {
+        this.accountID = accountID;
+    }
 
     public RequestGameData(){} // no arg constructor for KryoNet internal usage
 }

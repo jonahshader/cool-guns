@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreatePlayer;
@@ -18,8 +19,8 @@ public class Player extends PhysicsObject implements Renderable{
 
     private int accountId;
 
-    public Player(Vector2 position, int accountId) {
-        super(position, new Vector2(0,0), new Vector2(0,0));
+    public Player(Vector2 position, int accountId, int networkID) {
+        super(position, new Vector2(0,0), new Vector2(0,0), networkID);
         this.accountId = accountId;
         if (texAtl == null) {
             texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/stuff.pack");
@@ -30,7 +31,7 @@ public class Player extends PhysicsObject implements Renderable{
     public Player(CreatePlayer packet) {
         super(packet.u.x, packet.u.y,
                 packet.u.xVel, packet.u.yVel,
-                packet.u.xAccel, packet.u.yAccel);
+                packet.u.xAccel, packet.u.yAccel, packet.u.netID);
         this.accountId = packet.accountId;
         if (texAtl == null) {
             texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/stuff.pack");
@@ -43,11 +44,16 @@ public class Player extends PhysicsObject implements Renderable{
         createPacketBuffer.add(new CreatePlayer(this));
     }
 
+    @Override
+    public void receiveUpdate(Object updatePacket) {
+        // assume object is of type
+    }
+
     public void run(float dt) {
     }
 
     @Override
-    public void draw(SpriteBatch sb) {
+    public void draw(SpriteBatch sb, ShapeRenderer sr) {
         sb.draw(playerTex, position.x, position.y);
     }
 

@@ -22,7 +22,7 @@ public class ObjectCreationListener extends Listener {
             world.queueAddObject(new Player(packet));
         } else if (o instanceof CreateTestObject) {
             CreateTestObject packet = (CreateTestObject) o;
-            world.queueAddObject(new TestObject(packet));
+            world.queueAddObject(new TestObject(packet, true));
         }
     }
 }

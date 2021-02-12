@@ -1,7 +1,9 @@
 package sophomoreproject.game.systems;
 
+import com.esotericsoftware.kryonet.Connection;
 import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.networking.ServerNetwork;
+import sophomoreproject.game.networking.serverlisteners.RequestListener;
 import sophomoreproject.game.systems.gameplaysystems.GameSystem;
 import sophomoreproject.game.systems.gameplaysystems.spawners.TestObjectSpawner;
 
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 public class GameServer {
     private GameWorld world;
     private ServerNetwork serverNetwork;
+    private double time = 0.0;
 
     private ArrayList<Object> createPackets = new ArrayList<>();
     private ArrayList<GameSystem> gameSystems = new ArrayList<>();
@@ -19,7 +22,10 @@ public class GameServer {
         this.serverNetwork = serverNetwork;
 
         // add game systems
-        gameSystems.add(new TestObjectSpawner(this));
+        gameSystems.add(new TestObjectSpawner(this, world));
+
+        // add listeners
+        serverNetwork.addListener(new RequestListener(this));
     }
 
     public void run(float dt) {
@@ -28,6 +34,8 @@ public class GameServer {
 
         world.serverOnly(dt, serverNetwork);
         world.update(dt);
+
+        time += dt;
     }
 
     /**
@@ -39,5 +47,10 @@ public class GameServer {
         gameObject.addCreatePacketToBuffer(createPackets);
         serverNetwork.sendPacketsToAll(createPackets);
         createPackets.clear();
+    }
+
+    public void sendAllWorldDataToClient(Connection c) {
+        ArrayList<Object> worldPackets = world.createWorldCopy();
+        for (Object packet : worldPackets) c.sendTCP(packet);
     }
 }

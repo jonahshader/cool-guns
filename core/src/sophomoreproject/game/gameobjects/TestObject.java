@@ -21,9 +21,9 @@ public class TestObject extends PhysicsObject implements Renderable {
     private int xFactor;
     private int yFactor;
 
-    public TestObject(Vector2 position) {
-        super(position, new Vector2((float)ranNumPosNeg(), (float)ranNumPosNeg()), new Vector2());
-        if (texAtlas == null) {
+    public TestObject(Vector2 position, int netID, boolean client) {
+        super(position, new Vector2((float)ranNumPosNeg(), (float)ranNumPosNeg()), new Vector2(), netID);
+        if (texAtlas == null && client) {
             texAtlas = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
             tex = texAtlas.findRegion("troll");
         }
@@ -34,9 +34,9 @@ public class TestObject extends PhysicsObject implements Renderable {
         updateFrequency = ServerUpdateFrequency.CONSTANT;
     }
 
-    public TestObject(CreateTestObject packet) {
-        super(packet.u.x, packet.u.y, packet.u.xVel, packet.u.yVel, packet.u.xAccel, packet.u.yAccel);
-        if (texAtlas == null) {
+    public TestObject(CreateTestObject packet, boolean client) {
+        super(packet.u.x, packet.u.y, packet.u.xVel, packet.u.yVel, packet.u.xAccel, packet.u.yAccel, packet.u.netID);
+        if (texAtlas == null && client) {
             texAtlas = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
             tex = texAtlas.findRegion("troll");
         }
@@ -53,20 +53,28 @@ public class TestObject extends PhysicsObject implements Renderable {
     }
 
     @Override
+    public void receiveUpdate(Object updatePacket) {
+        // no special packet besides the physics update one
+    }
+
+    @Override
     public void run(float dt) {
-        acceleration.x += Math.cos(lifeTime / (xFactor * Math.PI)) * dt;
-        acceleration.y += Math.sin(lifeTime / (yFactor * Math.PI)) * dt;
+//        acceleration.x += Math.cos(lifeTime * Math.PI * .5 * (xFactor)) * 15 * dt;
+//        acceleration.y += Math.sin(lifeTime * Math.PI * .5 * (yFactor)) * 15 * dt;
+        acceleration.x = (float) ranNumPosNeg() * 30;
+        acceleration.y = (float) ranNumPosNeg() * 30;
 
         lifeTime += dt;
     }
 
     @Override
-    public void draw(SpriteBatch sb) {
+    public void draw(SpriteBatch sb, ShapeRenderer sr) {
         sb.draw(tex, position.x, position.y, 8f, 8f);
+//        debugDraw(sr);
     }
 
     public void debugDraw(ShapeRenderer sr) {
-        sr.ellipse(position.x, position.y, 8f, 8f);
+        sr.ellipse(position.x, position.y, 32f, 32f);
     }
 
     public int getxFactor() {
