@@ -33,9 +33,9 @@ public class MenuItem {
 
     public void run(float dt) {
 
-        if (this menuitem was just clicked) {
-            action.execute();
-        }
+//        if (this menuitem was just clicked) {
+//            action.execute();
+//        }
     }
 
     public void draw(SpriteBatch sb) {

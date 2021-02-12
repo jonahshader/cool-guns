@@ -17,7 +17,7 @@ public class Menu implements InputProcessor {
     public void addMenuItem(String label, MenuAction action) {
         // TODO: add menu item to items arraylist
 
-        MenuItem newItem = new MenuItem(..., ..., items.get(items.size() - 1));
+//        MenuItem newItem = new MenuItem(..., ..., items.get(items.size() - 1));
 
         if (items.size() == 0) {
 
