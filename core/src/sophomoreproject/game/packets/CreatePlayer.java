@@ -11,4 +11,6 @@ public class CreatePlayer {
         u = new UpdatePhysicsObject(toSend.getNetworkID(), toSend.position, toSend.velocity, toSend.acceleration);
         accountId = toSend.getAccountId();
     }
+
+    public CreatePlayer(){} // no arg constructor for KryoNet internal usage
 }

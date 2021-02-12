@@ -15,4 +15,6 @@ public class ReplyAccountEvent {
         this.event = event;
         this.accountID = accountID;
     }
+
+    public ReplyAccountEvent(){} // no arg constructor for KryoNet internal usage
 }

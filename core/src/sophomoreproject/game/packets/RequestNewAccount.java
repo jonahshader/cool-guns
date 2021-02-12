@@ -8,4 +8,6 @@ public class RequestNewAccount {
         this.username = username;
         this.password = password;
     }
+
+    public RequestNewAccount(){} // no arg constructor for KryoNet internal usage
 }

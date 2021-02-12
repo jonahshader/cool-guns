@@ -8,4 +8,6 @@ public class RequestLogin {
         this.username = username;
         this.password = password;
     }
+
+    public RequestLogin(){} // no arg constructor for KryoNet internal usage
 }
