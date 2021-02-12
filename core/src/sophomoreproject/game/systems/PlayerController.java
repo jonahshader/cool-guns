@@ -1,37 +1,28 @@
-package sophomoreproject.game.menu;
+package sophomoreproject.game.systems;
 
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import sophomoreproject.game.gameobjects.Player;
 
-import java.util.ArrayList;
 
-public class Menu implements InputProcessor {
-    private ArrayList<MenuItem> items = new ArrayList<>();
-    private BitmapFont font;
+public final class PlayerController implements InputProcessor {
+    private static PlayerController instance;
+    private Player player;
 
-    public Menu(BitmapFont font) {
-        this.font = font;
+    private  PlayerController() {
+
     }
 
-    public void addMenuItem(String label, MenuAction action) {
-        // TODO: add menu item to items arraylist
-
-//        MenuItem newItem = new MenuItem(..., ..., items.get(items.size() - 1));
-
-        if (items.size() == 0) {
-
-        } else {
-
-        }
+    public static PlayerController getInstance() {
+        if (instance == null)
+            instance = new PlayerController();
+        return instance;
     }
 
-    public void run(float dt) {
-        // TODO:
-    }
-
-    public void draw(SpriteBatch sb) {
-        // TODO:
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     @Override
@@ -74,3 +65,4 @@ public class Menu implements InputProcessor {
         return false;
     }
 }
+

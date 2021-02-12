@@ -1,0 +1,24 @@
+
+sprites.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+troll
+  rotate: false
+  xy: 1, 1
+  size: 840, 548
+  orig: 840, 548
+  offset: 0, 0
+  index: -1
+
+sprites2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+fronttroll
+  rotate: false
+  xy: 1, 1
+  size: 860, 520
+  orig: 860, 520
+  offset: 0, 0
+  index: -1

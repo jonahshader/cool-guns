@@ -1,34 +1,36 @@
 package sophomoreproject.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import sophomoreproject.game.screens.ConnectServerScreen;
+import sophomoreproject.game.screens.LoginScreen;
+import sophomoreproject.game.screens.TempBypassScreen;
+import sophomoreproject.game.singletons.CustomAssetManager;
 
 public class CoolGuns extends Game {
-	SpriteBatch batch;
-	Texture img;
-	
-	@Override
+	public SpriteBatch batch;
+	public ShapeRenderer shapeRenderer;
+
+
+    @Override
 	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+        batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
+		CustomAssetManager.getInstance().loadImages();
+//		CustomAssetManager.getInstance().loadFonts();
+//		CustomAssetManager.getInstance().loadSounds();
+		CustomAssetManager.getInstance().manager.finishLoading();
+        // change screen to a new instance of LoginScreen
+        setScreen(new TempBypassScreen(this));
 	}
 
-	@Override
-	public void render () {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
-	}
-	
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
+		super.dispose();
 	}
 }

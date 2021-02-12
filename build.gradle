@@ -1,5 +1,5 @@
 buildscript {
-    
+
 
     repositories {
         mavenLocal()
@@ -14,6 +14,19 @@ buildscript {
 
     }
 }
+//plugins {
+//    id 'application'
+//    id 'org.openjfx.javafxplugin' version '0.0.8'
+//}
+//
+//repositories {
+//    mavenCentral()
+//}
+//
+//javafx {
+//    version = "13"
+//    modules = [ 'javafx.controls' ]
+//}
 
 allprojects {
     apply plugin: "eclipse"
@@ -61,6 +74,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         compile "com.esotericsoftware:kryonet:2.22.0-RC1"
+
 
     }
 }
