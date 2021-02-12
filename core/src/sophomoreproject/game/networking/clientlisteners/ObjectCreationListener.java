@@ -19,10 +19,10 @@ public class ObjectCreationListener extends Listener {
     public void received(Connection c, Object o) {
         if (o instanceof CreatePlayer) {
             CreatePlayer packet = (CreatePlayer) o;
-            world.addObject(new Player(packet));
+            world.queueAddObject(new Player(packet));
         } else if (o instanceof CreateTestObject) {
             CreateTestObject packet = (CreateTestObject) o;
-            world.addObject(new TestObject(packet));
+            world.queueAddObject(new TestObject(packet));
         }
     }
 }

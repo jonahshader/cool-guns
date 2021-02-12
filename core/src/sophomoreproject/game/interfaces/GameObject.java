@@ -23,6 +23,7 @@ public abstract class GameObject implements Comparable<GameObject>{
 
     public abstract void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer);
     public abstract void addCreatePacketToBuffer(ArrayList<Object> createPacketBuffer);
+    public abstract void receiveUpdate(Object updatePacket);
     public abstract void run(float dt);
 
     @Override
