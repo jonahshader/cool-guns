@@ -76,6 +76,7 @@ public class GameWorld {
                 }
             } // TODO: add other Update packets
         }
+        clientUpdatePacketBuffer.clear();
         readingClientUpdatePackets = false;
     }
 
