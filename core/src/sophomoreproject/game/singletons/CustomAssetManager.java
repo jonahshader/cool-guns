@@ -15,7 +15,7 @@ public final class CustomAssetManager {
     public final AssetManager manager = new AssetManager();
 
     //Textures
-    public static final String SPRITE_PACK = "graphics/spritesheets/sprites.pack";
+    public static final String SPRITE_PACK = "graphics/spritesheets/sprites.atlas";
 
     public void loadImages() {
         manager.load(SPRITE_PACK, TextureAtlas.class);
