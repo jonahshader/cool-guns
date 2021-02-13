@@ -38,7 +38,6 @@ public class ServerNetwork {
     }
 
     public void sendPacketsToAll(ArrayList<Object> packets) {
-        System.out.println("Server sent " + packets.size() + " packets!");
         for (Object o : packets) server.sendToAllTCP(o);
     }
 

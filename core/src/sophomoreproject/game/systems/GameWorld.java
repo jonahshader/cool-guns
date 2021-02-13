@@ -11,6 +11,7 @@ import sophomoreproject.game.packets.UpdatePhysicsObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class GameWorld {
     // note: the contents of these arrays are mutually exclusive.
@@ -24,8 +25,8 @@ public class GameWorld {
     private final ArrayList<GameObject> gameObjectAddQueue = new ArrayList<>();
     private final ArrayList<GameObject> gameObjectRemoveQueue = new ArrayList<>();
 
-    private volatile boolean readingClientUpdatePackets = false;
-    private volatile boolean readingGameObjectQueue = false;
+    private ReentrantLock clientUpdatePacketsLock = new ReentrantLock();
+    private ReentrantLock gameObjectQueueLock = new ReentrantLock();
 
     /**
      * this method should be called by both client and server. just does physics for now.
@@ -33,12 +34,12 @@ public class GameWorld {
      */
     public void update(float dt) {
         // process gameObject add and remove queues
-        readingGameObjectQueue = true;
+        gameObjectQueueLock.lock();
         for (GameObject o : gameObjectAddQueue) addObject(o);
         for (GameObject o : gameObjectRemoveQueue) removeObject(o);
         gameObjectAddQueue.clear();
         gameObjectRemoveQueue.clear();
-        readingGameObjectQueue = false;
+        gameObjectQueueLock.unlock();
 
         Collections.sort(physicsObjects);
         Collections.sort(gameObjects);
@@ -66,7 +67,7 @@ public class GameWorld {
 
     public void clientOnly(float dt, ClientNetwork clientNetwork) {
         //TODO: learn how to use locks and synchronize instead of this volatile stuff. its not working
-        readingClientUpdatePackets = true;
+        clientUpdatePacketsLock.lock();
         for (Object o : clientUpdatePacketBuffer) {
             if (o instanceof UpdatePhysicsObject) {
                 UpdatePhysicsObject packet = (UpdatePhysicsObject) o;
@@ -77,22 +78,25 @@ public class GameWorld {
             } // TODO: add other Update packets
         }
         clientUpdatePacketBuffer.clear();
-        readingClientUpdatePackets = false;
+        clientUpdatePacketsLock.unlock();
     }
 
     public void queueAddObject(GameObject o) {
-        while (readingGameObjectQueue){}
+        gameObjectQueueLock.lock();
         gameObjectAddQueue.add(o);
+        gameObjectQueueLock.unlock();
     }
 
     public void queueRemoveObject(GameObject o) {
-        while (readingGameObjectQueue){}
+        gameObjectQueueLock.lock();
         gameObjectRemoveQueue.add(o);
+        gameObjectQueueLock.unlock();
     }
 
     public void queueAddUpdatePacket(Object packet) {
-        while (readingClientUpdatePackets) {}
+        clientUpdatePacketsLock.lock();
         clientUpdatePacketBuffer.add(packet);
+        clientUpdatePacketsLock.unlock();
     }
 
     private void addObject(GameObject o) {
@@ -185,7 +189,12 @@ public class GameWorld {
     }
 
     public int getNewNetID() {
-        if (gameObjects.size() == 0) return 0;
-        else return gameObjects.get(gameObjects.size() - 1).getNetworkID() + 1;
+        if (gameObjectAddQueue.size() == 0) {
+            if (gameObjects.size() == 0) return 0;
+            else return gameObjects.get(gameObjects.size() - 1).getNetworkID() + 1;
+        } else {
+            return gameObjectAddQueue.get(gameObjectAddQueue.size() - 1).getNetworkID() + 1;
+        }
+
     }
 }

@@ -26,20 +26,20 @@ public class TempBypassScreen implements Screen {
         boolean connected = false;
         int accountID = -1;
 
-//        while (!connected) {
-//            System.out.print("Enter ip (without port): ");
-//            String ip = scanner.nextLine();
-//            System.out.print("Enter port: ");
-//            int port = scanner.nextInt();
-//
-//            if (ClientNetwork.getInstance().tryConnect(ip, port)) {
-//                connected = true;
-//            } else {
-//                System.out.println("Connection failed!");
-//            }
-//        }
-        if (!ClientNetwork.getInstance().tryConnect("127.0.0.1", 123)) System.exit(-1);
-        connected = true;
+        while (!connected) {
+            System.out.print("Enter ip (without port): ");
+            String ip = scanner.nextLine();
+            System.out.print("Enter port: ");
+            int port = scanner.nextInt();
+
+            if (ClientNetwork.getInstance().tryConnect(ip, port)) {
+                connected = true;
+            } else {
+                System.out.println("Connection failed!");
+            }
+        }
+//        if (!ClientNetwork.getInstance().tryConnect("127.0.0.1", 123)) System.exit(-1);
+//        connected = true;
 
 
 

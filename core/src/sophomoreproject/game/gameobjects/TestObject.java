@@ -29,8 +29,8 @@ public class TestObject extends PhysicsObject implements Renderable {
             tex = texAtlas.findRegion("troll");
         }
 
-        xFactor = (int)(Math.random() * 4) + 1;
-        yFactor = (int)(Math.random() * 4) + 1;
+        xFactor = (int)(Math.random() * 6) + 1;
+        yFactor = (int)(Math.random() * 6) + 1;
 
         updateFrequency = ServerUpdateFrequency.CONSTANT;
     }
@@ -60,17 +60,17 @@ public class TestObject extends PhysicsObject implements Renderable {
 
     @Override
     public void run(float dt) {
-        velocity.x = (float) (Math.cos(lifeTime * Math.PI * .5 * (xFactor)) * 800 * dt);
-        velocity.y = (float) (Math.sin(lifeTime * Math.PI * .5 * (yFactor)) * 800 * dt);
-//        velocity.x = (float) ranNumPosNeg() * 30;
-//        velocity.y = (float) ranNumPosNeg() * 30;
+//        velocity.x = (float) (Math.cos(lifeTime * Math.PI * .5 * (xFactor)) * 3200 * dt);
+//        velocity.y = (float) (Math.sin(lifeTime * Math.PI * .5 * (yFactor)) * 3200 * dt);
+        velocity.x = (float) ranNumPosNeg() * 30;
+        velocity.y = (float) ranNumPosNeg() * 30;
 
         lifeTime += dt;
     }
 
     @Override
     public void draw(SpriteBatch sb, ShapeRenderer sr) {
-        sb.draw(tex, position.x, position.y, 32f, 32f);
+        sb.draw(tex, position.x, position.y, 48f, 32f);
 //        debugDraw(sr);
     }
 
