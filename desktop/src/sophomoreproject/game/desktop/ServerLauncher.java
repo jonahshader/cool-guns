@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ServerLauncher {
-    private static final double LOOP_TIME = 1/30.0;
+    private static final double LOOP_TIME = 1/5.0;
     private static final double NANOS_TO_SECONDS = 1e-9;
 
     private static final long LOOP_TIME_NANOS = (long) (LOOP_TIME/NANOS_TO_SECONDS);
