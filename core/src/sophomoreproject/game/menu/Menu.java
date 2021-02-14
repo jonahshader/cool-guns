@@ -2,6 +2,7 @@ package sophomoreproject.game.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -11,9 +12,11 @@ import java.util.ArrayList;
 public class Menu {
     private ArrayList<MenuItem> items = new ArrayList<>();
     private BitmapFont font;
+    private Camera camera;
 
-    public Menu(BitmapFont font) {
+    public Menu(BitmapFont font, Camera camera) {
         this.font = font;
+        this.camera = camera;
     }
 
     public void addMenuItem(String label, MenuAction action) {
@@ -21,10 +24,10 @@ public class Menu {
         MenuItem newItem;
         if (items.size() == 0) {
           //Call first menu item constructor
-            newItem = new MenuItem(action, MenuItem.MENU_PADDING, MenuItem.MENU_PADDING, 50f, 15f, label, font);
+            newItem = new MenuItem(action, MenuItem.MENU_PADDING, MenuItem.MENU_PADDING, 325f, 100f, label, font, camera);
         } else {
           //Call other items constructor
-            newItem = new MenuItem(action, label, items.get(items.size() - 1), font);
+            newItem = new MenuItem(action, label, items.get(items.size() - 1), font, camera);
         }
         items.add(newItem);
     }

@@ -14,8 +14,12 @@ import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.menu.Menu;
 import sophomoreproject.game.menu.MenuAction;
 import sophomoreproject.game.menu.MenuItem;
+import sophomoreproject.game.menu.menuactions.ExitGameAction;
+import sophomoreproject.game.menu.menuactions.PlayGameAction;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.systems.GameClient;
+
+import static sophomoreproject.game.singletons.CustomAssetManager.MENU_FONT;
 
 public class MainMenuScreen implements Screen {
 
@@ -23,26 +27,22 @@ public class MainMenuScreen implements Screen {
     private Viewport mainMenuViewport;
     private CoolGuns game;
     private Menu mainMenu;
-    private GameClient gameClient;
-    private int accountID;
 
 
 
     public MainMenuScreen(CoolGuns game, int accountID) {
         this.game = game;
-        this.accountID = accountID;
 
         mainMenuCamera = new OrthographicCamera();
         mainMenuViewport = new FitViewport(1000, 600, mainMenuCamera);
-        gameClient = new GameClient(accountID);
 
-        mainMenu = new Menu(CustomAssetManager.getInstance().manager.get("myfont.ttf"));
+        mainMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), mainMenuCamera);
 
-        //mainMenu.addMenuItem("Play Game", new PlayGameAction());
+        mainMenu.addMenuItem("Play Game", new PlayGameAction(game, accountID));
         //mainMenu.addMenuItem("Edit Character", new EditAction());
         //mainMenu.addMenuItem("Options", new OptionsAction());
-        //mainMenu.addMenuItem("Credits", new CreditsAction());
-        //mainMenu.addMenuItem("Exit", new ExitAction());
+       //mainMenu.addMenuItem("Credits", new CreditsAction());
+        mainMenu.addMenuItem("Exit", new ExitGameAction());
 
     }
 
@@ -55,16 +55,27 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        /*gameClient.run(delta);
+
+        mainMenu.run(delta);
+
+
         mainMenuViewport.apply();
         mainMenuCamera.update();
         game.batch.setProjectionMatrix(mainMenuCamera.combined);
         game.shapeRenderer.setProjectionMatrix(mainMenuCamera.combined);
 
         Gdx.gl.glClearColor(0, 0.5f, 0.5f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);*/
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        mainMenu.drawShape(game.shapeRenderer);
+        game.shapeRenderer.end();
 
         game.batch.begin();
+        mainMenu.drawText(game.batch);
+        game.batch.end();
+
+
 
     }
 
