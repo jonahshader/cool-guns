@@ -21,8 +21,8 @@ public class CoolGuns extends Game {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
 		CustomAssetManager.getInstance().loadImages();
-//		CustomAssetManager.getInstance().loadFonts();
-//		CustomAssetManager.getInstance().loadSounds();
+		CustomAssetManager.getInstance().loadFonts();
+		CustomAssetManager.getInstance().loadSounds();
 		CustomAssetManager.getInstance().manager.finishLoading();
         // change screen to a new instance of LoginScreen
         setScreen(new TempBypassScreen(this));

@@ -39,9 +39,12 @@ public abstract class PhysicsObject extends GameObject {
     public void updateFromPacket(UpdatePhysicsObject packet) {
         position.x = packet.x;
         position.y = packet.y;
-        velocity.x = packet.x;
-        velocity.y = packet.y;
-        acceleration.x = packet.x;
-        acceleration.y = packet.y;
+        velocity.x = packet.xVel;
+        velocity.y = packet.yVel;
+        acceleration.x = packet.xAccel;
+        acceleration.y = packet.yAccel;
+
+//        System.out.println("vel update: " + velocity);
+//        System.out.println("accel update: " + acceleration);
     }
 }

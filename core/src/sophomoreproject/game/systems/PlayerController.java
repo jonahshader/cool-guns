@@ -4,12 +4,16 @@ package sophomoreproject.game.systems;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Camera;
 import sophomoreproject.game.gameobjects.Player;
 
+// Add a setCamera method.
 
 public final class PlayerController implements InputProcessor {
     private static PlayerController instance;
     private Player player;
+    private Camera cam;
+
 
     private  PlayerController() {
 
@@ -23,6 +27,10 @@ public final class PlayerController implements InputProcessor {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public void setCam(Camera cam) {
+        this.cam = cam;
     }
 
     @Override

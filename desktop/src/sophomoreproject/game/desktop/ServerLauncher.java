@@ -18,14 +18,14 @@ public class ServerLauncher {
     public static void main(String[] args) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-//        int port = -1;
-//        try {
-//            System.out.print("Enter port: ");
-//            port = Integer.parseInt(reader.readLine());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-        int port = 123;
+        int port = -1;
+        try {
+            System.out.print("Enter port: ");
+            port = Integer.parseInt(reader.readLine());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        int port = 1234;
         if (port != -1) {
             // create server
             ServerNetwork server = new ServerNetwork(port);

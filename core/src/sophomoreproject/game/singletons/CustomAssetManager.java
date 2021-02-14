@@ -15,16 +15,16 @@ public final class CustomAssetManager {
     public final AssetManager manager = new AssetManager();
 
     //Textures
-    public static final String SPRITE_PACK = "graphics/spritesheets/sprites.pack";
+    public static final String SPRITE_PACK = "graphics/spritesheets/sprites.atlas";
 
     public void loadImages() {
         manager.load(SPRITE_PACK, TextureAtlas.class);
     }
 
     //Sounds
-    public static final String OPEN_SOUND = "audio/sounds/open.wav";
-    public static final String CLOSE_SOUND = "audio/sounds/open.wav";
-    public static final String MENU_SOUND = "audio/sounds/menu_mouse.wav";
+    public static final String OPEN_SOUND = "audio/sounds/open.ogg";
+    public static final String CLOSE_SOUND = "audio/sounds/close.ogg";
+    public static final String MENU_SOUND = "audio/sounds/menu_mouseover.ogg";
 
     public void loadSounds() {
         manager.load(OPEN_SOUND, Sound.class);
@@ -33,18 +33,12 @@ public final class CustomAssetManager {
     }
 
     //fonts
-    public static final String MENU_FONT = "graphics/fonts/myfont.ttf";
+    public static final String MENU_FONT = "graphics/fonts/dogica.fnt";
 
     public void loadFonts() {
         manager.load(MENU_FONT, BitmapFont.class);
     }
 
- //is this necessary?
-    /*   public BitmapFont fontHelper(String filepath, float scale) {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator();
-
-    }
-*/
 
 /*    // Particle Effects
     public final String somePE = "graphics/effects/PE1";
@@ -56,7 +50,6 @@ public final class CustomAssetManager {
     }
 */
 
-    private CustomAssetManager(){}
 
     public static CustomAssetManager getInstance() {
         if (instance == null) {
