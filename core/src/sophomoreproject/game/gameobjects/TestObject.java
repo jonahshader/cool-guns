@@ -10,23 +10,30 @@ import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreateTestObject;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.CustomAssetManager;
+import sophomoreproject.game.utilites.RendingUtilities;
 
 import java.util.ArrayList;
 
 import static sophomoreproject.game.singletons.CustomAssetManager.SPRITE_PACK;
 
 public class TestObject extends PhysicsObject implements Renderable {
-    private static TextureAtlas texAtlas = null;
-    private static TextureRegion tex = null;
+    private static TextureAtlas texAtl = null;
+    private static TextureRegion playerTexFront = null;
+    private static TextureRegion playerTexRight = null;
+    private static TextureRegion playerTexBack = null;
     private double lifeTime = 0.0;
     private int xFactor;
     private int yFactor;
 
+    private final Vector2 PLAYER_SIZE = new Vector2(6, 9);
+
     public TestObject(Vector2 position, int netID, boolean client) {
         super(position, new Vector2((float)ranNumPosNeg(), (float)ranNumPosNeg()), new Vector2(), netID);
-        if (texAtlas == null && client) {
-            texAtlas = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
-            tex = texAtlas.findRegion("troll");
+        if (texAtl == null && client) {
+            texAtl = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
+            playerTexFront = texAtl.findRegion("player_front");
+            playerTexRight = texAtl.findRegion("player_right");
+            playerTexBack = texAtl.findRegion("player_back");
         }
 
         xFactor = (int)(Math.random() * 6) + 1;
@@ -37,9 +44,11 @@ public class TestObject extends PhysicsObject implements Renderable {
 
     public TestObject(CreateTestObject packet, boolean client) {
         super(packet.u.x, packet.u.y, packet.u.xVel, packet.u.yVel, packet.u.xAccel, packet.u.yAccel, packet.u.netID);
-        if (texAtlas == null && client) {
-            texAtlas = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
-            tex = texAtlas.findRegion("troll");
+        if (texAtl == null && client) {
+            texAtl = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
+            playerTexFront = texAtl.findRegion("player_front");
+            playerTexRight = texAtl.findRegion("player_right");
+            playerTexBack = texAtl.findRegion("player_back");
         }
 
         xFactor = packet.xFactor;
@@ -70,7 +79,7 @@ public class TestObject extends PhysicsObject implements Renderable {
 
     @Override
     public void draw(SpriteBatch sb, ShapeRenderer sr) {
-        sb.draw(tex, position.x, position.y, 48f, 32f);
+        RendingUtilities.renderCharacter(position, velocity, PLAYER_SIZE, playerTexFront, playerTexBack,playerTexRight,sb,1.25f);
 //        debugDraw(sr);
     }
 

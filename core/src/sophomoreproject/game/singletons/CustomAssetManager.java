@@ -34,6 +34,7 @@ public final class CustomAssetManager {
 
     //fonts
     public static final String MENU_FONT = "graphics/fonts/dogica.fnt";
+//    public static final String BOLD_FONT = "graphics/fonts/dogicabold.fnt";
 
     public void loadFonts() {
         manager.load(MENU_FONT, BitmapFont.class);

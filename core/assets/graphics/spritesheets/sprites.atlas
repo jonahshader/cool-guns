@@ -1,20 +1,27 @@
 
 sprites.png
-size: 2048, 1024
+size: 32, 16
 format: RGBA8888
-filter: Nearest, Nearest
+filter: MipMap, Nearest
 repeat: none
-fronttroll
+player_back
   rotate: false
-  xy: 844, 30
-  size: 860, 520
-  orig: 860, 520
+  xy: 9, 1
+  size: 6, 9
+  orig: 6, 9
   offset: 0, 0
   index: -1
-troll
+player_front
   rotate: false
-  xy: 2, 2
-  size: 840, 548
-  orig: 840, 548
+  xy: 1, 1
+  size: 6, 9
+  orig: 6, 9
+  offset: 0, 0
+  index: -1
+player_right
+  rotate: false
+  xy: 17, 1
+  size: 6, 9
+  orig: 6, 9
   offset: 0, 0
   index: -1
