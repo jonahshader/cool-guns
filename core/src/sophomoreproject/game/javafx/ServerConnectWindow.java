@@ -1,6 +1,5 @@
 package sophomoreproject.game.javafx;
 
-
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,44 +12,53 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import sophomoreproject.game.networking.ClientNetwork;
 
 
-public class LoginWindow extends Application {
+public class ServerConnectWindow extends Application {
 
 
     @Override
     public void start(Stage primaryStage)
     {
+
         GridPane gridp = new GridPane();
         gridp.setAlignment(Pos.CENTER);
         gridp.setHgap(10);
         gridp.setVgap(10);
 
 
-        Button signIn = new Button("Sign in");
+        Button connect = new Button("Connect");
         HBox Enter = new HBox(10);
         Enter.setAlignment(Pos.CENTER);
         final Text actiontarget = new Text();
 
-        signIn.setOnAction((ActionEvent) -> {
-            actiontarget.setText("Test Successful");
-        });
-
-        Text Desc = new Text("CoolGuns Login");
+        Text Desc = new Text("CoolGuns Servers");
         Desc.setFont(Font.font("Times New Roman",25));
         gridp.add(Desc, 0, 0, 2, 1);
 
-        TextField userField = new TextField();
-        gridp.add(userField, 1, 1);
+        TextField ipField = new TextField();
+        gridp.add(ipField, 1, 1);
 
-        Label userLabel = new Label("Username:");
-        gridp.add(userLabel, 0, 1);
+        Label ipLabel = new Label("IP Address:");
+        gridp.add(ipLabel, 0, 1);
 
-        PasswordField passField = new PasswordField();
-        gridp.add(passField, 1, 2);
+        TextField portField = new PasswordField();
+        gridp.add(portField, 1, 2);
 
-        Label passLabel = new Label("Password:");
-        gridp.add(passLabel, 0, 2);
+        Label portLabel = new Label("Port:");
+        gridp.add(portLabel, 0, 2);
+
+
+        connect.setOnAction((ActionEvent) -> {
+            int port = Integer.parseInt(portField.getCharacters().toString());
+            String ip = ipField.getCharacters().toString();
+            if (ClientNetwork.getInstance().tryConnect(ip, port))
+                primaryStage.close();
+            else
+                actiontarget.setText("Connect Unsuccessful");
+
+        });
 
 
         Scene scene = new Scene(gridp, 300, 300);
@@ -65,6 +73,5 @@ public class LoginWindow extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
 }
-
-

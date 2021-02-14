@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.javafx.LoginWindow;
 
 /**
@@ -15,11 +16,12 @@ import sophomoreproject.game.javafx.LoginWindow;
  */
 
 public class LoginScreen implements Screen {
-    private SpriteBatch batch;
+    CoolGuns game;
 
-    public LoginScreen(SpriteBatch batch) {
-        this.batch = batch;
-        LoginWindow.launch();
+    public LoginScreen(CoolGuns game) {
+        this.game = game;
+        LoginWindow.launch(LoginWindow.class);
+        game.setScreen(new MainMenuScreen ());
     }
 
     @Override
