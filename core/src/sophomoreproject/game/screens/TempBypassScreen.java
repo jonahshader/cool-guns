@@ -38,11 +38,8 @@ public class TempBypassScreen implements Screen {
                 System.out.println("Connection failed!");
             }
         }
-//        if (!ClientNetwork.getInstance().tryConnect("127.0.0.1", 123)) System.exit(-1);
+//        if (!ClientNetwork.getInstance().tryConnect("127.0.0.1", 1234)) System.exit(-1);
 //        connected = true;
-
-
-
 
         final ReplyAccountEvent[] rEvent = {null};
         ClientNetwork.getInstance().addListener(new Listener(){

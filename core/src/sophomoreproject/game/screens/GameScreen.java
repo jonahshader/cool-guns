@@ -11,13 +11,17 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import sophomoreproject.game.CoolGuns;
+import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.systems.GameClient;
+import sophomoreproject.game.systems.PlayerController;
 
 public class GameScreen implements Screen {
     private Camera worldCamera;
     private Viewport worldViewport;
     private CoolGuns game;
     private GameClient gameClient;
+
+
 
     private int accountID;
 
@@ -26,8 +30,10 @@ public class GameScreen implements Screen {
         this.accountID = accountID;
 
         worldCamera = new OrthographicCamera();
-        worldViewport = new ExtendViewport(800, 450, worldCamera);
+        worldViewport = new ExtendViewport(640, 360, worldCamera);
         gameClient = new GameClient(accountID);
+        Gdx.input.setInputProcessor(PlayerController.getInstance());
+        PlayerController.getInstance().setCam(worldCamera);
     }
 
     @Override
@@ -37,6 +43,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        PlayerController.getInstance().run(delta);
         gameClient.run(delta);
         worldViewport.apply();
         worldCamera.update();

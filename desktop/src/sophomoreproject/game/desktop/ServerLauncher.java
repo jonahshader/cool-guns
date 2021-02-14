@@ -25,7 +25,7 @@ public class ServerLauncher {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        int port = 123;
+//        int port = 1234;
         if (port != -1) {
             // create server
             ServerNetwork server = new ServerNetwork(port);
