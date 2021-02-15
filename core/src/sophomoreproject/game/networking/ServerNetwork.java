@@ -1,7 +1,6 @@
 package sophomoreproject.game.networking;
 
-import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.kryonet.Server;
+import com.esotericsoftware.kryonetty.ServerEndpoint;
 import sophomoreproject.game.networking.serverlisteners.AccountListener;
 import sophomoreproject.game.packets.RegisterPackets;
 
@@ -9,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class ServerNetwork {
-    private Server server;
+    private ServerEndpoint server;
     private Accounts accounts;
 
     public ServerNetwork(int port) {
@@ -20,20 +19,16 @@ public class ServerNetwork {
             accounts = new Accounts();
         }
 
-        server = new Server();
-        server.start();
-        RegisterPackets.registerPackets(server.getKryo());
-        try {
-            server.bind(port, port);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        server = new ServerEndpoint(RegisterPackets.makeKryoNetty());
+
+        server.start(port);
 
         // add listeners to server
-        server.addListener(new AccountListener(accounts));
+        server.getEventHandler().register(new AccountListener(accounts));
     }
 
     public void sendPacketToAll(Object packet) {
+        server.se
         server.sendToAllTCP(packet);
     }
 

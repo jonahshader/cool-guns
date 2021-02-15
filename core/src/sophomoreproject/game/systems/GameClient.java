@@ -3,8 +3,6 @@ package sophomoreproject.game.systems;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.networking.ClientNetwork;
 import sophomoreproject.game.networking.clientlisteners.ObjectCreationListener;
