@@ -32,6 +32,9 @@ public class ServerConnectWindow extends Application {
         HBox Enter = new HBox(10);
         Enter.setAlignment(Pos.CENTER);
         final Text actiontarget = new Text();
+        gridp.add(actiontarget, 1, 3);
+        Enter.getChildren().add(connect);
+        gridp.add(Enter, 1, 4);
 
         Text Desc = new Text("CoolGuns Servers");
         Desc.setFont(Font.font("Times New Roman",25));

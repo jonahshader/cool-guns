@@ -2,6 +2,7 @@ package sophomoreproject.game.javafx;
 
 
 import javafx.application.Application;
+import static javafx.application.Application.launch;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,43 +15,63 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-
+/**
+ *
+ * @author tommyjaboro
+ */
 public class LoginWindow extends Application {
 
 
     @Override
     public void start(Stage primaryStage)
     {
+
         GridPane gridp = new GridPane();
         gridp.setAlignment(Pos.CENTER);
         gridp.setHgap(10);
         gridp.setVgap(10);
 
 
-        Button signIn = new Button("Sign in");
+        Button signin = new Button("Sign in");
         HBox Enter = new HBox(10);
         Enter.setAlignment(Pos.CENTER);
         final Text actiontarget = new Text();
+        gridp.add(actiontarget, 1, 5);
+        Enter.getChildren().add(signin);
+        gridp.add(Enter, 1, 6);
 
-        signIn.setOnAction((ActionEvent) -> {
+        signin.setOnAction((ActionEvent) -> {
             actiontarget.setText("Test Successful");
         });
 
         Text Desc = new Text("CoolGuns Login");
-        Desc.setFont(Font.font("Times New Roman",25));
+        Desc.setFont(Font.font("Times New Roman",30));
         gridp.add(Desc, 0, 0, 2, 1);
 
-        TextField userField = new TextField();
-        gridp.add(userField, 1, 1);
+        TextField Userbox = new TextField();
+        gridp.add(Userbox, 1, 1);
 
-        Label userLabel = new Label("Username:");
-        gridp.add(userLabel, 0, 1);
+        Label user = new Label("Username:");
+        gridp.add(user, 0, 1);
 
-        PasswordField passField = new PasswordField();
-        gridp.add(passField, 1, 2);
+        PasswordField passBox = new PasswordField();
+        gridp.add(passBox, 1, 2);
 
-        Label passLabel = new Label("Password:");
-        gridp.add(passLabel, 0, 2);
+        Label passbox = new Label("Password:");
+        gridp.add(passbox, 0, 2);
+
+        TextField ipbox = new TextField();
+        gridp.add(ipbox, 1, 3);
+
+        Label ip = new Label("IP Address:");
+        gridp.add(ip, 0, 3);
+
+        TextField portbox = new TextField();
+        gridp.add(portbox, 1, 4);
+
+        Label port = new Label("Port:");
+        gridp.add(port, 0, 4);
+
 
 
         Scene scene = new Scene(gridp, 300, 300);
@@ -65,6 +86,6 @@ public class LoginWindow extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-}
 
+}
 
