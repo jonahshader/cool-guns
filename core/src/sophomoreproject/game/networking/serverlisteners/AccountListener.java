@@ -7,7 +7,7 @@ import sophomoreproject.game.packets.ReplyAccountEvent;
 import sophomoreproject.game.packets.RequestLogin;
 import sophomoreproject.game.packets.RequestNewAccount;
 
-public class AccountListener extends Listener {
+public class AccountListener implements Listener {
     private Accounts accounts;
 
     public AccountListener(Accounts accounts) {

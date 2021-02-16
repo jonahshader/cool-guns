@@ -5,7 +5,7 @@ import com.esotericsoftware.kryonet.Listener;
 import sophomoreproject.game.packets.RequestGameData;
 import sophomoreproject.game.systems.GameServer;
 
-public class RequestListener extends Listener {
+public class RequestListener implements Listener {
     private GameServer gameServer;
 
     public RequestListener(GameServer gameServer) {

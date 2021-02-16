@@ -5,7 +5,7 @@ import com.esotericsoftware.kryonet.Listener;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.systems.GameWorld;
 
-public class ObjectUpdateListener extends Listener {
+public class ObjectUpdateListener implements Listener {
     private GameWorld world;
 
     public ObjectUpdateListener(GameWorld world) {

@@ -8,7 +8,7 @@ import sophomoreproject.game.packets.CreatePlayer;
 import sophomoreproject.game.packets.CreateTestObject;
 import sophomoreproject.game.systems.GameWorld;
 
-public class ObjectCreationListener extends Listener {
+public class ObjectCreationListener implements Listener {
     private GameWorld world;
 
     public ObjectCreationListener(GameWorld world) {

@@ -1,8 +1,8 @@
 package sophomoreproject.game.networking;
 
 import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import sophomoreproject.game.networking.clientlisteners.ReconnectListener;
 import sophomoreproject.game.packets.RegisterPackets;
 
 import java.io.IOException;
@@ -10,13 +10,15 @@ import java.io.IOException;
 public final class ClientNetwork {
     private static ClientNetwork instance = null;
     private final Client client;
-    private boolean connected = false;
+    private boolean firstConnect = false;
     private int accountID = -1;
 
     private ClientNetwork() {
         client = new Client();
         RegisterPackets.registerPackets(client.getKryo());
         client.start();
+
+        addListener(new ReconnectListener());
     }
 
     /**
@@ -25,10 +27,9 @@ public final class ClientNetwork {
      * @return true: connection successful. false: connection failed (possibly already connected, or it just failed)
      */
     public boolean tryConnect(String ip, int port) {
-        if (!connected) {
+        if (!firstConnect) {
             try {
                 client.connect(2000, ip, port, port);
-                connected = true;
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -61,5 +62,9 @@ public final class ClientNetwork {
         }
 
         return instance;
+    }
+
+    public Client getClient() {
+        return client;
     }
 }
