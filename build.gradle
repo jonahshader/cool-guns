@@ -48,7 +48,6 @@ allprojects {
         google()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-        maven { url 'https://jitpack.io' }
     }
 }
 
@@ -74,7 +73,8 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-//        compile "com.esotericsoftware:kryonet:2.22.0-RC1"
-        implementation 'com.github.EsotericSoftware:kryonetty:master-SNAPSHOT'
+        compile "com.esotericsoftware:kryonet:2.22.0-RC1"
+
+
     }
 }

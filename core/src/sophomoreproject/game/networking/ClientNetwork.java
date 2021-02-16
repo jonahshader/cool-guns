@@ -1,19 +1,22 @@
 package sophomoreproject.game.networking;
 
-import com.esotericsoftware.kryonetty.ClientEndpoint;
-import com.esotericsoftware.kryonetty.network.handler.NetworkListener;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import sophomoreproject.game.packets.RegisterPackets;
 
 import java.io.IOException;
 
 public final class ClientNetwork {
     private static ClientNetwork instance = null;
-    private final ClientEndpoint client;
+    private final Client client;
     private boolean connected = false;
     private int accountID = -1;
 
     private ClientNetwork() {
-        client = new ClientEndpoint(RegisterPackets.makeKryoNetty());
+        client = new Client();
+        RegisterPackets.registerPackets(client.getKryo());
+        client.start();
     }
 
     /**
@@ -23,20 +26,29 @@ public final class ClientNetwork {
      */
     public boolean tryConnect(String ip, int port) {
         if (!connected) {
-            client.connect(ip, port);
-            connected = true;
-            return true;
+            try {
+                client.connect(2000, ip, port, port);
+                connected = true;
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
         } else {
             return false;
         }
     }
 
     public void sendPacket(Object packet) {
-        client.send(packet);
+        client.sendTCP(packet);
     }
 
-    public void addListener(NetworkListener listener) {
-        client.getEventHandler().register(listener);
+    public void addListener(Listener listener) {
+        client.addListener(listener);
+    }
+
+    public void removeListener(Listener listener) {
+        client.removeListener(listener);
     }
 
     public int getAccountID() {
