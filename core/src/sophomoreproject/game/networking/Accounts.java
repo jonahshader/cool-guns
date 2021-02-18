@@ -3,12 +3,17 @@ package sophomoreproject.game.networking;
 import java.io.*;
 import java.util.HashMap;
 
-public class Accounts implements Serializable {
+public class Accounts {
     private static final String PATH_TO_ACCOUNTS = "accounts.data";
     private HashMap<String, Account> accounts;
 
     public Accounts() {
         accounts = new HashMap<>();
+    }
+
+    // constructor for loading from file
+    private Accounts(HashMap<String, Account> accounts) {
+        this.accounts = accounts;
     }
 
     /**
@@ -56,9 +61,8 @@ public class Accounts implements Serializable {
             ObjectInputStream objIn = new ObjectInputStream(fIn);
             Object obj = objIn.readObject();
 
-            if (obj instanceof Accounts) {
-                return (Accounts) obj;
-            }
+
+            return new Accounts((HashMap<String, Account>) obj);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -73,12 +77,16 @@ public class Accounts implements Serializable {
         try {
             FileOutputStream fOut = new FileOutputStream(PATH_TO_ACCOUNTS);
             ObjectOutputStream objOut = new ObjectOutputStream(fOut);
-            objOut.writeObject(this);
+            objOut.writeObject(accounts);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
 
          return false;
+    }
+
+    public Account getAccountByUsername(String username) {
+        return accounts.get(username);
     }
 }

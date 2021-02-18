@@ -5,16 +5,20 @@ import com.esotericsoftware.kryonet.Server;
 import sophomoreproject.game.networking.serverlisteners.AccountListener;
 import sophomoreproject.game.packets.RegisterPackets;
 
+import javax.print.attribute.HashPrintJobAttributeSet;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ServerNetwork {
-    private Server server;
-    private Accounts accounts;
+    private Server server; // kryonet server for sending and receiving packets
+    private Accounts accounts; // this is the collection of registered accounts
+    private HashMap<Integer, ConnectedAccount> usersLoggedIn; // this is the collection of users that are currently logged in
 
     public ServerNetwork(int port) {
         // try to load accounts file
         accounts = Accounts.loadFromFile();
+        usersLoggedIn = new HashMap<>();
         // if that load didn't work, just make a new accounts object
         if (accounts == null) {
             accounts = new Accounts();
@@ -30,7 +34,7 @@ public class ServerNetwork {
         }
 
         // add listeners to server
-        server.addListener(new AccountListener(accounts));
+        server.addListener(new AccountListener(accounts, usersLoggedIn));
     }
 
     public void sendPacketToAll(Object packet) {

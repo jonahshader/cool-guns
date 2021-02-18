@@ -93,6 +93,9 @@ public class TempBypassScreen implements Screen {
                 case ACCOUNT_LOG_IN_FAILED:
                     System.out.println("Log in failed! Account does not exists!");
                     break;
+                case ACCOUNT_ALREADY_LOGGED_IN:
+                    System.out.println("Log in failed! Account current in use!");
+                    break;
                 default:
                     break;
             }
