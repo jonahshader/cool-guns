@@ -30,4 +30,9 @@ public abstract class GameObject implements Comparable<GameObject>{
     public int compareTo(GameObject o) {
         return networkID - o.networkID;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof GameObject && ((GameObject)obj).networkID == networkID);
+    }
 }

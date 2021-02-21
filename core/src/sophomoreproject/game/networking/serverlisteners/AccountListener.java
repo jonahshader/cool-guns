@@ -2,12 +2,13 @@ package sophomoreproject.game.networking.serverlisteners;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import sophomoreproject.game.networking.Account;
 import sophomoreproject.game.networking.Accounts;
 import sophomoreproject.game.networking.ConnectedAccount;
 import sophomoreproject.game.packets.ReplyAccountEvent;
 import sophomoreproject.game.packets.RequestLogin;
 import sophomoreproject.game.packets.RequestNewAccount;
+import sophomoreproject.game.systems.GameServer;
+import sophomoreproject.game.systems.GameWorld;
 
 import java.util.HashMap;
 
@@ -15,11 +16,18 @@ public class AccountListener implements Listener {
     private Accounts accounts;
     private HashMap<Integer, ConnectedAccount> usersLoggedIn;
     private HashMap<Connection, Integer> connectionToAccountID;
+    private GameWorld world;
+    private GameServer gameServer;
 
-    public AccountListener(Accounts accounts, HashMap<Integer, ConnectedAccount> usersLoggedIn) {
+    public AccountListener(Accounts accounts,
+                           HashMap<Integer, ConnectedAccount> usersLoggedIn,
+                           HashMap<Connection, Integer> connectionToAccountID,
+                           GameServer gameServer) {
         this.accounts = accounts;
         this.usersLoggedIn = usersLoggedIn;
-        connectionToAccountID = new HashMap<>();
+        this.connectionToAccountID = connectionToAccountID;
+        this.world = gameServer.getGameWorld();
+        this.gameServer = gameServer;
     }
 
     @Override
@@ -28,6 +36,11 @@ public class AccountListener implements Listener {
             int disconnectedAccountID = connectionToAccountID.get(connection);
             usersLoggedIn.remove(disconnectedAccountID);
             connectionToAccountID.remove(connection);
+
+            // make player go to sleep
+//            world.handleSetSleepStatePacket(new SetSleepState());
+            int playerNetID = world.getPlayerNetIDFromAccountID(disconnectedAccountID);
+            gameServer.setAndSendSleepState(playerNetID, true);
         }
     }
 

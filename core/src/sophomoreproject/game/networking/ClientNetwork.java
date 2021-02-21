@@ -6,6 +6,7 @@ import sophomoreproject.game.networking.clientlisteners.ReconnectListener;
 import sophomoreproject.game.packets.RegisterPackets;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public final class ClientNetwork {
     private static ClientNetwork instance = null;
@@ -66,5 +67,9 @@ public final class ClientNetwork {
 
     public Client getClient() {
         return client;
+    }
+
+    public void sendAllPackets(ArrayList<Object> packets) {
+        for (Object o : packets) client.sendTCP(o);
     }
 }

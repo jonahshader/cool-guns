@@ -14,5 +14,6 @@ public class RegisterPackets {
         kryo.register(RequestLogin.class);
         kryo.register(RequestNewAccount.class);
         kryo.register(UpdatePhysicsObject.class);
+        kryo.register(UpdateSleepState.class);
     }
 }

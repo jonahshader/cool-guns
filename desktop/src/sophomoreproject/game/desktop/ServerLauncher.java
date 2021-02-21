@@ -1,6 +1,8 @@
 package sophomoreproject.game.desktop;
 
 import sophomoreproject.game.networking.ServerNetwork;
+import sophomoreproject.game.networking.serverlisteners.AccountListener;
+import sophomoreproject.game.networking.serverlisteners.RelaySendOnlyPacketsListener;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.systems.GameServer;
 
@@ -31,6 +33,15 @@ public class ServerLauncher {
             ServerNetwork server = new ServerNetwork(port);
             GameServer gameServer = new GameServer(server);
 
+            // add some listeners here (that can't be added elsewhere)
+            server.addListener(new AccountListener(server.getAccounts(),
+                    server.getUsersLoggedIn(),
+                    server.getConnectionToAccountID(),
+                    gameServer));
+
+            server.addListener(new RelaySendOnlyPacketsListener(server,
+                    gameServer));
+
             long lastTime = System.nanoTime();
             long time = lastTime;
             while(true) {
@@ -41,6 +52,5 @@ public class ServerLauncher {
                 lastTime = time;
             }
         }
-
     }
 }
