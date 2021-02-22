@@ -6,6 +6,10 @@ import sophomoreproject.game.networking.ClientNetwork;
 
 import java.io.IOException;
 
+/**
+ * TODO: this will mess up ServerNetwork's HashMap<Connection, Integer> connectionToAccountID
+ */
+
 public class ReconnectListener implements Listener {
     private boolean reconnectQueued = false;
 

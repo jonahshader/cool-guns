@@ -8,9 +8,11 @@ import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.networking.ClientNetwork;
 import sophomoreproject.game.networking.ServerNetwork;
+import sophomoreproject.game.packets.CreateSleeping;
 import sophomoreproject.game.packets.UpdateSleepState;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.locks.ReentrantLock;
@@ -70,9 +72,6 @@ public class GameWorld {
         Collections.sort(physicsObjects);
         Collections.sort(gameObjects);
 
-//        System.out.println("Start");
-//        for (GameObject o : gameObjects) System.out.println(o.getNetworkID());
-
         for (PhysicsObject p : physicsObjects) { p.updatePhysics(dt); }
     }
 
@@ -120,9 +119,25 @@ public class GameWorld {
     public void handleSetSleepStatePacket(UpdateSleepState packet) {
         sleepUpdateLock.lock();
         if (packet.sleeping) {
-            wakeToSleepingGameObjectQueue.add(getGameObjectFromID(packet.networkID));
+            GameObject obj = getGameObjectFromID(packet.networkID);
+            if (obj == null) {
+                obj = getSleepingGameObjectFromID(packet.networkID);
+            }
+            if (obj != null) {
+                wakeToSleepingGameObjectQueue.add(obj);
+            } else {
+                System.out.println("Tried updating sleep state of null object! " + packet.toString());
+            }
         } else {
-            sleepingToWakeGameObjectQueue.add(getSleepingGameObjectFromID(packet.networkID));
+            GameObject obj = getSleepingGameObjectFromID(packet.networkID);
+            if (obj == null) {
+                obj = getGameObjectFromID(packet.networkID);
+            }
+            if (obj != null) {
+                sleepingToWakeGameObjectQueue.add(obj);
+            } else {
+                System.out.println("Tried updating sleep state of null object! " + packet.toString());
+            }
         }
         sleepUpdateLock.unlock();
     }
@@ -131,6 +146,12 @@ public class GameWorld {
         gameObjectQueueLock.lock();
         gameObjectAddQueue.add(o);
         gameObjectQueueLock.unlock();
+    }
+
+    public void addSleepingObject(GameObject toQueue) {
+        sleepUpdateLock.lock();
+        sleepingGameObjects.add(toQueue);
+        sleepUpdateLock.unlock();
     }
 
     public void queueRemoveObject(GameObject o) {
@@ -158,12 +179,6 @@ public class GameWorld {
     }
 
     public GameObject getGameObjectFromID(int networkID) {
-//        int index = getGameObjectIndexFromID(networkID, gameObjects);
-//        if (index >= 0) {
-//            return gameObjects.get(index);
-//        } else {
-//            return null;
-//        }
         for (GameObject g : gameObjects) if (g.getNetworkID() == networkID) return g;
         return null;
     }
@@ -174,74 +189,24 @@ public class GameWorld {
     }
 
     public PhysicsObject getPhysicsObjectFromID(int networkID) {
-//        int index = getPhysicsObjectIndexFromID(networkID, physicsObjects);
-//        if (index >= 0) {
-//            return physicsObjects.get(index);
-//        } else {
-//            return null;
-//        }
-
         for (PhysicsObject p : physicsObjects) if (p.getNetworkID() == networkID) return p;
         return null;
     }
 
-    // modified from: https://www.geeksforgeeks.org/binary-search/
-//    private static int getGameObjectIndexFromID(int networkID, ArrayList<GameObject> array) {
-//        int l = 0, r = array.size() - 1;
-//
-////        if (r <= 0) return -1;
-//        while (l <= r) {
-//            int m = l + (r - 1) / 2;
-//
-//            // check if x is present at mid
-//            if (array.get(m).getNetworkID() == networkID)
-//                return m;
-//
-//            // if x is greater, ignore left half
-//            if (array.get(m).getNetworkID() < networkID)
-//                l = m + 1;
-//            // if x is smaller, ignore right half
-//            else
-//                r = m - 1;
-//        }
-//
-//        // if element wasn't found, return -1
-//        return -1;
-//    }
-//
-//    private static int getPhysicsObjectIndexFromID(int networkID, ArrayList<PhysicsObject> array) {
-//        int l = 0, r = array.size() - 1;
-//
-////        if (r <= 0) return -1;
-//        while (l <= r) {
-//            int m = l + (r - 1) / 2;
-//
-//            if (m > r || m < 0) return -1;
-//            // check if x is present at mid
-//            if (array.get(m).getNetworkID() == networkID)
-//                return m;
-//
-//            // if x is greater, ignore left half
-//            if (array.get(m).getNetworkID() < networkID)
-//                l = m + 1;
-//                // if x is smaller, ignore right half
-//            else
-//                r = m - 1;
-//        }
-//
-//        // if element wasn't found, return -1
-//        return -1;
-//    }
-
     public ArrayList<Object> createWorldCopy() {
         ArrayList<Object> worldCopy = new ArrayList<>();
+        ArrayList<Object> sleepingCreatePackets = new ArrayList<>();
         // add wakeful objects
         for (GameObject g : gameObjects) {
             g.addCreatePacketToBuffer(worldCopy);
         }
-        // add sleeping objects
+        // add sleeping objects to temp array
         for (GameObject g : sleepingGameObjects) {
-            g.addCreatePacketToBuffer(worldCopy);
+            g.addCreatePacketToBuffer(sleepingCreatePackets);
+        }
+        // wrap sleeping object create packets with CreateSleeping packet
+        for (Object p : sleepingCreatePackets) {
+            worldCopy.add(new CreateSleeping(p));
         }
         return worldCopy;
     }
@@ -281,4 +246,6 @@ public class GameWorld {
         }
         return -1;
     }
+
+
 }

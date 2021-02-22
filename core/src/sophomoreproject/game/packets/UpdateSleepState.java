@@ -10,4 +10,9 @@ public class UpdateSleepState {
     }
 
     public UpdateSleepState() { }
+
+    @Override
+    public String toString() {
+        return "ID: " + networkID + " state: " + (sleeping ? "sleeping" : "awake");
+    }
 }

@@ -7,6 +7,7 @@ public class RegisterPackets {
     // aware of the possible packets that can be sent
     public static void registerPackets(Kryo kryo) {
         kryo.register(CreatePlayer.class);
+        kryo.register(CreateSleeping.class);
         kryo.register(CreateTestObject.class);
         kryo.register(ReplyAccountEvent.AccountEvent.class);
         kryo.register(ReplyAccountEvent.class);

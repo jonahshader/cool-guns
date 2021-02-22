@@ -41,7 +41,8 @@ public class RequestListener implements Listener {
                 int playerAccountID = connectionToAccountID.get(c);
                 int playerNetID = world.getSleepingPlayerNetIDFromAccountID(playerAccountID);
                 if (playerNetID >= 0) {
-                    world.handleSetSleepStatePacket(new UpdateSleepState(playerNetID, false));
+                    gameServer.setAndSendSleepState(playerNetID, false);
+//                    world.handleSetSleepStatePacket(new UpdateSleepState(playerNetID, false));
                     System.out.println("Waking up player with accountID " + playerAccountID + " and netID " + playerNetID + "!");
                 } else {
                     // create player
