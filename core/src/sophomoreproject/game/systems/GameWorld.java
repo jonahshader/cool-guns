@@ -27,7 +27,6 @@ public class GameWorld {
 
     private final ArrayList<Object> serverSendUpdatePacketBuffer = new ArrayList<>();
     private final ArrayList<Object> clientReceiveUpdatePacketBuffer = new ArrayList<>();
-    private final ArrayList<Object> clientSendUpdatePacketBuffer = new ArrayList<>();
     private final ArrayList<GameObject> gameObjectAddQueue = new ArrayList<>();
     private final ArrayList<GameObject> gameObjectRemoveQueue = new ArrayList<>();
     private final ArrayList<GameObject> wakeToSleepingGameObjectQueue = new ArrayList<>();
@@ -105,15 +104,6 @@ public class GameWorld {
         }
         clientReceiveUpdatePacketBuffer.clear();
         clientUpdatePacketsLock.unlock();
-
-        // Send update packets
-        for (GameObject o : gameObjects) {
-            if (o.getUpdateFrequency() == GameObject.ServerUpdateFrequency.SEND_ONLY) {
-                o.addUpdatePacketToBuffer(clientSendUpdatePacketBuffer);
-            }
-        }
-        ClientNetwork.getInstance().sendAllPackets(clientSendUpdatePacketBuffer);
-        clientSendUpdatePacketBuffer.clear();
     }
 
     public void handleSetSleepStatePacket(UpdateSleepState packet) {

@@ -7,6 +7,10 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.networking.ClientNetwork;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 // TODO: https://www.gamedevelopment.blog/full-libgdx-game-tutorial-input-controller/
 
@@ -18,6 +22,8 @@ public final class PlayerController implements InputProcessor {
     public boolean isMouse1Down, isMouse2Down;
     public boolean isDragged;
     public Vector2 mouseLocation = new Vector2();
+
+    private final ArrayList<Object> updatePacketArray = new ArrayList<>();
 
     public final float PLAYER_ACCELERATION = 1000;
     public final float PLAYER_TOP_SPEED = 100;
@@ -86,7 +92,19 @@ public final class PlayerController implements InputProcessor {
 
             cam.position.x = player.position.x;
             cam.position.y = player.position.y;
+
+            sendUpdatePacketToServer();
         }
+
+    }
+
+    /**
+     * generates an update packet and sends it to the server to be redistributed
+     */
+    private void sendUpdatePacketToServer() {
+        player.addUpdatePacketToBuffer(updatePacketArray);
+        ClientNetwork.getInstance().sendAllPackets(updatePacketArray);
+        updatePacketArray.clear();
     }
 
 
