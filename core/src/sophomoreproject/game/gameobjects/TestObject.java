@@ -18,41 +18,31 @@ import static sophomoreproject.game.singletons.CustomAssetManager.SPRITE_PACK;
 
 public class TestObject extends PhysicsObject implements Renderable {
     private static TextureAtlas texAtl = null;
-    private static TextureRegion playerTexFront = null;
-    private static TextureRegion playerTexRight = null;
-    private static TextureRegion playerTexBack = null;
+    private static TextureRegion[] textures = null;
+
+
     private double lifeTime = 0.0;
     private int xFactor;
     private int yFactor;
 
-    private final Vector2 PLAYER_SIZE = new Vector2(6, 9);
+    private final Vector2 PLAYER_SIZE = new Vector2(1, 1);
 
     public TestObject(Vector2 position, int netID, boolean client) {
         super(position, new Vector2((float)ranNumPosNeg(), (float)ranNumPosNeg()), new Vector2(), netID);
-        if (texAtl == null && client) {
-            texAtl = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
-            playerTexFront = texAtl.findRegion("player_front");
-            playerTexRight = texAtl.findRegion("player_right");
-            playerTexBack = texAtl.findRegion("player_back");
-        }
 
         xFactor = (int)(Math.random() * 6) + 1;
         yFactor = (int)(Math.random() * 6) + 1;
+        loadTextures(client);
 
         updateFrequency = ServerUpdateFrequency.CONSTANT;
     }
 
     public TestObject(CreateTestObject packet, boolean client) {
         super(packet.u.x, packet.u.y, packet.u.xVel, packet.u.yVel, packet.u.xAccel, packet.u.yAccel, packet.u.netID);
-        if (texAtl == null && client) {
-            texAtl = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
-            playerTexFront = texAtl.findRegion("player_front");
-            playerTexRight = texAtl.findRegion("player_right");
-            playerTexBack = texAtl.findRegion("player_back");
-        }
 
         xFactor = packet.xFactor;
         yFactor = packet.yFactor;
+        loadTextures(client);
 
         updateFrequency = ServerUpdateFrequency.CONSTANT;
     }
@@ -79,7 +69,7 @@ public class TestObject extends PhysicsObject implements Renderable {
 
     @Override
     public void draw(SpriteBatch sb, ShapeRenderer sr) {
-        RendingUtilities.renderCharacter(position, velocity, PLAYER_SIZE, playerTexFront, playerTexBack,playerTexRight,sb,1.25f);
+        RendingUtilities.renderCharacter(position, velocity, PLAYER_SIZE,sb,textures);
 //        debugDraw(sr);
     }
 
@@ -97,5 +87,21 @@ public class TestObject extends PhysicsObject implements Renderable {
 
     private static double ranNumPosNeg() {
         return (Math.random() * 2) - 1;
+    }
+
+    private void loadTextures (boolean client) {
+        if (texAtl == null && client) {
+            texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
+            textures = new TextureRegion[8];
+            textures[0] = texAtl.findRegion("player_right");
+            textures[1] = texAtl.findRegion("player_top_right");
+            textures[2] = texAtl.findRegion("player_back");
+            textures[3] = texAtl.findRegion("player_top_left");
+            textures[4] = texAtl.findRegion("player_left");
+            textures[5] = texAtl.findRegion("player_bottom_left");
+            textures[6] = texAtl.findRegion("player_front");
+            textures[7] = texAtl.findRegion("player_bottom_right");
+        }
+
     }
 }

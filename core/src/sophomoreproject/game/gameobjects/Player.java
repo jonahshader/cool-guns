@@ -16,9 +16,9 @@ import java.util.ArrayList;
 public class Player extends PhysicsObject implements Renderable{
 
     private static TextureAtlas texAtl = null;
+    private static TextureRegion[] textures = null;
 
-
-    private final Vector2 PLAYER_SIZE = new Vector2(6*2, 9*2);
+    private final Vector2 PLAYER_SIZE = new Vector2(2, 2);
 
 
     private int accountId;
@@ -26,11 +26,8 @@ public class Player extends PhysicsObject implements Renderable{
     public Player(Vector2 position, int accountId, int networkID, boolean client) {
         super(position, new Vector2(0,0), new Vector2(0,0), networkID);
         this.accountId = accountId;
-        if (texAtl == null && client) {
-            texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
-
-        }
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
+        loadTextures(client);
     }
 
     public Player(CreatePlayer packet, boolean client) {
@@ -38,10 +35,8 @@ public class Player extends PhysicsObject implements Renderable{
                 packet.u.xVel, packet.u.yVel,
                 packet.u.xAccel, packet.u.yAccel, packet.u.netID);
         this.accountId = packet.accountId;
-        if (texAtl == null && client) {
-            texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
+        loadTextures(client);
 
-        }
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
     }
 
@@ -60,14 +55,26 @@ public class Player extends PhysicsObject implements Renderable{
 
     @Override
     public void draw(SpriteBatch sb, ShapeRenderer sr) {
-        RendingUtilities.renderCharacter(position, velocity, PLAYER_SIZE, playerTexFront, playerTexBack,playerTexRight,sb);
+        RendingUtilities.renderCharacter(position, velocity, PLAYER_SIZE, sb, textures);
     }
 
     public int getAccountId() {
         return accountId;
     }
 
-    private void loadTextures () {
+    private void loadTextures (boolean client) {
+        if (texAtl == null && client) {
+            texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
 
+            textures = new TextureRegion[8];
+            textures[0] = texAtl.findRegion("player_right");
+            textures[1] = texAtl.findRegion("player_top_right");
+            textures[2] = texAtl.findRegion("player_back");
+            textures[3] = texAtl.findRegion("player_top_left");
+            textures[4] = texAtl.findRegion("player_left");
+            textures[5] = texAtl.findRegion("player_bottom_left");
+            textures[6] = texAtl.findRegion("player_front");
+            textures[7] = texAtl.findRegion("player_bottom_right");
+        }
     }
 }
