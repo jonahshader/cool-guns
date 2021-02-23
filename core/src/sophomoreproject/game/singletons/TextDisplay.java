@@ -14,13 +14,13 @@ import static sophomoreproject.game.singletons.CustomAssetManager.MENU_FONT;
 public class TextDisplay {
     private static TextDisplay instance;
 
-    private static final float UNDERTEXT_OFFSET = 2f;
+    private static final float UNDERTEXT_OFFSET = 3f;
     private static final float TEXT_OFFSET_PERCENT = 1.5f; // percentage of height
     private static final float TEXT_PADDING = 3f;
     private final BitmapFont font;
 
-    private final ArrayList<String> topLeftText;
-    private final ArrayList<String> topText;
+    private final ArrayList<String[]> topLeftText;
+    private final ArrayList<String[]> topText;
 //    private final ArrayList<String> topRightText;
 
     public enum TextPosition {
@@ -38,7 +38,7 @@ public class TextDisplay {
 //        topRightText = new ArrayList<>();
     }
 
-    public void addHudText(String text, TextPosition pos) {
+    public void addHudText(String[] text, TextPosition pos) {
         switch (pos) {
             case TOP_LEFT:
                 topLeftText.add(text);
@@ -61,12 +61,12 @@ public class TextDisplay {
     }
 
     public void draw(SpriteBatch sb, Viewport hudVp) {
+        font.getData().setScale(0.25f);
         for (int i = 0; i < topLeftText.size(); ++i) {
-            drawText(sb, topLeftText.get(i), TEXT_PADDING, hudVp.getWorldHeight() - (TEXT_PADDING + i * font.getLineHeight() * TEXT_OFFSET_PERCENT), 1f, Color.WHITE);
-            System.out.println("Rendering text");
+            drawText(sb, topLeftText.get(i)[0], TEXT_PADDING, hudVp.getWorldHeight() - (TEXT_PADDING + i * font.getLineHeight() * TEXT_OFFSET_PERCENT), .25f, Color.WHITE, Align.topLeft);
         }
         for (int i = 0; i < topText.size(); ++i) {
-            drawText(sb, topText.get(i), TEXT_PADDING, hudVp.getWorldHeight() - (TEXT_PADDING + i * font.getLineHeight() * TEXT_OFFSET_PERCENT), 1f, Color.WHITE);
+            drawText(sb, topText.get(i)[0], TEXT_PADDING, hudVp.getWorldHeight() - (TEXT_PADDING + i * font.getLineHeight() * TEXT_OFFSET_PERCENT), .25f, Color.WHITE, Align.center);
         }
 
     }
@@ -75,19 +75,22 @@ public class TextDisplay {
 //
 //    }
 
-    public void drawTextInWorld(SpriteBatch sb, String text, float x, float y, float scale) {
+    public void drawTextInWorld(SpriteBatch sb, String text, float x, float y, float scale, Color c) {
 //        font.getData().setScale(scale);
         font.setColor(1f, 1f, 1f, 1f);
-        font.draw(sb, text, x, y, 9999f, Align.center, false);
+//        font.draw(sb, text, x, y, 0f, Align.center, false);
+//        font.draw(sb, text, x, y);
+        drawText(sb, text, x, y + font.getLineHeight() * .5f, scale, c, Align.center);
     }
 
-    private void drawText(SpriteBatch sb, String text, float x, float y, float scale, Color c) {
-//        font.getData().setScale(scale);
+    private void drawText(SpriteBatch sb, String text, float x, float y, float scale, Color c, int align) {
+        font.setUseIntegerPositions(false);
+        font.getData().setScale(scale);
         font.setColor(0f, 0f, 0f, c.a);
-        font.draw(sb, text, x + UNDERTEXT_OFFSET, y + UNDERTEXT_OFFSET);
+        font.draw(sb, text, x + UNDERTEXT_OFFSET * scale, y + UNDERTEXT_OFFSET * scale, 0f, align, false);
 
         font.setColor(c);
-        font.draw(sb, text, x, y);
+        font.draw(sb, text, x, y, 0f, align, false);
     }
 
     public static TextDisplay getInstance() {

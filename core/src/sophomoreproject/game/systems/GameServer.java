@@ -26,7 +26,7 @@ public class GameServer {
         gameSystems.add(new TestObjectSpawner(this, world));
 
         // add listeners
-        serverNetwork.addListener(new RequestListener(this, world, serverNetwork.getConnectionToAccountID()));
+        serverNetwork.addListener(new RequestListener(this, world, serverNetwork));
     }
 
     public void run(float dt) {

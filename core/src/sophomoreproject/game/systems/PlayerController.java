@@ -25,8 +25,9 @@ public final class PlayerController implements InputProcessor {
     public boolean isDragged;
     public Vector2 mouseLocation = new Vector2();
 
-    private String accountIDString = "";
-    private String playerNetIDString = "";
+    private String[] accountIDString;
+    private String[] playerNetIDString;
+    private String[] fpsString;
 
 
     private final ArrayList<Object> updatePacketArray = new ArrayList<>();
@@ -37,8 +38,16 @@ public final class PlayerController implements InputProcessor {
 //    public final float FRICTION = 420;
 
     private PlayerController() {
+        accountIDString = new String[1];
+        playerNetIDString = new String[1];
+        fpsString = new String[1];
+        accountIDString[0] = "temp";
+        playerNetIDString[0] = "temp";
+        fpsString[0] = "temp";
+
         TextDisplay.getInstance().addHudText(accountIDString, TextDisplay.TextPosition.TOP_LEFT);
         TextDisplay.getInstance().addHudText(playerNetIDString, TextDisplay.TextPosition.TOP_LEFT);
+        TextDisplay.getInstance().addHudText(fpsString, TextDisplay.TextPosition.TOP_LEFT);
     }
 
     public static PlayerController getInstance() {
@@ -50,8 +59,8 @@ public final class PlayerController implements InputProcessor {
     public void setPlayer(Player player) {
         this.player = player;
 
-        accountIDString = "Account ID: " + player.getAccountId();
-        playerNetIDString = "Net ID: " + player.getNetworkID();
+        accountIDString[0] = "Account ID: " + player.getAccountId();
+        playerNetIDString[0] = "Net ID: " + player.getNetworkID();
     }
 
     public void setCam(Camera cam) {
@@ -59,6 +68,7 @@ public final class PlayerController implements InputProcessor {
     }
 
     public void run(float dt) {
+        fpsString[0] = "FPS: " + Math.round(1/dt);
         if (player != null && cam != null) {
 //            if (player.velocity.len() > PLAYER_TOP_SPEED) {
 //                player.velocity.nor().scl(PLAYER_TOP_SPEED);

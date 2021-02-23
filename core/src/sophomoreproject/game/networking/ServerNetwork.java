@@ -15,7 +15,7 @@ import java.util.HashMap;
 public class ServerNetwork {
     private Server server; // kryonet server for sending and receiving packets
     private Accounts accounts; // this is the collection of registered accounts
-    private HashMap<Integer, ConnectedAccount> usersLoggedIn; // this is the collection of users that are currently logged in
+    private HashMap<Integer, ConnectedAccount> usersLoggedIn; // (accountID to ConnectedAccount) this is the collection of users that are currently logged in
     private HashMap<Connection, Integer> connectionToAccountID; // this is too
 
     public ServerNetwork(int port) {
