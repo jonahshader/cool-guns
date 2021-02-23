@@ -23,22 +23,22 @@ public class Player extends PhysicsObject implements Renderable{
 
     private int accountId;
 
-    public Player(Vector2 position, int accountId, int networkID) {
+    public Player(Vector2 position, int accountId, int networkID, boolean client) {
         super(position, new Vector2(0,0), new Vector2(0,0), networkID);
         this.accountId = accountId;
-        if (texAtl == null) {
+        if (texAtl == null && client) {
             texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
 
         }
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
     }
 
-    public Player(CreatePlayer packet) {
+    public Player(CreatePlayer packet, boolean client) {
         super(packet.u.x, packet.u.y,
                 packet.u.xVel, packet.u.yVel,
                 packet.u.xAccel, packet.u.yAccel, packet.u.netID);
         this.accountId = packet.accountId;
-        if (texAtl == null) {
+        if (texAtl == null && client) {
             texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
 
         }

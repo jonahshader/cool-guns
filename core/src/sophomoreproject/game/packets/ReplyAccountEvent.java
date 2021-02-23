@@ -5,7 +5,8 @@ public class ReplyAccountEvent {
         ACCOUNT_CREATED,
         ACCOUNT_CREATE_FAILED,
         ACCOUNT_LOGGED_IN,
-        ACCOUNT_LOG_IN_FAILED
+        ACCOUNT_LOG_IN_FAILED,
+        ACCOUNT_ALREADY_LOGGED_IN
     }
 
     public AccountEvent event;

@@ -4,6 +4,7 @@ import com.esotericsoftware.kryonet.Connection;
 import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.networking.serverlisteners.RequestListener;
+import sophomoreproject.game.packets.UpdateSleepState;
 import sophomoreproject.game.systems.gameplaysystems.GameSystem;
 import sophomoreproject.game.systems.gameplaysystems.spawners.TestObjectSpawner;
 
@@ -25,7 +26,7 @@ public class GameServer {
         gameSystems.add(new TestObjectSpawner(this, world));
 
         // add listeners
-        serverNetwork.addListener(new RequestListener(this));
+        serverNetwork.addListener(new RequestListener(this, world, serverNetwork.getConnectionToAccountID()));
     }
 
     public void run(float dt) {
@@ -52,5 +53,20 @@ public class GameServer {
     public void sendAllWorldDataToClient(Connection c) {
         ArrayList<Object> worldPackets = world.createWorldCopy();
         for (Object packet : worldPackets) c.sendTCP(packet);
+    }
+
+    public GameWorld getGameWorld() {
+        return world;
+    }
+
+    public void setAndSendSleepState(int networkID, boolean sleeping) {
+        UpdateSleepState packet = new UpdateSleepState(networkID, sleeping);
+        world.handleSetSleepStatePacket(packet);
+        serverNetwork.sendPacketToAll(packet);
+    }
+
+    public void setAndSendSleepState(UpdateSleepState packet) {
+        world.handleSetSleepStatePacket(packet);
+        serverNetwork.sendPacketToAll(packet);
     }
 }

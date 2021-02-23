@@ -15,8 +15,8 @@ import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class TempBypassScreen implements Screen {
-    private CoolGuns game;
-    private int accountID;
+    private final CoolGuns game;
+    private int accountID = -1;
     boolean loggedIn = false;
 
     public TempBypassScreen(CoolGuns game) {
@@ -24,7 +24,6 @@ public class TempBypassScreen implements Screen {
 
         Scanner scanner = new Scanner(System.in);
         boolean connected = false;
-        int accountID = -1;
 
         while (!connected) {
             System.out.print("Enter ip (without port): ");
@@ -54,7 +53,6 @@ public class TempBypassScreen implements Screen {
         while (!loggedIn) {
             System.out.print("(R)egister or (L)ogin: ");
                 String nextLine = scanner.nextLine();
-//                System.out.println("Next line...?:" + nextLine);
             while (nextLine.length() == 0) {
                 nextLine = scanner.nextLine();
             }
@@ -69,7 +67,16 @@ public class TempBypassScreen implements Screen {
             } else {
                 ClientNetwork.getInstance().sendPacket(new RequestLogin(username, password));
             }
-            while (rEvent[0] == null) {} // chill until we get a reply from the server
+
+            try {
+                while (rEvent[0] == null) {
+                    Thread.sleep(250);
+                    System.out.println(".");
+                } // chill until we get a reply from the server
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
 
             switch (rEvent[0].event) {
                 case ACCOUNT_CREATED:
@@ -85,6 +92,9 @@ public class TempBypassScreen implements Screen {
                     break;
                 case ACCOUNT_LOG_IN_FAILED:
                     System.out.println("Log in failed! Account does not exists!");
+                    break;
+                case ACCOUNT_ALREADY_LOGGED_IN:
+                    System.out.println("Log in failed! Account current in use!");
                     break;
                 default:
                     break;
