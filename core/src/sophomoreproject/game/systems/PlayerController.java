@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.networking.ClientNetwork;
+import sophomoreproject.game.singletons.TextDisplay;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -24,6 +25,10 @@ public final class PlayerController implements InputProcessor {
     public boolean isDragged;
     public Vector2 mouseLocation = new Vector2();
 
+    private String accountIDString = "";
+    private String playerNetIDString = "";
+
+
     private final ArrayList<Object> updatePacketArray = new ArrayList<>();
 
     public final float PLAYER_ACCELERATION = 1000;
@@ -31,7 +36,9 @@ public final class PlayerController implements InputProcessor {
     public final float PLAYER_SPRINT_SPEED = 200;
 //    public final float FRICTION = 420;
 
-    private  PlayerController() {
+    private PlayerController() {
+        TextDisplay.getInstance().addHudText(accountIDString, TextDisplay.TextPosition.TOP_LEFT);
+        TextDisplay.getInstance().addHudText(playerNetIDString, TextDisplay.TextPosition.TOP_LEFT);
     }
 
     public static PlayerController getInstance() {
@@ -42,6 +49,9 @@ public final class PlayerController implements InputProcessor {
 
     public void setPlayer(Player player) {
         this.player = player;
+
+        accountIDString = "Account ID: " + player.getAccountId();
+        playerNetIDString = "Net ID: " + player.getNetworkID();
     }
 
     public void setCam(Camera cam) {

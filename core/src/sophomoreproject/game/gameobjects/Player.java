@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreatePlayer;
 import sophomoreproject.game.singletons.CustomAssetManager;
+import sophomoreproject.game.singletons.TextDisplay;
 import sophomoreproject.game.utilites.RendingUtilities;
 
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class Player extends PhysicsObject implements Renderable{
     @Override
     public void draw(SpriteBatch sb, ShapeRenderer sr) {
         RendingUtilities.renderCharacter(position, velocity, PLAYER_SIZE, sb, textures);
+        TextDisplay.getInstance().drawTextInWorld(sb, "HELLO", position.x, position.y, 1f);
     }
 
     public int getAccountId() {

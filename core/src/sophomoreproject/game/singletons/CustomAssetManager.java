@@ -34,10 +34,13 @@ public final class CustomAssetManager {
 
     //fonts
     public static final String MENU_FONT = "graphics/fonts/dogica.fnt";
-//    public static final String BOLD_FONT = "graphics/fonts/dogicabold.fnt";
+//    public static final String MAIN_FONT = "graphics/fonts/dogica.fnt";
+    public static final String BOLD_FONT = "graphics/fonts/dogicabold.fnt";
 
     public void loadFonts() {
         manager.load(MENU_FONT, BitmapFont.class);
+//        manager.load(MAIN_FONT, BitmapFont.class);
+        manager.load(BOLD_FONT, BitmapFont.class);
     }
 
 
@@ -58,6 +61,4 @@ public final class CustomAssetManager {
         }
         return instance;
     }
-
-
 }
