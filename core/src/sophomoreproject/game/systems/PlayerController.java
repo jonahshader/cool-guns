@@ -18,7 +18,7 @@ public final class PlayerController implements InputProcessor {
     private static PlayerController instance;
     private Player player = null;
     private Camera cam = null;
-    public boolean left,right,up,down;
+    public boolean left,right,up,down,shift;
     public boolean isMouse1Down, isMouse2Down;
     public boolean isDragged;
     public Vector2 mouseLocation = new Vector2();
@@ -26,7 +26,8 @@ public final class PlayerController implements InputProcessor {
     private final ArrayList<Object> updatePacketArray = new ArrayList<>();
 
     public final float PLAYER_ACCELERATION = 1000;
-    public final float PLAYER_TOP_SPEED = 100;
+    public final float PLAYER_WALK_SPEED = 100;
+    public final float PLAYER_SPRINT_SPEED = 200;
 //    public final float FRICTION = 420;
 
     private  PlayerController() {
@@ -74,8 +75,12 @@ public final class PlayerController implements InputProcessor {
                 desiredSpeed.y = -1;
             }
             if (playerMoving) {
-                desiredSpeed.nor().scl(PLAYER_TOP_SPEED);
+                desiredSpeed.nor().scl(PLAYER_WALK_SPEED);
             }
+            if (shift) {
+                desiredSpeed.nor().scl(PLAYER_SPRINT_SPEED);
+            }
+
 
             Vector2 speedDifference = new Vector2(desiredSpeed);
             Vector2 tempVel = new Vector2(player.velocity);
@@ -108,7 +113,7 @@ public final class PlayerController implements InputProcessor {
     }
 
 
-    // Later we will have
+    // Later we will have adjustable controls.
     @Override
     public boolean keyDown(int keycode) {
         boolean keyProc = false;
@@ -128,6 +133,10 @@ public final class PlayerController implements InputProcessor {
                 break;
             case Keys.S:
                 down = true;
+                keyProc = true;
+                break;
+            case Keys.SHIFT_LEFT:
+                shift = true;
                 keyProc = true;
         }
         return keyProc;
@@ -153,13 +162,13 @@ public final class PlayerController implements InputProcessor {
             case Keys.S:
                 down = false;
                 keyProc = true;
+                break;
+            case Keys.SHIFT_LEFT:
+                shift = false;
+                keyProc = true;
+                break;
         }
         return keyProc;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
     }
 
     @Override
@@ -204,6 +213,11 @@ public final class PlayerController implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
         return false;
     }
 }
