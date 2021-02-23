@@ -13,6 +13,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 // TODO: https://www.gamedevelopment.blog/full-libgdx-game-tutorial-input-controller/
+// This class will have all of the controls for the player and the gun
 
 public final class PlayerController implements InputProcessor {
     private static PlayerController instance;
