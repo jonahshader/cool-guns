@@ -138,9 +138,9 @@ public class GameWorld {
         gameObjectQueueLock.unlock();
     }
 
-    public void addSleepingObject(GameObject toQueue) {
+    public void addSleepingObject(GameObject o) {
         sleepUpdateLock.lock();
-        sleepingGameObjects.add(toQueue);
+        sleepingGameObjects.add(o);
         sleepUpdateLock.unlock();
     }
 
@@ -166,6 +166,7 @@ public class GameWorld {
         if (o instanceof PhysicsObject) physicsObjects.remove(o);
         if (o instanceof Renderable) renderables.remove(o);
         gameObjects.remove(o);
+        sleepingGameObjects.remove(o);
     }
 
     public GameObject getGameObjectFromID(int networkID) {

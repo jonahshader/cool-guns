@@ -15,6 +15,8 @@ public class TestObjectSpawner implements GameSystem {
     public TestObjectSpawner(GameServer gameServer, GameWorld world) {
         this.gameServer = gameServer;
         this.world = world;
+
+        TestObject.setGameServer(gameServer);
     }
 
     public void run(float dt) {

@@ -71,15 +71,7 @@ public class TextDisplay {
 
     }
 
-//    public void drawTextInWorld(SpriteBatch sb, float x, float y, Color c) {
-//
-//    }
-
     public void drawTextInWorld(SpriteBatch sb, String text, float x, float y, float scale, Color c) {
-//        font.getData().setScale(scale);
-        font.setColor(1f, 1f, 1f, 1f);
-//        font.draw(sb, text, x, y, 0f, Align.center, false);
-//        font.draw(sb, text, x, y);
         drawText(sb, text, x, y + font.getLineHeight() * .5f, scale, c, Align.center);
     }
 
