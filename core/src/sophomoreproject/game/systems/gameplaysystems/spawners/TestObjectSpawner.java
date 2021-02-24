@@ -9,7 +9,7 @@ import sophomoreproject.game.systems.gameplaysystems.GameSystem;
 public class TestObjectSpawner implements GameSystem {
     private final GameServer gameServer;
     private final GameWorld world;
-    private static final float SPAWN_TIME = 0.5f;
+    private static final float SPAWN_TIME = 1;
     private float spawnTime = SPAWN_TIME;
 
     public TestObjectSpawner(GameServer gameServer, GameWorld world) {
@@ -23,8 +23,9 @@ public class TestObjectSpawner implements GameSystem {
         if (spawnTime < 0) {
             spawnTime += SPAWN_TIME;
             // spawn test object
-            for (int i = 0; i < 3; i++) {
-                gameServer.spawnAndSendGameObject(new TestObject(new Vector2(), world.getNewNetID(), false));
+            for (int i = 0; i < 1; i++) {
+                gameServer.spawnAndSendGameObject(new TestObject(new Vector2(), world.getNewNetID()));
+                // test commit
             }
         }
 
