@@ -47,7 +47,7 @@ public final class PlayerController implements InputProcessor {
         TextDisplay.getInstance().addHudText(fpsString, TextDisplay.TextPosition.TOP_LEFT);
     }
 
-    public static PlayerController getInstance() {
+    public synchronized static PlayerController getInstance() {
         if (instance == null)
             instance = new PlayerController();
         return instance;
