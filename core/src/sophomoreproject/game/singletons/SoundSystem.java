@@ -36,7 +36,9 @@ public final class SoundSystem {
      * @param volume the range (0,1) to play the sound in the game
      */
     public void playSoundInWorld(Sound s, Vector2 soundPosition, Vector2 cameraPosition, float volume) {
-
+        float prePan = soundPosition.x - cameraPosition.x;
+        float realVolume = volume * overallVolume;
+        s.play(realVolume, 1, prePan/320);
     }
 
     public void playSoundStandalone(Sound s, float volume, float pan) {
@@ -46,5 +48,9 @@ public final class SoundSystem {
 
     public void setOverallVolume(float overallVolume) {
         this.overallVolume = overallVolume;
+
+    }
+    public void playGroupSound(Sound s, Vector2 soundPosition, Vector2 cameraPosition, float volume){
+
     }
 }
