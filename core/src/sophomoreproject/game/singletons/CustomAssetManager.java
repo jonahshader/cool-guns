@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 
-//TODO: https://www.gamedevelopment.blog/asset-manager-libgdx-tutorial/
 
 
 public final class CustomAssetManager {
