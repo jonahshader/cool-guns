@@ -25,4 +25,6 @@ public class UpdatePhysicsObject {
         this.xAccel = xAccel;
         this.yAccel = yAccel;
     }
+
+    public UpdatePhysicsObject(){} // no arg constructor for KryoNet internal usage
 }

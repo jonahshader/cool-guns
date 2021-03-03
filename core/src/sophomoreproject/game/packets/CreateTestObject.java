@@ -12,4 +12,6 @@ public class CreateTestObject {
         xFactor = toSend.getxFactor();
         yFactor = toSend.getyFactor();
     }
+
+    public CreateTestObject(){} // no arg constructor for KryoNet internal usage
 }

@@ -23,10 +23,16 @@ public abstract class GameObject implements Comparable<GameObject>{
 
     public abstract void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer);
     public abstract void addCreatePacketToBuffer(ArrayList<Object> createPacketBuffer);
+    public abstract void receiveUpdate(Object updatePacket);
     public abstract void run(float dt);
 
     @Override
     public int compareTo(GameObject o) {
         return networkID - o.networkID;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof GameObject && ((GameObject)obj).networkID == networkID);
     }
 }
