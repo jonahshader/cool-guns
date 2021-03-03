@@ -60,18 +60,6 @@ public class LoginWindow extends Application {
         Label passbox = new Label("Password:");
         gridp.add(passbox, 0, 2);
 
-        TextField ipbox = new TextField();
-        gridp.add(ipbox, 1, 3);
-
-        Label ip = new Label("IP Address:");
-        gridp.add(ip, 0, 3);
-
-        TextField portbox = new TextField();
-        gridp.add(portbox, 1, 4);
-
-        Label port = new Label("Port:");
-        gridp.add(port, 0, 4);
-
 
 
         Scene scene = new Scene(gridp, 300, 300);
