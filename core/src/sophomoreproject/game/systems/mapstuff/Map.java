@@ -14,8 +14,8 @@ import java.util.HashMap;
 import static sophomoreproject.game.singletons.CustomAssetManager.MAP_PACK;
 
 public class Map {
-    public static final int LOAD_CHUNK_RADIUS = 3;
-    public static final int UNLOAD_CHUNK_RADIUS = 4;
+    public static final int LOAD_CHUNK_RADIUS = 2;
+    public static final int UNLOAD_CHUNK_RADIUS = 3;
 
     private HashMap<String, MapChunk> keyToChunk;
     private MapGenerator mapGen;
@@ -107,18 +107,18 @@ public class Map {
             }
         }
 
-//        ArrayList<MapChunk> chunkRemoveQueue = new ArrayList<>();
-//        for (MapChunk chunk : keyToChunk.values()) {
-//            if (shouldUnloadChunk(chunk)) {
-//                chunkRemoveQueue.add(chunk);
-//            }
-//        }
-//
-//        for (MapChunk toUnload : chunkRemoveQueue) {
-//            toUnload.dispose();
-//            keyToChunk.remove(toUnload.getKey());
-//        }
-//        chunkRemoveQueue.clear();
+        ArrayList<MapChunk> chunkRemoveQueue = new ArrayList<>();
+        for (MapChunk chunk : keyToChunk.values()) {
+            if (shouldUnloadChunk(chunk)) {
+                chunkRemoveQueue.add(chunk);
+            }
+        }
+
+        for (MapChunk toUnload : chunkRemoveQueue) {
+            toUnload.dispose();
+            keyToChunk.remove(toUnload.getKey());
+        }
+        chunkRemoveQueue.clear();
     }
 
     public void render(OrthographicCamera cam) {
@@ -135,6 +135,6 @@ public class Map {
 
     private void updateLoadCenterChunk(Camera cam) {
         chunkLoadCenterX = (int) Math.floor(cam.position.x / MapChunk.CHUNK_SIZE_PIXELS);
-        chunkLoadCenterX = (int) Math.floor(cam.position.y / MapChunk.CHUNK_SIZE_PIXELS);
+        chunkLoadCenterY = (int) Math.floor(cam.position.y / MapChunk.CHUNK_SIZE_PIXELS);
     }
 }

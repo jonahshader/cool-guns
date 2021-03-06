@@ -10,7 +10,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.Disposable;
 
 public class MapChunk implements Disposable {
-    public static final int CHUNK_SIZE_TILES = 128; // length of side of chunk in tiles
+    public static final int CHUNK_SIZE_TILES = 32; // length of side of chunk in tiles
     public static final int TILE_SIZE = 16; // size in pixels
     public static final int CHUNK_SIZE_PIXELS = CHUNK_SIZE_TILES * TILE_SIZE;
 

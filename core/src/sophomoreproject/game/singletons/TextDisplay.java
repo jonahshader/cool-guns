@@ -91,7 +91,7 @@ public class TextDisplay {
         font.setUseIntegerPositions(false);
         font.getData().setScale(scale);
         font.setColor(0f, 0f, 0f, c.a);
-        font.draw(sb, text, x + UNDERTEXT_OFFSET * scale, y + UNDERTEXT_OFFSET * scale, 0f, align, false);
+        font.draw(sb, text, x - UNDERTEXT_OFFSET * scale, y - UNDERTEXT_OFFSET * scale, 0f, align, false);
 
         font.setColor(c);
         font.draw(sb, text, x, y, 0f, align, false);
