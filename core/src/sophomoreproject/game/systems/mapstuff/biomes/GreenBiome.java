@@ -20,10 +20,10 @@ public class GreenBiome implements Biome{
     public GreenBiome(Map map, Random random) {
         this.map = map;
         selection = new OctaveSet(random);
-        selection.addOctaveFractal(0.01, 1.0, 2.0, 0.5, 4);
+        selection.addOctaveFractal(0.002, 1.0, 2.0, 0.5, 2);
 
         terrain = new OctaveSet(random);
-        terrain.addOctaveFractal(0.015, 1.0, 2.0, 0.5, 2);
+        terrain.addOctaveFractal(0.005, 1.0, 2.0, 0.5, 4);
 
         yellowFlowerSelect = new OctaveSet(random);
         yellowFlowerSelect.addOctave(13.59153, 1.0);
@@ -43,9 +43,9 @@ public class GreenBiome implements Biome{
         double val = terrain.getValue(x, y);
         if (val < -0.25) {
             return map.waterCell;
-        } else if (val < -0.1) {
+        } else if (val < -0.175) {
             return map.sandCell;
-        } else if (denseGrassSelect.getValue(x, y) > .8) {
+        } else if (denseGrassSelect.getValue(x, y) > .75) {
             return map.grassDenseCell;
         } else if (yellowFlowerSelect.getValue(x, y) > 0.95) {
             return map.grassYellowFlowerCell;
