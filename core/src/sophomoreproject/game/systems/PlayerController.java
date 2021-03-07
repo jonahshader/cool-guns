@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input.*;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
+import sophomoreproject.game.gameobjects.Gun;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.networking.ClientNetwork;
 
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 public final class PlayerController implements InputProcessor {
     private static PlayerController instance;
     private Player player = null;
+//    private Gun gun = null;
     private Camera cam = null;
     public boolean left,right,up,down,shift;
     public boolean isMouse1Down, isMouse2Down;
@@ -39,11 +41,12 @@ public final class PlayerController implements InputProcessor {
             instance = new PlayerController();
         return instance;
     }
-
     public void setPlayer(Player player) {
         this.player = player;
     }
-
+/*    public void setGun(Gun gun) {
+        this.gun = gun;
+    }*/
     public void setCam(Camera cam) {
         this.cam = cam;
     }
@@ -54,7 +57,6 @@ public final class PlayerController implements InputProcessor {
 //                player.velocity.nor().scl(PLAYER_TOP_SPEED);
 //
 //            }
-
             player.acceleration.set(0,0);
             boolean playerMoving = false;
             Vector2 desiredSpeed = new Vector2();
@@ -82,7 +84,6 @@ public final class PlayerController implements InputProcessor {
                 desiredSpeed.nor().scl(PLAYER_SPRINT_SPEED);
             }
 
-
             Vector2 speedDifference = new Vector2(desiredSpeed);
             Vector2 tempVel = new Vector2(player.velocity);
 
@@ -95,6 +96,8 @@ public final class PlayerController implements InputProcessor {
             } else {
                 player.acceleration.set(speedDifference);
             }
+
+
 
             cam.position.x = player.position.x;
             cam.position.y = player.position.y;
@@ -112,7 +115,6 @@ public final class PlayerController implements InputProcessor {
         ClientNetwork.getInstance().sendAllPackets(updatePacketArray);
         updatePacketArray.clear();
     }
-
 
     // Later we will have adjustable controls.
     @Override
