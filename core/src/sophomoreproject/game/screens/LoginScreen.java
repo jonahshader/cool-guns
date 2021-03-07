@@ -11,8 +11,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import sophomoreproject.game.CoolGuns;
-import sophomoreproject.game.javafx.LoginWindow;
+import sophomoreproject.game.networking.ClientNetwork;
+import sophomoreproject.game.packets.ReplyAccountEvent;
+import sophomoreproject.game.packets.RequestLogin;
+import sophomoreproject.game.packets.RequestNewAccount;
+
+import java.util.Scanner;
+
 
 /**
  * this is the screen that first pops up when you launch the game.
@@ -23,14 +31,18 @@ import sophomoreproject.game.javafx.LoginWindow;
  */
 
 public class LoginScreen implements Screen {
-    CoolGuns game;
+
+    private final CoolGuns game;
+    private int accountID = -1;
+    boolean loggedIn = false;
+
 
     private Stage stage;
     private Skin skin = new Skin(Gdx.files.internal("uiskin.json"));;
 
 
-    Label loginLabel = new Label("Username:", skin);
-    TextField userName = new TextField("", skin);
+    Label loginLabel = new Label("username:", skin);
+    TextField username = new TextField("", skin);
     Label passwordLabel = new Label("Password:", skin);
     TextField password = new TextField("", skin);
     TextButton loginButton = new TextButton("Login", skin);
@@ -41,6 +53,8 @@ public class LoginScreen implements Screen {
         this.game = game;
     }
 
+    Scanner scanner = new Scanner(System.in);
+    boolean connected = false;
 
     @Override
     public void show() {
@@ -52,11 +66,11 @@ public class LoginScreen implements Screen {
         loginLabel.setWidth(200);
         loginLabel.setHeight(30);
 
-        userName.setX(200);
-        userName.setY(400);
-        userName.setWidth(210);
-        userName.setHeight(30);
-        stage.addActor(userName);
+        username.setX(200);
+        username.setY(400);
+        username.setWidth(210);
+        username.setHeight(30);
+        stage.addActor(username);
 
         passwordLabel.setX(200);
         passwordLabel.setY(370);
@@ -84,7 +98,7 @@ public class LoginScreen implements Screen {
         errorMsg.setHeight(30);
 
         stage.addActor(password);
-        stage.addActor(userName);
+        stage.addActor(username);
         stage.addActor(loginLabel);
         stage.addActor(passwordLabel);
         stage.addActor(loginButton);
@@ -93,29 +107,72 @@ public class LoginScreen implements Screen {
 
 
 
-        loginButton.addListener(new ClickListener() {
+        final ReplyAccountEvent[] rEvent = {null};
+        ClientNetwork.getInstance().addListener(new Listener(){
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-
-                if (userName.getText().length() < 7) {
-                    errorMsg.setText("Your username must be at least 7 characters");
-                    return;
-                }
-
-                if (password.getText().length() < 7) {
-                    errorMsg.setText("Your password must be at least 7 characters");
-                    return;
+            public void received(Connection c, Object o) {
+                if (o instanceof ReplyAccountEvent) {
+                    rEvent[0] = (ReplyAccountEvent) o;
                 }
             }
         });
-    }
 
+        while (!loggedIn) {
+
+            registerButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    String u = username.getText();
+                    String p = password.getText();
+                    if (u.length() > 8 & p.length() > 8) {
+                        ClientNetwork.getInstance().sendPacket(new RequestNewAccount(username, password));
+                    } else {
+                        ClientNetwork.getInstance().sendPacket(new RequestLogin(username, password));
+                    }
+                }
+            });
+
+
+            try {
+                while (rEvent[0] == null) {
+                    Thread.sleep(250);
+                    System.out.println(".");
+                } // chill until we get a reply from the server
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+            switch (rEvent[0].event) {
+                case ACCOUNT_CREATED:
+                    errorMsg.setText("Account created successfully! Please login");
+                    break;
+                case ACCOUNT_CREATE_FAILED:
+                    errorMsg.setText("Account create failed! Account already exists!");
+                    break;
+                case ACCOUNT_LOGGED_IN:
+                    errorMsg.setText("Logged in successfully!");
+                    accountID = rEvent[0].accountID;
+                    loggedIn = true;
+                    break;
+                case ACCOUNT_LOG_IN_FAILED:
+                    errorMsg.setText("Log in failed! Account does not exists!");
+                    break;
+                case ACCOUNT_ALREADY_LOGGED_IN:
+                    errorMsg.setText("Log in failed! Account current in use!");
+                    break;
+                default:
+                    break;
+            }
+            rEvent[0] = null; // clear this so that we wait for the next packet again (if nessesary)
+        }
+    }
     @Override
     public void render(float delta) {
         // set clear color
         Gdx.gl.glClearColor(0, 0, 0, 1);
         // apply clear color to screen
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.draw();
     }
 
