@@ -38,7 +38,8 @@ public class LoginScreen implements Screen {
 
 
     private Stage stage;
-    private Skin skin = new Skin(Gdx.files.internal("uiskin.json"));;
+    private Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+    ;
 
 
     Label loginLabel = new Label("username:", skin);
@@ -106,9 +107,8 @@ public class LoginScreen implements Screen {
         stage.addActor(errorMsg);
 
 
-
         final ReplyAccountEvent[] rEvent = {null};
-        ClientNetwork.getInstance().addListener(new Listener(){
+        ClientNetwork.getInstance().addListener(new Listener() {
             @Override
             public void received(Connection c, Object o) {
                 if (o instanceof ReplyAccountEvent) {
@@ -117,56 +117,99 @@ public class LoginScreen implements Screen {
             }
         });
 
-        while (!loggedIn) {
 
-            registerButton.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    String u = username.getText();
-                    String p = password.getText();
-                    if (u.length() > 8 & p.length() > 8) {
-                        ClientNetwork.getInstance().sendPacket(new RequestNewAccount(username, password));
-                    } else {
-                        ClientNetwork.getInstance().sendPacket(new RequestLogin(username, password));
-                    }
+        registerButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                String u = username.getText();
+                String p = password.getText();
+
+                ClientNetwork.getInstance().sendPacket(new RequestNewAccount(u, p));
+
+                try {
+                    while (rEvent[0] == null) {
+                        Thread.sleep(250);
+                        System.out.println(".");
+                    } // chill until we get a reply from the server
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            });
 
+                switch (rEvent[0].event) {
+                    case ACCOUNT_CREATED:
+                        errorMsg.setText("Account created successfully! Please login");
+                        break;
+                    case ACCOUNT_CREATE_FAILED:
+                        errorMsg.setText("Account create failed! Account already exists!");
+                        break;
+                    case ACCOUNT_LOGGED_IN:
+                        errorMsg.setText("Logged in successfully!");
+                        accountID = rEvent[0].accountID;
+                        loggedIn = true;
+                        break;
+                    case ACCOUNT_LOG_IN_FAILED:
+                        errorMsg.setText("Log in failed! Account does not exists!");
+                        break;
+                    case ACCOUNT_ALREADY_LOGGED_IN:
+                        errorMsg.setText("Log in failed! Account current in use!");
+                        break;
+                    default:
+                        break;
+                }
+                rEvent[0] = null; // clear this so that we wait for the next packet again (if nessesary)
 
-            try {
-                while (rEvent[0] == null) {
-                    Thread.sleep(250);
-                    System.out.println(".");
-                } // chill until we get a reply from the server
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
 
+        });
 
-            switch (rEvent[0].event) {
-                case ACCOUNT_CREATED:
-                    errorMsg.setText("Account created successfully! Please login");
-                    break;
-                case ACCOUNT_CREATE_FAILED:
-                    errorMsg.setText("Account create failed! Account already exists!");
-                    break;
-                case ACCOUNT_LOGGED_IN:
-                    errorMsg.setText("Logged in successfully!");
-                    accountID = rEvent[0].accountID;
-                    loggedIn = true;
-                    break;
-                case ACCOUNT_LOG_IN_FAILED:
-                    errorMsg.setText("Log in failed! Account does not exists!");
-                    break;
-                case ACCOUNT_ALREADY_LOGGED_IN:
-                    errorMsg.setText("Log in failed! Account current in use!");
-                    break;
-                default:
-                    break;
+        loginButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                String u = username.getText();
+                String p = password.getText();
+
+                ClientNetwork.getInstance().sendPacket(new RequestLogin(u, p));
+
+                try {
+                    while (rEvent[0] == null) {
+                        Thread.sleep(250);
+                        System.out.println(".");
+                    } // chill until we get a reply from the server
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                switch (rEvent[0].event) {
+                    case ACCOUNT_CREATED:
+                        errorMsg.setText("Account created successfully! Please login");
+                        break;
+                    case ACCOUNT_CREATE_FAILED:
+                        errorMsg.setText("Account create failed! Account already exists!");
+                        break;
+                    case ACCOUNT_LOGGED_IN:
+                        errorMsg.setText("Logged in successfully!");
+                        accountID = rEvent[0].accountID;
+                        loggedIn = true;
+                        game.setScreen(new MainMenuScreen(game, accountID));
+                        break;
+                    case ACCOUNT_LOG_IN_FAILED:
+                        errorMsg.setText("Log in failed! Account does not exists!");
+                        break;
+                    case ACCOUNT_ALREADY_LOGGED_IN:
+                        errorMsg.setText("Log in failed! Account current in use!");
+                        break;
+                    default:
+                        break;
+                }
+                rEvent[0] = null; // clear this so that we wait for the next packet again (if nessesary)
+
             }
-            rEvent[0] = null; // clear this so that we wait for the next packet again (if nessesary)
-        }
+
+        });
+
+
     }
+
     @Override
     public void render(float delta) {
         // set clear color

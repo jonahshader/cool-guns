@@ -89,8 +89,13 @@ public class ConnectServerScreen implements Screen {
                 public void clicked(InputEvent event, float x, float y) {
                     int p = Integer.parseInt(port.getText());
                     String i = ip.getText();
-                    if (ClientNetwork.getInstance().tryConnect(i, p))
+                    System.out.println(p);
+                    System.out.println(i);
+                    if (ClientNetwork.getInstance().tryConnect(i, p)) {
+                        System.out.println("Connect Success");
                         game.setScreen( new LoginScreen(game));
+                    }
+
                     else
                         errorMsg.setText("Connect Unsuccessful");
                 }

@@ -1,6 +1,6 @@
 package sophomoreproject.game.packets;
 
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+
 
 public class RequestNewAccount {
     public String username;
@@ -11,5 +11,7 @@ public class RequestNewAccount {
         this.password = password;
     }
 
-    public RequestNewAccount(TextField userName, TextField password){} // no arg constructor for KryoNet internal usage
+    public RequestNewAccount(){} // no arg constructor for KryoNet internal usage
+
+
 }

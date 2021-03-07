@@ -30,7 +30,7 @@ public class CoolGuns extends Game {
 		CustomAssetManager.getInstance().loadSounds();
 		CustomAssetManager.getInstance().manager.finishLoading();
         // change screen to a new instance of LoginScreen
-        setScreen(new TempBypassScreen(this, useLocalHost));
+        setScreen(new ConnectServerScreen(this));
 //		setScreen(new MainMenuScreen(this, 0));
 	}
 
