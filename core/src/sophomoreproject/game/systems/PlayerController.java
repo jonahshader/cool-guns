@@ -32,7 +32,7 @@ public final class PlayerController implements InputProcessor {
 
     private final ArrayList<Object> updatePacketArray = new ArrayList<>();
 
-    public final float PLAYER_ACCELERATION = 1000;
+    public final float PLAYER_ACCELERATION = 1500;
     public final float PLAYER_WALK_SPEED = 100;
     public final float PLAYER_SPRINT_SPEED = 200;
 //    public final float FRICTION = 420;

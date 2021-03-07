@@ -15,14 +15,16 @@ import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.singletons.TextDisplay;
 import sophomoreproject.game.systems.GameClient;
 import sophomoreproject.game.systems.PlayerController;
+import sophomoreproject.game.systems.mapstuff.Map;
 
 public class GameScreen implements Screen {
-    private Camera worldCamera;
+    private OrthographicCamera worldCamera;
     private Camera hudCamera;
     private Viewport worldViewport;
     private Viewport hudViewport;
     private CoolGuns game;
     private GameClient gameClient;
+    private Map map;
 
 
 
@@ -40,6 +42,8 @@ public class GameScreen implements Screen {
         gameClient = new GameClient(accountID);
         Gdx.input.setInputProcessor(PlayerController.getInstance());
         PlayerController.getInstance().setCam(worldCamera);
+
+        map = new Map(game, 81528512);
     }
 
     @Override
@@ -50,11 +54,11 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         PlayerController.getInstance().run(delta);
+        map.run();
         gameClient.run(delta);
         worldViewport.apply();
         worldCamera.update();
-        game.batch.setProjectionMatrix(worldCamera.combined);
-        game.shapeRenderer.setProjectionMatrix(worldCamera.combined);
+
 
         // clear background
         // set clear color
@@ -62,6 +66,10 @@ public class GameScreen implements Screen {
         // apply clear color to screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         // render sprites
+        map.render(worldCamera);
+
+        game.batch.setProjectionMatrix(worldCamera.combined);
+        game.shapeRenderer.setProjectionMatrix(worldCamera.combined);
         game.batch.begin();
         gameClient.draw(game.batch, game.shapeRenderer);
         game.batch.end();
