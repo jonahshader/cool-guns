@@ -6,8 +6,11 @@ import com.badlogic.gdx.Input.*;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
+import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.networking.ClientNetwork;
+import sophomoreproject.game.packets.CreateBullet;
+import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.TextDisplay;
 
 import java.lang.reflect.Array;
@@ -111,7 +114,10 @@ public final class PlayerController implements InputProcessor {
             cam.position.x = player.position.x;
             cam.position.y = player.position.y;
 
+
             sendUpdatePacketToServer();
+
+
         }
 
     }
@@ -188,6 +194,8 @@ public final class PlayerController implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if(button == 0){
             isMouse1Down = true;
+            CreateBullet b = new CreateBullet(new UpdatePhysicsObject(-1,player.position.x,player.position.y,10f,0f,0f,0f), player.getNetworkID(), 1f);
+            ClientNetwork.getInstance().sendPacket(b);
         }else if(button == 1){
             isMouse2Down = true;
         }

@@ -27,21 +27,22 @@ public class Player extends PhysicsObject implements Renderable{
 
     private int accountId;
 
-    public Player(Vector2 position, int accountId, int networkID, String username, boolean client) {
+    //Server side constructor
+    public Player(Vector2 position, int accountId, int networkID, String username) {
         super(position, new Vector2(0,0), new Vector2(0,0), networkID);
         this.accountId = accountId;
         this.username = username;
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
-        loadTextures(client);
     }
 
-    public Player(CreatePlayer packet, boolean client) {
+    //Client side constructor
+    public Player(CreatePlayer packet) {
         super(packet.u.x, packet.u.y,
                 packet.u.xVel, packet.u.yVel,
                 packet.u.xAccel, packet.u.yAccel, packet.u.netID);
         this.accountId = packet.accountId;
         this.username = packet.username;
-        loadTextures(client);
+        loadTextures();
 
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
     }
@@ -69,8 +70,8 @@ public class Player extends PhysicsObject implements Renderable{
         return accountId;
     }
 
-    private void loadTextures (boolean client) {
-        if (texAtl == null && client) {
+    private void loadTextures () {
+        if (texAtl == null) {
             texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
 
             textures = new TextureRegion[8];

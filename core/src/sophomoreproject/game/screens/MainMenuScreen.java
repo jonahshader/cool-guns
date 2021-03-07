@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import javafx.scene.shape.Rectangle;
 import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.menu.Menu;
 import sophomoreproject.game.menu.MenuAction;
