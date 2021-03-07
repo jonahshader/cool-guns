@@ -20,7 +20,7 @@ public class Player extends PhysicsObject implements Renderable{
     private static TextureAtlas texAtl = null;
     private static TextureRegion[] textures = null;
 
-    private final Vector2 PLAYER_SIZE = new Vector2(2, 2);
+    private final Vector2 PLAYER_SIZE = new Vector2(1.5f, 1.5f);
 
     private final String username;
 
@@ -62,7 +62,7 @@ public class Player extends PhysicsObject implements Renderable{
     @Override
     public void draw(SpriteBatch sb, ShapeRenderer sr) {
         RendingUtilities.renderCharacter(position, velocity, PLAYER_SIZE, sb, textures);
-        TextDisplay.getInstance().drawTextInWorld(sb, username, position.x, position.y + 16, .33f, new Color(1f, 1f, 1f, .5f));
+        TextDisplay.getInstance().drawTextInWorld(sb, username, position.x, position.y + 24, .25f, new Color(1f, 1f, 1f, 1f));
     }
 
     public int getAccountId() {
