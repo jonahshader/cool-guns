@@ -1,5 +1,6 @@
 package sophomoreproject.game.gameobjects;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreatePlayer;
 import sophomoreproject.game.singletons.CustomAssetManager;
+import sophomoreproject.game.singletons.TextDisplay;
 import sophomoreproject.game.utilites.RendingUtilities;
 
 import java.util.ArrayList;
@@ -20,12 +22,15 @@ public class Player extends PhysicsObject implements Renderable{
 
     private final Vector2 PLAYER_SIZE = new Vector2(2, 2);
 
+    private final String username;
+
 
     private int accountId;
 
-    public Player(Vector2 position, int accountId, int networkID, boolean client) {
+    public Player(Vector2 position, int accountId, int networkID, String username, boolean client) {
         super(position, new Vector2(0,0), new Vector2(0,0), networkID);
         this.accountId = accountId;
+        this.username = username;
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
         loadTextures(client);
     }
@@ -35,6 +40,7 @@ public class Player extends PhysicsObject implements Renderable{
                 packet.u.xVel, packet.u.yVel,
                 packet.u.xAccel, packet.u.yAccel, packet.u.netID);
         this.accountId = packet.accountId;
+        this.username = packet.username;
         loadTextures(client);
 
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
@@ -56,6 +62,7 @@ public class Player extends PhysicsObject implements Renderable{
     @Override
     public void draw(SpriteBatch sb, ShapeRenderer sr) {
         RendingUtilities.renderCharacter(position, velocity, PLAYER_SIZE, sb, textures);
+        TextDisplay.getInstance().drawTextInWorld(sb, username, position.x, position.y + 16, .33f, new Color(1f, 1f, 1f, .5f));
     }
 
     public int getAccountId() {
@@ -76,5 +83,9 @@ public class Player extends PhysicsObject implements Renderable{
             textures[6] = texAtl.findRegion("player_front");
             textures[7] = texAtl.findRegion("player_bottom_right");
         }
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

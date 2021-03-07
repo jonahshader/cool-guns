@@ -6,9 +6,9 @@ import com.badlogic.gdx.Input.*;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
-import sophomoreproject.game.gameobjects.Gun;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.networking.ClientNetwork;
+import sophomoreproject.game.singletons.TextDisplay;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -19,12 +19,16 @@ import java.util.ArrayList;
 public final class PlayerController implements InputProcessor {
     private static PlayerController instance;
     private Player player = null;
-//    private Gun gun = null;
     private Camera cam = null;
     public boolean left,right,up,down,shift;
     public boolean isMouse1Down, isMouse2Down;
     public boolean isDragged;
     public Vector2 mouseLocation = new Vector2();
+
+    private TextDisplay.TextEntry accountIDString;
+    private TextDisplay.TextEntry playerNetIDString;
+    private TextDisplay.TextEntry fpsString;
+
 
     private final ArrayList<Object> updatePacketArray = new ArrayList<>();
 
@@ -33,30 +37,36 @@ public final class PlayerController implements InputProcessor {
     public final float PLAYER_SPRINT_SPEED = 200;
 //    public final float FRICTION = 420;
 
-    private  PlayerController() {
+    private PlayerController() {
+        accountIDString = new TextDisplay.TextEntry("temp");
+        playerNetIDString = new TextDisplay.TextEntry("temp");
+        fpsString = new TextDisplay.TextEntry("temp");
+
+        TextDisplay.getInstance().addHudText(accountIDString, TextDisplay.TextPosition.TOP_LEFT);
+        TextDisplay.getInstance().addHudText(playerNetIDString, TextDisplay.TextPosition.TOP_LEFT);
+        TextDisplay.getInstance().addHudText(fpsString, TextDisplay.TextPosition.TOP_LEFT);
     }
 
-    public static PlayerController getInstance() {
+    public synchronized static PlayerController getInstance() {
         if (instance == null)
             instance = new PlayerController();
         return instance;
     }
+
     public void setPlayer(Player player) {
         this.player = player;
+
+        accountIDString.entry = "Account ID: " + player.getAccountId();
+        playerNetIDString.entry = "Net ID: " + player.getNetworkID();
     }
-/*    public void setGun(Gun gun) {
-        this.gun = gun;
-    }*/
+
     public void setCam(Camera cam) {
         this.cam = cam;
     }
 
     public void run(float dt) {
+        fpsString.entry = "FPS: " + Math.round(1/dt);
         if (player != null && cam != null) {
-//            if (player.velocity.len() > PLAYER_TOP_SPEED) {
-//                player.velocity.nor().scl(PLAYER_TOP_SPEED);
-//
-//            }
             player.acceleration.set(0,0);
             boolean playerMoving = false;
             Vector2 desiredSpeed = new Vector2();
@@ -84,6 +94,7 @@ public final class PlayerController implements InputProcessor {
                 desiredSpeed.nor().scl(PLAYER_SPRINT_SPEED);
             }
 
+
             Vector2 speedDifference = new Vector2(desiredSpeed);
             Vector2 tempVel = new Vector2(player.velocity);
 
@@ -96,8 +107,6 @@ public final class PlayerController implements InputProcessor {
             } else {
                 player.acceleration.set(speedDifference);
             }
-
-
 
             cam.position.x = player.position.x;
             cam.position.y = player.position.y;
@@ -115,6 +124,7 @@ public final class PlayerController implements InputProcessor {
         ClientNetwork.getInstance().sendAllPackets(updatePacketArray);
         updatePacketArray.clear();
     }
+
 
     // Later we will have adjustable controls.
     @Override

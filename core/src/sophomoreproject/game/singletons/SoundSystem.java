@@ -7,7 +7,7 @@ public final class SoundSystem {
     private static SoundSystem instance;
     private CustomAssetManager assets;
 
-    private float overallVolume;
+    private float overallVolume = 1f;
 
 //    enum SoundGroup {
 //        BULLET,
@@ -31,7 +31,7 @@ public final class SoundSystem {
     }
 
     public void playSoundStandalone(Sound s, float volume, float pan) {
-
+        float realVolume = volume * overallVolume;
     }
 
     public void setOverallVolume(float overallVolume) {

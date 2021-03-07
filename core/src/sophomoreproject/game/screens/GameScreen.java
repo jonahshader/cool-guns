@@ -12,12 +12,15 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.singletons.TextDisplay;
 import sophomoreproject.game.systems.GameClient;
 import sophomoreproject.game.systems.PlayerController;
 
 public class GameScreen implements Screen {
     private Camera worldCamera;
+    private Camera hudCamera;
     private Viewport worldViewport;
+    private Viewport hudViewport;
     private CoolGuns game;
     private GameClient gameClient;
 
@@ -31,6 +34,9 @@ public class GameScreen implements Screen {
 
         worldCamera = new OrthographicCamera();
         worldViewport = new ExtendViewport(640, 360, worldCamera);
+
+        hudCamera = new OrthographicCamera();
+        hudViewport = new ExtendViewport(640, 360, hudCamera);
         gameClient = new GameClient(accountID);
         Gdx.input.setInputProcessor(PlayerController.getInstance());
         PlayerController.getInstance().setCam(worldCamera);
@@ -60,6 +66,14 @@ public class GameScreen implements Screen {
         gameClient.draw(game.batch, game.shapeRenderer);
         game.batch.end();
 
+        // render HUD
+        hudViewport.apply(true);
+        game.batch.setProjectionMatrix(hudCamera.combined);
+        game.batch.begin();
+        TextDisplay.getInstance().draw(game.batch, hudViewport);
+        game.batch.end();
+
+
         if (Gdx.input.justTouched()) {
             System.out.println("Just clicked in world coords: " + worldCamera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0f)).toString());
         }
@@ -69,7 +83,7 @@ public class GameScreen implements Screen {
     public void resize(int width, int height) {
         // update viewport and projection matrix
         worldViewport.update(width, height);
-
+        hudViewport.update(width, height);
     }
 
     @Override

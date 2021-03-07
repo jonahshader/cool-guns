@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.networking.ConnectedAccount;
+import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.packets.RequestGameData;
 import sophomoreproject.game.packets.UpdateSleepState;
 import sophomoreproject.game.systems.GameServer;
@@ -25,11 +27,13 @@ public class RequestListener implements Listener {
     private GameServer gameServer;
     private GameWorld world;
     private HashMap<Connection, Integer> connectionToAccountID;
+    private HashMap<Integer, ConnectedAccount> usersLoggedIn;
 
-    public RequestListener(GameServer gameServer, GameWorld world, HashMap<Connection, Integer> connectionToAccountID) {
+    public RequestListener(GameServer gameServer, GameWorld world, ServerNetwork serverNetwork) {
         this.gameServer = gameServer;
         this.world = world;
-        this.connectionToAccountID = connectionToAccountID;
+        this.connectionToAccountID = serverNetwork.getConnectionToAccountID();
+        this.usersLoggedIn = serverNetwork.getUsersLoggedIn();
     }
 
     @Override
@@ -46,7 +50,8 @@ public class RequestListener implements Listener {
                     System.out.println("Waking up player with accountID " + playerAccountID + " and netID " + playerNetID + "!");
                 } else {
                     // create player
-                    Player newPlayer = new Player(new Vector2(), playerAccountID, world.getNewNetID(), false);
+                    String username = usersLoggedIn.get(playerAccountID).getAccount().username;
+                    Player newPlayer = new Player(new Vector2(), playerAccountID, world.getNewNetID(), username, false);
                     // register with world and distribute
                     gameServer.spawnAndSendGameObject(newPlayer);
                     System.out.println("Created new player with account id " + playerAccountID + " and net id " + newPlayer.getNetworkID() + "!");

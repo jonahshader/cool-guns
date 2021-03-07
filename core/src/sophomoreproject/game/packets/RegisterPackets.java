@@ -9,6 +9,7 @@ public class RegisterPackets {
         kryo.register(CreatePlayer.class);
         kryo.register(CreateSleeping.class);
         kryo.register(CreateTestObject.class);
+        kryo.register(RemoveObject.class);
         kryo.register(ReplyAccountEvent.AccountEvent.class);
         kryo.register(ReplyAccountEvent.class);
         kryo.register(RequestGameData.class);

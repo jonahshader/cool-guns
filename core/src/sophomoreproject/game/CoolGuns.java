@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import sophomoreproject.game.screens.ConnectServerScreen;
 import sophomoreproject.game.screens.LoginScreen;
+import sophomoreproject.game.screens.MainMenuScreen;
 import sophomoreproject.game.screens.TempBypassScreen;
 import sophomoreproject.game.singletons.CustomAssetManager;
 
@@ -26,6 +27,7 @@ public class CoolGuns extends Game {
 		CustomAssetManager.getInstance().manager.finishLoading();
         // change screen to a new instance of LoginScreen
         setScreen(new TempBypassScreen(this));
+//		setScreen(new MainMenuScreen(this, 0));
 	}
 
 	@Override

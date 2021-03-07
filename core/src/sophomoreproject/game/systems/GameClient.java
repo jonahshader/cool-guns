@@ -8,10 +8,7 @@ import com.esotericsoftware.kryonet.Listener;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.networking.ClientNetwork;
-import sophomoreproject.game.networking.clientlisteners.ObjectCreationListener;
-import sophomoreproject.game.networking.clientlisteners.ObjectUpdateListener;
-import sophomoreproject.game.networking.clientlisteners.ReconnectListener;
-import sophomoreproject.game.networking.clientlisteners.SleepListener;
+import sophomoreproject.game.networking.clientlisteners.*;
 import sophomoreproject.game.packets.RequestGameData;
 
 import java.util.ArrayList;
@@ -26,6 +23,7 @@ public class GameClient {
         world = new GameWorld();
         ClientNetwork client = ClientNetwork.getInstance();
         client.addListener(new ObjectCreationListener(world, this));
+        client.addListener(new ObjectRemoveListener(world));
         client.addListener(new ObjectUpdateListener(world));
         client.addListener(new SleepListener(world));
 

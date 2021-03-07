@@ -8,8 +8,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreateTestObject;
+import sophomoreproject.game.packets.RemoveObject;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.CustomAssetManager;
+import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.utilites.RendingUtilities;
 
 import java.util.ArrayList;
@@ -17,9 +19,12 @@ import java.util.ArrayList;
 import static sophomoreproject.game.singletons.CustomAssetManager.SPRITE_PACK;
 
 public class TestObject extends PhysicsObject implements Renderable {
+    private static GameServer gameServer = null;
+
     private static TextureAtlas texAtl = null;
     private static TextureRegion[] textures = null;
 
+    private static final float LIFE_SPAN = 30f;
 
     private double lifeTime = 0.0;
     private int xFactor;
@@ -27,22 +32,21 @@ public class TestObject extends PhysicsObject implements Renderable {
 
     private final Vector2 PLAYER_SIZE = new Vector2(1, 1);
 
-    public TestObject(Vector2 position, int netID, boolean client) {
-        super(position, new Vector2((float)ranNumPosNeg(), (float)ranNumPosNeg()), new Vector2(), netID);
+    public TestObject(Vector2 position, int netID) {
+        super(position, new Vector2((float)ranNumPosNeg() * 30, (float)ranNumPosNeg() * 30), new Vector2(), netID);
 
         xFactor = (int)(Math.random() * 6) + 1;
         yFactor = (int)(Math.random() * 6) + 1;
-        loadTextures(client);
 
         updateFrequency = ServerUpdateFrequency.CONSTANT;
     }
 
-    public TestObject(CreateTestObject packet, boolean client) {
+    public TestObject(CreateTestObject packet) {
         super(packet.u.x, packet.u.y, packet.u.xVel, packet.u.yVel, packet.u.xAccel, packet.u.yAccel, packet.u.netID);
 
         xFactor = packet.xFactor;
         yFactor = packet.yFactor;
-        loadTextures(client);
+        loadTextures(true);
 
         updateFrequency = ServerUpdateFrequency.CONSTANT;
     }
@@ -61,8 +65,15 @@ public class TestObject extends PhysicsObject implements Renderable {
     public void run(float dt) {
 //        velocity.x = (float) (Math.cos(lifeTime * Math.PI * .5 * (xFactor)) * 3200 * dt);
 //        velocity.y = (float) (Math.sin(lifeTime * Math.PI * .5 * (yFactor)) * 3200 * dt);
+
+        if (lifeTime > LIFE_SPAN) {
+            gameServer.removeObject(networkID);
+        }
+
+
         velocity.x = (float) ranNumPosNeg() * 30;
         velocity.y = (float) ranNumPosNeg() * 30;
+
 
         lifeTime += dt;
     }
@@ -102,6 +113,9 @@ public class TestObject extends PhysicsObject implements Renderable {
             textures[6] = texAtl.findRegion("player_front");
             textures[7] = texAtl.findRegion("player_bottom_right");
         }
+    }
 
+    public static void setGameServer(GameServer gameServer) {
+        TestObject.gameServer = gameServer;
     }
 }

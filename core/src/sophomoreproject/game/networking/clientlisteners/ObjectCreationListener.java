@@ -41,7 +41,7 @@ public class ObjectCreationListener implements Listener {
                 gameClient.setClientControlledPlayer(newPlayer);
         } else if (o instanceof CreateTestObject) {
             CreateTestObject packet = (CreateTestObject) o;
-            toQueue = new TestObject(packet, true);
+            toQueue = new TestObject(packet);
         }
 
 
