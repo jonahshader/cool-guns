@@ -2,10 +2,12 @@ package sophomoreproject.game.systems;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.*;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.networking.ClientNetwork;
@@ -117,12 +119,22 @@ public final class PlayerController implements InputProcessor {
 
             sendUpdatePacketToServer();
 
+            if (Gdx.input.justTouched()) {
+                Vector3 mouseWorldCoords = cam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0f));
+                Vector2 mouseWorldCoords2D = new Vector2(mouseWorldCoords.x, mouseWorldCoords.y);
+                Vector2 playerToMouse = mouseWorldCoords2D.sub(player.position);
+                playerToMouse.nor();
+                playerToMouse.scl(500);
+                CreateBullet b = new CreateBullet(new UpdatePhysicsObject(-1, player.position.x, player.position.y, playerToMouse.x, playerToMouse.y,
+                        0f, 0f), player.getNetworkID(), 3f);
+                ClientNetwork.getInstance().sendPacket(b);
+            }
 
         }
 
     }
 
-    /**
+    /**s
      * generates an update packet and sends it to the server to be redistributed
      */
     private void sendUpdatePacketToServer() {
@@ -194,8 +206,6 @@ public final class PlayerController implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if(button == 0){
             isMouse1Down = true;
-            CreateBullet b = new CreateBullet(new UpdatePhysicsObject(-1,player.position.x,player.position.y,10f,0f,0f,0f), player.getNetworkID(), 1f);
-            ClientNetwork.getInstance().sendPacket(b);
         }else if(button == 1){
             isMouse2Down = true;
         }

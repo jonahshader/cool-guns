@@ -1,10 +1,11 @@
-package sophomoreproject.game.gameobjects;
+package sophomoreproject.game.gameobjects.gunstuff;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreateBullet;
 import sophomoreproject.game.singletons.CustomAssetManager;
@@ -13,6 +14,12 @@ import sophomoreproject.game.utilites.RendingUtilities;
 import java.util.ArrayList;
 
 public class Bullet extends PhysicsObject implements Renderable {
+    public enum BulletType {
+        STANDARD,
+        FIRE,
+        VOLTAGE,
+        ACID
+    }
     private int creatorNetId;
     private static TextureAtlas texAtl = null;
     private static TextureRegion texture = null;

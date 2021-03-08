@@ -3,13 +3,12 @@ package sophomoreproject.game.networking.serverlisteners;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import sophomoreproject.game.gameobjects.Bullet;
+import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.networking.ConnectedAccount;
 import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.packets.CreateBullet;
 import sophomoreproject.game.packets.RequestGameData;
-import sophomoreproject.game.packets.UpdateSleepState;
 import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.systems.GameWorld;
 

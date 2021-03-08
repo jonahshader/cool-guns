@@ -2,7 +2,7 @@ package sophomoreproject.game.networking.clientlisteners;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import sophomoreproject.game.gameobjects.Bullet;
+import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.gameobjects.TestObject;
 import sophomoreproject.game.interfaces.GameObject;

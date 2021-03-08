@@ -1,8 +1,7 @@
 package sophomoreproject.game.packets;
 
 
-import sophomoreproject.game.gameobjects.Bullet;
-import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 
 public class CreateBullet {
     public UpdatePhysicsObject u;
