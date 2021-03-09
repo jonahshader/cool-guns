@@ -15,15 +15,16 @@ import sophomoreproject.game.packets.UpdatePhysicsObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class GameWorld {
     // note: the contents of these arrays are mutually exclusive.
     // one object should only exist in one array at a time, even though objects can be both PhysicsObject and GameObject
-    private final ArrayList<PhysicsObject> physicsObjects = new ArrayList<>();
-    private final ArrayList<GameObject> gameObjects = new ArrayList<>();
-    private final ArrayList<GameObject> sleepingGameObjects = new ArrayList<>();
-    private final ArrayList<Renderable> renderables = new ArrayList<>();
+    private final List<PhysicsObject> physicsObjects = Collections.synchronizedList(new ArrayList<>());
+    private final List<GameObject> gameObjects = Collections.synchronizedList(new ArrayList<>());
+    private final List<GameObject> sleepingGameObjects = Collections.synchronizedList(new ArrayList<>());
+    private final List<Renderable> renderables = Collections.synchronizedList(new ArrayList<>());
 
     private final ArrayList<Object> serverSendUpdatePacketBuffer = new ArrayList<>();
     private final ArrayList<Object> receiveUpdatePacketBuffer = new ArrayList<>();
@@ -86,7 +87,6 @@ public class GameWorld {
         sleepingToWakeGameObjectQueue.clear();
         wakeToSleepingGameObjectQueue.clear();
         sleepUpdateLock.unlock();
-
         Collections.sort(physicsObjects);
         Collections.sort(gameObjects);
 
@@ -175,7 +175,9 @@ public class GameWorld {
     }
 
     public GameObject getGameObjectFromID(int networkID) {
-        for (GameObject g : gameObjects) if (g.getNetworkID() == networkID) return g;
+        for (GameObject g : gameObjects) if (g.getNetworkID() == networkID) {
+            return g;
+        }
         return null;
     }
 

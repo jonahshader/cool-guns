@@ -44,7 +44,7 @@ public class GameServer {
      * adds a GameObject to the server's world and sends a creation packet to all clients
      * @param gameObject
      */
-    public void spawnAndSendGameObject(GameObject gameObject) {
+    public synchronized void spawnAndSendGameObject(GameObject gameObject) {
         world.queueAddObject(gameObject);
         gameObject.addCreatePacketToBuffer(createPackets);
         serverNetwork.sendPacketsToAll(createPackets);

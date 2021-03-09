@@ -21,6 +21,7 @@ public class GameClient {
     public GameClient(int accountID) {
         this.accountID = accountID;
         world = new GameWorld();
+        PlayerController.getInstance().setGameWorld(world);
         ClientNetwork client = ClientNetwork.getInstance();
         client.addListener(new ObjectCreationListener(world, this));
         client.addListener(new ObjectRemoveListener(world));

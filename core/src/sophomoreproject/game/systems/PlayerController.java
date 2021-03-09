@@ -26,6 +26,7 @@ import java.util.ArrayList;
 public final class PlayerController implements InputProcessor {
     private static PlayerController instance;
     private Player player = null;
+    private GameWorld world = null;
     private Camera cam = null;
     public boolean left,right,up,down,shift;
     public boolean isMouse1Down, isMouse2Down;
@@ -67,6 +68,10 @@ public final class PlayerController implements InputProcessor {
 
         accountIDString.entry = "Account ID: " + player.getAccountId();
         playerNetIDString.entry = "Net ID: " + player.getNetworkID();
+    }
+
+    public void setGameWorld(GameWorld world) {
+        this.world = world;
     }
 
     public void setCam(Camera cam) {
@@ -139,10 +144,19 @@ public final class PlayerController implements InputProcessor {
             Vector2 mouseWorldCoords2D = new Vector2(mouseWorldCoords.x, mouseWorldCoords.y);
             Vector2 playerToMouse = mouseWorldCoords2D.sub(player.position);
             playerToMouse.nor();
-            if (player.getInventory().get(equippedItemIndex) != null)
-                player.getInventory().get(equippedItemIndex)
-                        .updateItem(dt,Gdx.input.justTouched() && isMouse1Down, isMouse1Down,
-                                playerToMouse, player);
+            if (player.getInventory().get(equippedItemIndex) != null) {
+                Object gameObj = world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
+                if (gameObj != null) {
+                    Item gameItem = (Item) gameObj;
+                    gameItem.updateItem(dt,Gdx.input.justTouched() && isMouse1Down, isMouse1Down,
+                            playerToMouse, player);
+                } else {
+                    // inventory item not found!
+                    System.out.println("Player inventory item not found! Should never happen!");
+
+                }
+            }
+
 
 
 
@@ -156,9 +170,15 @@ public final class PlayerController implements InputProcessor {
     private void sendUpdatePacketToServer() {
         player.addUpdatePacketToBuffer(updatePacketArray);
         if (inventoryUpdateQueued) {
-            for (Item item : player.getInventory()) {
+            for (Integer item : player.getInventory()) {
                 if (item != null) {
-                    item.addUpdatePacketToBuffer(updatePacketArray);
+                    Object gameObj = world.getGameObjectFromID(item);
+                    if (gameObj != null) {
+                        Item gameItem = (Item) gameObj;
+                        gameItem.addUpdatePacketToBuffer(updatePacketArray);
+                    } else {
+                        System.out.println("Player inventory item not found! Should never happen!");
+                    }
                 }
             }
             inventoryUpdateQueued = false;
@@ -269,13 +289,25 @@ public final class PlayerController implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        if (player.getInventory().get(equippedItemIndex) != null)
-            player.getInventory().get(equippedItemIndex).setEquipped(false);
-        equippedItemIndex -= Math.round(amountX);
-        equippedItemIndex = MathUtilities.wrap(equippedItemIndex, 0, 8);
-        if (player.getInventory().get(equippedItemIndex) != null)
-            player.getInventory().get(equippedItemIndex).setEquipped(true);
+        if (player.getInventory().get(equippedItemIndex) != null) {
+            Object gameObj = world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
+            if (gameObj != null) {
+                Item gameItem = (Item) gameObj;
+                gameItem.setEquipped(false);
+            }
+        }
 
+        equippedItemIndex -= Math.round(amountY);
+        equippedItemIndex = MathUtilities.wrap(equippedItemIndex, 0, player.getInventorySize());
+        if (player.getInventory().get(equippedItemIndex) != null) {
+            Object gameObj = world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
+            if (gameObj != null) {
+                Item gameItem = (Item) gameObj;
+                gameItem.setEquipped(true);
+            }
+        }
+
+        System.out.println("Item index " + equippedItemIndex + " equipped.");
         inventoryUpdateQueued = true;
         return true;
     }
