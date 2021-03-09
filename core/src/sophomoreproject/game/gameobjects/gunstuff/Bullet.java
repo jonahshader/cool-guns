@@ -59,6 +59,13 @@ public class Bullet extends PhysicsObject implements Renderable {
                 packet.u.xAccel, packet.u.yAccel, packet.u.netID);
         this.creatorNetId = packet.creatorNetId;
         this.bulletSize = packet.bulletSize;
+        this.damage = packet.damage;
+        this.shieldDamage = packet.shieldDamage;
+        this.armorDamage = packet.armorDamage;
+        this.critScalar = packet.critScalar;
+        this.enemyKnockback = packet.enemyKnockback;
+        this.bulletSpawn = new Vector2(packet.u.x, packet.u.y);
+
         updateFrequency = ServerUpdateFrequency.ONCE;
 
         if (client)
@@ -76,7 +83,12 @@ public class Bullet extends PhysicsObject implements Renderable {
     }
 
     @Override
-    public void run(float dt) {
+    public void run(float dt, GameServer server) {
+        float dist = position.dst(bulletSpawn);
+        if (dist >= MAX_RANGE) {
+            server.removeObject(networkID);
+        }
+
     }
 
     public int getCreatorNetId() {
@@ -116,9 +128,6 @@ public class Bullet extends PhysicsObject implements Renderable {
 
     @Override
     public void draw(SpriteBatch sb, ShapeRenderer sr) {
-        float width = bulletSize * texture.getRegionWidth();
-        float height = bulletSize * texture.getRegionHeight();
-        sb.draw(texture, position.x, position.y, width, height);
-
+        sb.draw(texture, position.x, position.y, bulletSize, bulletSize);
     }
 }

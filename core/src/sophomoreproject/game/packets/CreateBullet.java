@@ -17,6 +17,11 @@ public class CreateBullet {
         u = new UpdatePhysicsObject(toSend.getNetworkID(), toSend.position, toSend.velocity, toSend.acceleration);
         creatorNetId = toSend.getCreatorNetId();
         bulletSize = toSend.getBulletSize();
+        damage = toSend.getDamage();
+        shieldDamage = toSend.getShieldDamage();
+        armorDamage = toSend.getArmorDamage();
+        critScalar = toSend.getCritScalar();
+        enemyKnockback = toSend.getEnemyKnockback();
     }
 
     //Client request constructor

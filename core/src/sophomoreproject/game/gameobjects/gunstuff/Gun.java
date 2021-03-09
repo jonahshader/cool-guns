@@ -118,12 +118,8 @@ public class Gun extends Item implements Renderable {
 
     @Override
     public void addCreatePacketToBuffer(ArrayList<Object> createPacketBuffer) {
-
-    }
-
-    @Override
-    public void receiveUpdate(Object updatePacket) {
-
+        // make CreateInventoryGun packet and insert into createPacketBuffer
+        createPacketBuffer.add(new CreateInventoryGun(this));
     }
 
     @Override
@@ -132,9 +128,12 @@ public class Gun extends Item implements Renderable {
 
     @Override
     public void draw(SpriteBatch sb, ShapeRenderer sr) {
-        gunSprite.setFlip(false,angle.x < 0);
-        gunSprite.setRotation(angle.angleDeg());
-        gunSprite.setPosition(position.x, position.y);
+        if (isEquipped()) {
+            gunSprite.setFlip(false,angle.x < 0);
+            gunSprite.setRotation(angle.angleDeg());
+            gunSprite.setPosition(position.x, position.y);
+            gunSprite.draw(sb);
+        }
     }
 
     private void shoot(Vector2 angle, Player player) {

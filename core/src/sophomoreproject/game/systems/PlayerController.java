@@ -155,6 +155,15 @@ public final class PlayerController implements InputProcessor {
      */
     private void sendUpdatePacketToServer() {
         player.addUpdatePacketToBuffer(updatePacketArray);
+        if (inventoryUpdateQueued) {
+            for (Item item : player.getInventory()) {
+                if (item != null) {
+                    item.addUpdatePacketToBuffer(updatePacketArray);
+                }
+            }
+            inventoryUpdateQueued = false;
+        }
+
         ClientNetwork.getInstance().sendAllPackets(updatePacketArray);
         updatePacketArray.clear();
     }
@@ -260,7 +269,15 @@ public final class PlayerController implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        return false;
+        if (player.getInventory().get(equippedItemIndex) != null)
+            player.getInventory().get(equippedItemIndex).setEquipped(false);
+        equippedItemIndex -= Math.round(amountX);
+        equippedItemIndex = MathUtilities.wrap(equippedItemIndex, 0, 8);
+        if (player.getInventory().get(equippedItemIndex) != null)
+            player.getInventory().get(equippedItemIndex).setEquipped(true);
+
+        inventoryUpdateQueued = true;
+        return true;
     }
 
     @Override

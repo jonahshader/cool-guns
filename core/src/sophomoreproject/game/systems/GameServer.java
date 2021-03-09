@@ -34,7 +34,7 @@ public class GameServer {
         // run game systems
         for(GameSystem g : gameSystems) g.run(dt);
 
-        world.serverOnly(dt, serverNetwork);
+        world.serverOnly(dt, serverNetwork, this);
         world.update(dt);
 
         time += dt;

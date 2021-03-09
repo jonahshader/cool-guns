@@ -34,6 +34,9 @@ public class RelaySendOnlyPacketsListener implements Listener {
             serverNetwork.sendPacketToAllExcept(c, o);
         } else if (o instanceof UpdateSleepState) {
             gameServer.setAndSendSleepState((UpdateSleepState) o);
+        } else if (o instanceof UpdateItem) {
+            world.queueAddUpdatePacket(o);
+            serverNetwork.sendPacketToAllExcept(c, o);
         }
     }
 }

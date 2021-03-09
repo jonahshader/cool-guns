@@ -12,7 +12,10 @@ import sophomoreproject.game.packets.CreateInventoryGun;
 import sophomoreproject.game.packets.CreatePlayer;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.singletons.TextDisplay;
+import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.utilites.RendingUtilities;
+import sophomoreproject.game.interfaces.Item;
+import sophomoreproject.game.gameobjects.gunstuff.Gun;
 
 import java.util.ArrayList;
 
@@ -25,6 +28,8 @@ public class Player extends PhysicsObject implements Renderable{
 
     private final String username;
 
+    private ArrayList<Item> inventory = new ArrayList<>();
+    private int inventorySize = 8;
 
     private int accountId;
 
@@ -34,6 +39,15 @@ public class Player extends PhysicsObject implements Renderable{
         this.accountId = accountId;
         this.username = username;
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
+
+        GunInfo gunInfo = new GunInfo();
+        Gun gun = new Gun(gunInfo, networkID, server.getGameWorld().getNewNetID());
+        server.spawnAndSendGameObject(gun);
+        inventory.add(gun);
+
+        for (int i = 1; i < inventorySize; ++i) {
+            inventory.add(null);
+        }
     }
 
     //Client side constructor
@@ -43,8 +57,17 @@ public class Player extends PhysicsObject implements Renderable{
                 packet.u.xAccel, packet.u.yAccel, packet.u.netID);
         this.accountId = packet.accountId;
         this.username = packet.username;
-        loadTextures();
 
+        // populate inventory from inventory packets
+        for (Object invP : packet.inventoryPackets) {
+            if (invP == null) {
+                inventory.add(null);
+            } else if (invP instanceof CreateInventoryGun) {
+                inventory.add(new Gun((CreateInventoryGun) invP));
+            }
+        }
+
+        loadTextures();
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
     }
 
@@ -94,5 +117,9 @@ public class Player extends PhysicsObject implements Renderable{
 
     public String getUsername() {
         return username;
+    }
+
+    public ArrayList<Item> getInventory() {
+        return inventory;
     }
 }
