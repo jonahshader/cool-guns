@@ -9,20 +9,20 @@ public class CreatePlayer {
     public UpdatePhysicsObject u;
     public int accountId;
     public String username;
-    public ArrayList<Object> inventoryPackets;
+    public ArrayList<Integer> inventoryItems;
 
     public CreatePlayer(Player toSend) {
         u = new UpdatePhysicsObject(toSend.getNetworkID(), toSend.position, toSend.velocity, toSend.acceleration);
         accountId = toSend.getAccountId();
         username = toSend.getUsername();
-        inventoryPackets = new ArrayList<>();
+        inventoryItems = new ArrayList<>();
 
         // convert inventory to inventory packets
-        for (Item item : toSend.getInventory()) {
+        for (Integer item : toSend.getInventory()) {
             if (item == null) {
-                inventoryPackets.add(null);
+                inventoryItems.add(null);
             } else {
-                item.addCreatePacketToBuffer(inventoryPackets);
+                inventoryItems.add(item);
             }
         }
     }

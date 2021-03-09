@@ -5,11 +5,9 @@ import com.esotericsoftware.kryonet.Listener;
 import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.gameobjects.TestObject;
+import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.interfaces.GameObject;
-import sophomoreproject.game.packets.CreateBullet;
-import sophomoreproject.game.packets.CreatePlayer;
-import sophomoreproject.game.packets.CreateSleeping;
-import sophomoreproject.game.packets.CreateTestObject;
+import sophomoreproject.game.packets.*;
 import sophomoreproject.game.systems.GameClient;
 import sophomoreproject.game.systems.GameWorld;
 
@@ -46,6 +44,8 @@ public class ObjectCreationListener implements Listener {
             toQueue = new TestObject(packet);
         } else if (o instanceof CreateBullet) {
             toQueue = new Bullet((CreateBullet) o, true);
+        } else if (o instanceof CreateInventoryGun) {
+            toQueue = new Gun((CreateInventoryGun) o);
         }
 
 

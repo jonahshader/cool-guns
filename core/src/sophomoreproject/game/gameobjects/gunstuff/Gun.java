@@ -97,10 +97,12 @@ public class Gun extends Item implements Renderable {
                         if (usedOnce) shoot(angle, player);
                         break;
                     case BURST:
-                        bursting = true;
-                        burstDelayTimer = info.burstDelay;
-                        shoot(angle, player);
-                        ++burstShotsFired;
+                        if (usedOnce) {
+                            bursting = true;
+                            burstDelayTimer = info.burstDelay;
+                            shoot(angle, player);
+                            ++burstShotsFired;
+                        }
                         break;
                     case CHARGE:
                         break;
@@ -130,8 +132,8 @@ public class Gun extends Item implements Renderable {
     public void draw(SpriteBatch sb, ShapeRenderer sr) {
         if (isEquipped()) {
             gunSprite.setFlip(false,angle.x < 0);
-            gunSprite.setRotation(angle.angleDeg());
             gunSprite.setPosition(position.x, position.y);
+            gunSprite.setRotation(angle.angleDeg());
             gunSprite.draw(sb);
         }
     }
@@ -139,18 +141,19 @@ public class Gun extends Item implements Renderable {
     private void shoot(Vector2 angle, Player player) {
         firingTimer = firingTimer + info.fireDelay;
         Vector2 baseVelocity = new Vector2(angle);
-        Vector2 knockbackVelocity = new Vector2(angle);
-        knockbackVelocity.scl(-info.playerKnockback);
         baseVelocity.scl(info.bulletSpeed);
 
         for (int b = 0; b < info.bulletsPerShot; b++) {
-            player.velocity.add(knockbackVelocity);
             Vector2 uniqueVel = new Vector2(baseVelocity);
             uniqueVel.rotateRad((float) RAND.nextGaussian()*info.spread);
             uniqueVel.scl(expGaussian(2f,info.bulletSpeedVariation));
+
+            Vector2 uniqueKnockback = new Vector2(uniqueVel).nor().scl(-info.playerKnockback);
+            player.velocity.add(uniqueKnockback);
+
             float uniqueDam = info.bulletDamage + genTriangleDist()*info.bulletDamageVariance;
 
-            bulletPackets.add(new CreateBullet(new UpdatePhysicsObject(-1, player.position.x, player.position.y, uniqueVel.x, uniqueVel.y, 0f, 0f), player.getNetworkID(),
+            bulletPackets.add(new CreateBullet(new UpdatePhysicsObject(-1, gunSprite.getX(), gunSprite.getY(), uniqueVel.x, uniqueVel.y, 0f, 0f), player.getNetworkID(),
                     info.bulletSize, uniqueDam, info.shieldDamage,info.armorDamage, info.critScalar, info.enemyKnockback));
         }
         ClientNetwork.getInstance().sendAllPackets(bulletPackets);
@@ -160,7 +163,10 @@ public class Gun extends Item implements Renderable {
     private void loadTextures () {
         if (texAtl == null) {
             texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
+        }
+        if (gunSprite == null) {
             gunSprite = new Sprite(texAtl.findRegion("default_gun"));
+            gunSprite.setOriginCenter();
         }
     }
 

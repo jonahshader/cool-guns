@@ -10,8 +10,8 @@ public class GunInfo {
     public float spread = .1f;
     public Gun.FiringMode firingMode = Gun.FiringMode.SEMI_AUTO;
     public int clipSize = 10;
-    public float bulletSpeed = 75f;
-    public float bulletSpeedVariation = .2f;
+    public float bulletSpeed = 100f;
+    public float bulletSpeedVariation = .175f;
     public int bulletsPerShot = 1;
     public int shotsPerBurst = 3;
     public float bulletSize = 4f;
@@ -19,10 +19,10 @@ public class GunInfo {
     public float bulletDamage = 2f;
     public float bulletDamageVariance = 1.5f;
     public float critScalar = 1.5f;
-    public float playerKnockback = 45f;
+    public float playerKnockback = 25f;
     public float enemyKnockback = 15f;
     public Gun.GunType gunType = Gun.GunType.PISTOL;
-    public float gunHoldRadius = 30f;
+    public float gunHoldRadius = 15f;
     public int shieldDamage = 0;
     public int armorDamage = 0;
 

@@ -28,24 +28,20 @@ public class Player extends PhysicsObject implements Renderable{
 
     private final String username;
 
-    private ArrayList<Item> inventory = new ArrayList<>();
+    private ArrayList<Integer> inventory = new ArrayList<>();
     private int inventorySize = 8;
 
     private int accountId;
 
     //Server side constructor
-    public Player(Vector2 position, int accountId, int networkID, String username, GameServer server) {
+    public Player(Vector2 position, int accountId, int networkID, String username) {
         super(position, new Vector2(0,0), new Vector2(0,0), networkID);
         this.accountId = accountId;
         this.username = username;
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
 
-        GunInfo gunInfo = new GunInfo();
-        Gun gun = new Gun(gunInfo, networkID, server.getGameWorld().getNewNetID());
-        server.spawnAndSendGameObject(gun);
-        inventory.add(gun);
-
-        for (int i = 1; i < inventorySize; ++i) {
+        // create empty inventory
+        for (int i = 0; i < inventorySize; ++i) {
             inventory.add(null);
         }
     }
@@ -59,13 +55,7 @@ public class Player extends PhysicsObject implements Renderable{
         this.username = packet.username;
 
         // populate inventory from inventory packets
-        for (Object invP : packet.inventoryPackets) {
-            if (invP == null) {
-                inventory.add(null);
-            } else if (invP instanceof CreateInventoryGun) {
-                inventory.add(new Gun((CreateInventoryGun) invP));
-            }
-        }
+        inventory.addAll(packet.inventoryItems);
 
         loadTextures();
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
@@ -87,11 +77,6 @@ public class Player extends PhysicsObject implements Renderable{
     @Override
     public void draw(SpriteBatch sb, ShapeRenderer sr) {
         RendingUtilities.renderCharacter(position, velocity, PLAYER_SIZE, sb, textures);
-//        for (Item item : inventory) {
-//            if (item != null && item.isEquipped()) {
-//                item.draw(sb,sr);
-//            }
-//        }
         TextDisplay.getInstance().drawTextInWorld(sb, username, position.x, position.y + 24, .25f, new Color(1f, 1f, 1f, 1f));
     }
 
@@ -119,7 +104,11 @@ public class Player extends PhysicsObject implements Renderable{
         return username;
     }
 
-    public ArrayList<Item> getInventory() {
+    public ArrayList<Integer> getInventory() {
         return inventory;
+    }
+
+    public int getInventorySize() {
+        return inventorySize;
     }
 }

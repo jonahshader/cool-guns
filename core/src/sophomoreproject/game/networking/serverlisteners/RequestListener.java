@@ -5,6 +5,8 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.gameobjects.gunstuff.Gun;
+import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
 import sophomoreproject.game.networking.ConnectedAccount;
 import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.packets.CreateBullet;
@@ -52,7 +54,33 @@ public class RequestListener implements Listener {
                 } else {
                     // create player
                     String username = usersLoggedIn.get(playerAccountID).getAccount().username;
-                    Player newPlayer = new Player(new Vector2(), playerAccountID, world.getNewNetID(), username, gameServer);
+                    Player newPlayer = new Player(new Vector2(), playerAccountID, world.getNewNetID(), username);
+
+                    // make a default gun
+                    GunInfo gunInfo = new GunInfo();
+                    Gun gun = new Gun(gunInfo, newPlayer.getNetworkID(), world.getNewNetID());
+                    gameServer.spawnAndSendGameObject(gun);
+
+                    // make more guns
+                    GunInfo autoGunInfo = new GunInfo();
+                    autoGunInfo.firingMode = Gun.FiringMode.AUTO;
+                    autoGunInfo.fireDelay = 1/60f;
+                    autoGunInfo.bulletsPerShot = 1000;
+                    autoGunInfo.playerKnockback = 0f;
+                    Gun autoGun = new Gun(autoGunInfo, newPlayer.getNetworkID(), world.getNewNetID());
+                    gameServer.spawnAndSendGameObject(autoGun);
+
+                    GunInfo burstGunInfo = new GunInfo();
+                    burstGunInfo.firingMode = Gun.FiringMode.BURST;
+                    burstGunInfo.fireDelay = 0.05f;
+                    Gun burstGun = new Gun(burstGunInfo, newPlayer.getNetworkID(), world.getNewNetID());
+                    gameServer.spawnAndSendGameObject(burstGun);
+
+                    // put gun in player inventory
+                    newPlayer.getInventory().set(0, gun.getNetworkID()); // first slot
+                    newPlayer.getInventory().set(1, autoGun.getNetworkID()); // second slot
+                    newPlayer.getInventory().set(2, burstGun.getNetworkID()); // third slot
+
                     // register with world and distribute
                     gameServer.spawnAndSendGameObject(newPlayer);
                     System.out.println("Created new player with account id " + playerAccountID + " and net id " + newPlayer.getNetworkID() + "!");
