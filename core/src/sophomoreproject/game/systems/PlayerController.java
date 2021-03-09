@@ -2,13 +2,20 @@ package sophomoreproject.game.systems;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.*;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.networking.ClientNetwork;
+import sophomoreproject.game.packets.CreateBullet;
+import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.TextDisplay;
+import sophomoreproject.game.utilites.MathUtilities;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -24,6 +31,8 @@ public final class PlayerController implements InputProcessor {
     public boolean isMouse1Down, isMouse2Down;
     public boolean isDragged;
     public Vector2 mouseLocation = new Vector2();
+    private int equippedItemIndex;
+    private boolean inventoryUpdateQueued = false;
 
     private TextDisplay.TextEntry accountIDString;
     private TextDisplay.TextEntry playerNetIDString;
@@ -34,7 +43,7 @@ public final class PlayerController implements InputProcessor {
 
     public final float PLAYER_ACCELERATION = 1500;
     public final float PLAYER_WALK_SPEED = 100;
-    public final float PLAYER_SPRINT_SPEED = 200;
+    public final float PLAYER_SPRINT_SPEED = 10000;
 //    public final float FRICTION = 420;
 
     private PlayerController() {
@@ -96,6 +105,7 @@ public final class PlayerController implements InputProcessor {
 
 
             Vector2 speedDifference = new Vector2(desiredSpeed);
+            Vector2 tempVel = new Vector2(player.velocity);
 
             speedDifference.sub(player.velocity);
             speedDifference.nor().scl(PLAYER_ACCELERATION);
@@ -110,16 +120,50 @@ public final class PlayerController implements InputProcessor {
             cam.position.x = player.position.x;
             cam.position.y = player.position.y;
 
+
             sendUpdatePacketToServer();
+/*
+            if (Gdx.input.justTouched()) {
+                Vector3 mouseWorldCoords = cam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0f));
+                Vector2 mouseWorldCoords2D = new Vector2(mouseWorldCoords.x, mouseWorldCoords.y);
+                Vector2 playerToMouse = mouseWorldCoords2D.sub(player.position);
+                playerToMouse.nor();
+                playerToMouse.scl(500);
+                CreateBullet b = new CreateBullet(new UpdatePhysicsObject(-1, player.position.x, player.position.y, playerToMouse.x, playerToMouse.y,
+                        0f, 0f), player.getNetworkID(), 3f);
+                ClientNetwork.getInstance().sendPacket(b);
+            }
+*/
+
+            Vector3 mouseWorldCoords = cam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0f));
+            Vector2 mouseWorldCoords2D = new Vector2(mouseWorldCoords.x, mouseWorldCoords.y);
+            Vector2 playerToMouse = mouseWorldCoords2D.sub(player.position);
+            playerToMouse.nor();
+            if (player.getInventory().get(equippedItemIndex) != null)
+                player.getInventory().get(equippedItemIndex)
+                        .updateItem(dt,Gdx.input.justTouched() && isMouse1Down, isMouse1Down,
+                                playerToMouse, player);
+
+
+
         }
 
     }
 
-    /**
+    /**s
      * generates an update packet and sends it to the server to be redistributed
      */
     private void sendUpdatePacketToServer() {
         player.addUpdatePacketToBuffer(updatePacketArray);
+        if (inventoryUpdateQueued) {
+            for (Item item : player.getInventory()) {
+                if (item != null) {
+                    item.addUpdatePacketToBuffer(updatePacketArray);
+                }
+            }
+            inventoryUpdateQueued = false;
+        }
+
         ClientNetwork.getInstance().sendAllPackets(updatePacketArray);
         updatePacketArray.clear();
     }
@@ -225,7 +269,15 @@ public final class PlayerController implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        return false;
+        if (player.getInventory().get(equippedItemIndex) != null)
+            player.getInventory().get(equippedItemIndex).setEquipped(false);
+        equippedItemIndex -= Math.round(amountX);
+        equippedItemIndex = MathUtilities.wrap(equippedItemIndex, 0, 8);
+        if (player.getInventory().get(equippedItemIndex) != null)
+            player.getInventory().get(equippedItemIndex).setEquipped(true);
+
+        inventoryUpdateQueued = true;
+        return true;
     }
 
     @Override

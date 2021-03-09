@@ -3,11 +3,12 @@ package sophomoreproject.game.networking.serverlisteners;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.networking.ConnectedAccount;
 import sophomoreproject.game.networking.ServerNetwork;
+import sophomoreproject.game.packets.CreateBullet;
 import sophomoreproject.game.packets.RequestGameData;
-import sophomoreproject.game.packets.UpdateSleepState;
 import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.systems.GameWorld;
 
@@ -51,7 +52,7 @@ public class RequestListener implements Listener {
                 } else {
                     // create player
                     String username = usersLoggedIn.get(playerAccountID).getAccount().username;
-                    Player newPlayer = new Player(new Vector2(), playerAccountID, world.getNewNetID(), username, false);
+                    Player newPlayer = new Player(new Vector2(), playerAccountID, world.getNewNetID(), username, gameServer);
                     // register with world and distribute
                     gameServer.spawnAndSendGameObject(newPlayer);
                     System.out.println("Created new player with account id " + playerAccountID + " and net id " + newPlayer.getNetworkID() + "!");
@@ -60,6 +61,10 @@ public class RequestListener implements Listener {
                 System.out.println("WARNING: Account not found corresponding to connection " + c.toString());
                 System.out.println("This should never happen...");
             }
+        } else if (o instanceof CreateBullet) {
+            ((CreateBullet) o).u.netID = world.getNewNetID();
+            Bullet b = new Bullet((CreateBullet) o, false);
+            gameServer.spawnAndSendGameObject(b);
         }
     }
 }

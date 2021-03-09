@@ -5,14 +5,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.interfaces.GameObject;
+import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.interfaces.Renderable;
-import sophomoreproject.game.networking.ClientNetwork;
 import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.packets.CreateSleeping;
+import sophomoreproject.game.packets.UpdateItem;
 import sophomoreproject.game.packets.UpdateSleepState;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.locks.ReentrantLock;
@@ -26,13 +26,13 @@ public class GameWorld {
     private final ArrayList<Renderable> renderables = new ArrayList<>();
 
     private final ArrayList<Object> serverSendUpdatePacketBuffer = new ArrayList<>();
-    private final ArrayList<Object> clientReceiveUpdatePacketBuffer = new ArrayList<>();
+    private final ArrayList<Object> receiveUpdatePacketBuffer = new ArrayList<>();
     private final ArrayList<GameObject> gameObjectAddQueue = new ArrayList<>();
     private final ArrayList<GameObject> gameObjectRemoveQueue = new ArrayList<>();
     private final ArrayList<GameObject> wakeToSleepingGameObjectQueue = new ArrayList<>();
     private final ArrayList<GameObject> sleepingToWakeGameObjectQueue = new ArrayList<>();
 
-    private final ReentrantLock clientUpdatePacketsLock = new ReentrantLock();
+    private final ReentrantLock updatePacketsLock = new ReentrantLock();
     private final ReentrantLock gameObjectQueueLock = new ReentrantLock();
     private final ReentrantLock sleepUpdateLock = new ReentrantLock();
 
@@ -43,6 +43,25 @@ public class GameWorld {
      * @param dt
      */
     public void update(float dt) {
+        // handle update packets
+        updatePacketsLock.lock();
+        for (Object o : receiveUpdatePacketBuffer) {
+            if (o instanceof UpdatePhysicsObject) {
+                UpdatePhysicsObject packet = (UpdatePhysicsObject) o;
+                PhysicsObject toUpdate = getPhysicsObjectFromID(packet.netID);
+                if (toUpdate != null) {
+                    toUpdate.updateFromPacket(packet);
+                }
+            } else if (o instanceof UpdateItem) {
+                UpdateItem packet = (UpdateItem) o;
+                Item toUpdate = (Item)getGameObjectFromID(packet.netID);
+                toUpdate.receiveUpdate(packet);
+            }
+        }
+        receiveUpdatePacketBuffer.clear();
+        updatePacketsLock.unlock();
+
+
         // process gameObject add and remove queues
         gameObjectQueueLock.lock();
         for (GameObject o : gameObjectAddQueue) addObject(o);
@@ -78,8 +97,8 @@ public class GameWorld {
         for (Renderable r : renderables) r.draw(sb, sr);
     }
 
-    public void serverOnly(float dt, ServerNetwork serverNetwork) {
-        for (GameObject g : gameObjects) g.run(dt);
+    public void serverOnly(float dt, ServerNetwork serverNetwork, GameServer server) {
+        for (GameObject g : gameObjects) g.run(dt, server);
         for (GameObject g : gameObjects) {
             if (g.getUpdateFrequency() == GameObject.ServerUpdateFrequency.CONSTANT) {
                 g.addUpdatePacketToBuffer(serverSendUpdatePacketBuffer);
@@ -88,22 +107,8 @@ public class GameWorld {
 
         serverNetwork.sendPacketsToAll(serverSendUpdatePacketBuffer);
         serverSendUpdatePacketBuffer.clear();
-    }
 
-    public void clientOnly(float dt) {
-        clientUpdatePacketsLock.lock();
-        // Receive update packets
-        for (Object o : clientReceiveUpdatePacketBuffer) {
-            if (o instanceof UpdatePhysicsObject) {
-                UpdatePhysicsObject packet = (UpdatePhysicsObject) o;
-                PhysicsObject toUpdate = getPhysicsObjectFromID(packet.netID);
-                if (toUpdate != null) {
-                    toUpdate.updateFromPacket(packet);
-                }
-            }
-        }
-        clientReceiveUpdatePacketBuffer.clear();
-        clientUpdatePacketsLock.unlock();
+
     }
 
     public void handleSetSleepStatePacket(UpdateSleepState packet) {
@@ -151,9 +156,9 @@ public class GameWorld {
     }
 
     public void queueAddUpdatePacket(Object packet) {
-        clientUpdatePacketsLock.lock();
-        clientReceiveUpdatePacketBuffer.add(packet);
-        clientUpdatePacketsLock.unlock();
+        updatePacketsLock.lock();
+        receiveUpdatePacketBuffer.add(packet);
+        updatePacketsLock.unlock();
     }
 
     private void addObject(GameObject o) {

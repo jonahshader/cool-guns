@@ -2,9 +2,11 @@ package sophomoreproject.game.networking.clientlisteners;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.gameobjects.TestObject;
 import sophomoreproject.game.interfaces.GameObject;
+import sophomoreproject.game.packets.CreateBullet;
 import sophomoreproject.game.packets.CreatePlayer;
 import sophomoreproject.game.packets.CreateSleeping;
 import sophomoreproject.game.packets.CreateTestObject;
@@ -33,7 +35,7 @@ public class ObjectCreationListener implements Listener {
         GameObject toQueue = null;
         if (o instanceof CreatePlayer) {
             CreatePlayer packet = (CreatePlayer) o;
-            Player newPlayer = new Player(packet, true);
+            Player newPlayer = new Player(packet);
             toQueue = newPlayer;
             // if this player is owned by this client,
             if (newPlayer.getAccountId() == gameClient.getAccountID())
@@ -42,6 +44,8 @@ public class ObjectCreationListener implements Listener {
         } else if (o instanceof CreateTestObject) {
             CreateTestObject packet = (CreateTestObject) o;
             toQueue = new TestObject(packet);
+        } else if (o instanceof CreateBullet) {
+            toQueue = new Bullet((CreateBullet) o, true);
         }
 
 
