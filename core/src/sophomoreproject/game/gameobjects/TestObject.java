@@ -74,7 +74,7 @@ public class TestObject extends PhysicsObject implements Renderable {
     }
 
     @Override
-    public void draw(SpriteBatch sb, ShapeRenderer sr) {
+    public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
         RendingUtilities.renderCharacter(position, velocity, PLAYER_SIZE,sb,textures);
 //        debugDraw(sr);
     }

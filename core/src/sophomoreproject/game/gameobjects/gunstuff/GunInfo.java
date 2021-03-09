@@ -14,7 +14,7 @@ public class GunInfo {
     public float bulletSpeedVariation = .175f;
     public int bulletsPerShot = 1;
     public int shotsPerBurst = 3;
-    public float bulletSize = 4f;
+    public float bulletSize = 1.25f;
     public Bullet.BulletType bulletType = Bullet.BulletType.STANDARD;
     public float bulletDamage = 2f;
     public float bulletDamageVariance = 1.5f;

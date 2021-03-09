@@ -79,7 +79,7 @@ public class RequestListener implements Listener {
                     GunInfo shotgunInfo = new GunInfo();
                     shotgunInfo.bulletsPerShot = 12;
                     shotgunInfo.bulletSpeed = 150;
-                    shotgunInfo.bulletSize = 2f;
+                    shotgunInfo.bulletSize = .8f;
                     Gun shotgun = new Gun(shotgunInfo, newPlayer.getNetworkID(), world.getNewNetID());
                     gameServer.spawnAndSendGameObject(shotgun);
 

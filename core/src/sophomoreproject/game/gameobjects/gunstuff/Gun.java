@@ -126,7 +126,7 @@ public class Gun extends Item implements Renderable {
     }
 
     @Override
-    public void draw(SpriteBatch sb, ShapeRenderer sr) {
+    public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
         if (isEquipped()) {
             gunSprite.setFlip(false,angle.x < 0);
             gunSprite.setPosition(position.x, position.y);

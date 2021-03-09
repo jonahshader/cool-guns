@@ -1,5 +1,6 @@
 package sophomoreproject.game.gameobjects.gunstuff;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -9,6 +10,7 @@ import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreateBullet;
 import sophomoreproject.game.singletons.CustomAssetManager;
+import sophomoreproject.game.singletons.LocalRandom;
 import sophomoreproject.game.systems.GameServer;
 
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ public class Bullet extends PhysicsObject implements Renderable {
 
     private int creatorNetId;
     private static TextureAtlas texAtl = null;
-    private static TextureRegion texture = null;
+    private Sprite sprite = null;
     private float bulletSize;
     private float damage;
     private int shieldDamage;
@@ -33,24 +35,25 @@ public class Bullet extends PhysicsObject implements Renderable {
     private Vector2 bulletSpawn;
     private static final float MAX_RANGE = 170;
 
+    private float spin;
 
     //Server side constructor
-    public Bullet(Vector2 position, Vector2 velocity, Vector2 acceleration,
-                  int creatorNetId, int networkID, float bulletSize,
-                  float damage, int shieldDamage, int armorDamage,
-                  float critScalar, float enemyKnockback, Vector2 bulletSpawn) {
-        super(position, velocity, acceleration, networkID);
-        this.creatorNetId = creatorNetId;
-        this.bulletSize = bulletSize;
-        this.damage = damage;
-        this.shieldDamage = shieldDamage;
-        this.armorDamage = armorDamage;
-        this.critScalar = critScalar;
-        this.enemyKnockback = enemyKnockback;
-        this.bulletSpawn = new Vector2(position);
-
-        updateFrequency = ServerUpdateFrequency.ONCE;
-    }
+//    public Bullet(Vector2 position, Vector2 velocity, Vector2 acceleration,
+//                  int creatorNetId, int networkID, float bulletSize,
+//                  float damage, int shieldDamage, int armorDamage,
+//                  float critScalar, float enemyKnockback) {
+//        super(position, velocity, acceleration, networkID);
+//        this.creatorNetId = creatorNetId;
+//        this.bulletSize = bulletSize;
+//        this.damage = damage;
+//        this.shieldDamage = shieldDamage;
+//        this.armorDamage = armorDamage;
+//        this.critScalar = critScalar;
+//        this.enemyKnockback = enemyKnockback;
+//        this.bulletSpawn = new Vector2(position);
+//
+//        updateFrequency = ServerUpdateFrequency.ONCE;
+//    }
 
     //Client/Server side constructor
     public Bullet(CreateBullet packet, boolean client) {
@@ -68,8 +71,10 @@ public class Bullet extends PhysicsObject implements Renderable {
 
         updateFrequency = ServerUpdateFrequency.ONCE;
 
+        spin = (float) (LocalRandom.RAND.nextGaussian() * 180 / Math.PI);
+
         if (client)
-        loadTextures();
+            loadTextures();
     }
 
 
@@ -98,7 +103,12 @@ public class Bullet extends PhysicsObject implements Renderable {
     private void loadTextures () {
         if (texAtl == null) {
             texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
-            texture = texAtl.findRegion("white_pixel");
+        }
+
+        if (sprite == null) {
+            sprite = new Sprite(texAtl.findRegion("bullet"));
+            sprite.setOriginCenter();
+            sprite.setScale(bulletSize);
         }
     }
 
@@ -127,7 +137,9 @@ public class Bullet extends PhysicsObject implements Renderable {
     }
 
     @Override
-    public void draw(SpriteBatch sb, ShapeRenderer sr) {
-        sb.draw(texture, position.x, position.y, bulletSize, bulletSize);
+    public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
+        sprite.setPosition(position.x, position.y);
+        sprite.rotate(spin * dt);
+        sprite.draw(sb);
     }
 }
