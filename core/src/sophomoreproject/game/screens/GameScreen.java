@@ -71,7 +71,7 @@ public class GameScreen implements Screen {
         game.batch.setProjectionMatrix(worldCamera.combined);
         game.shapeRenderer.setProjectionMatrix(worldCamera.combined);
         game.batch.begin();
-        gameClient.draw(game.batch, game.shapeRenderer);
+        gameClient.draw(delta, game.batch, game.shapeRenderer);
         game.batch.end();
 
         // render HUD

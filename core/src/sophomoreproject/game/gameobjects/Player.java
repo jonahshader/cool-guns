@@ -6,16 +6,12 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
 import sophomoreproject.game.interfaces.Renderable;
-import sophomoreproject.game.packets.CreateInventoryGun;
 import sophomoreproject.game.packets.CreatePlayer;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.singletons.TextDisplay;
 import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.utilites.RendingUtilities;
-import sophomoreproject.game.interfaces.Item;
-import sophomoreproject.game.gameobjects.gunstuff.Gun;
 
 import java.util.ArrayList;
 
@@ -75,7 +71,7 @@ public class Player extends PhysicsObject implements Renderable{
     }
 
     @Override
-    public void draw(SpriteBatch sb, ShapeRenderer sr) {
+    public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
         RendingUtilities.renderCharacter(position, velocity, PLAYER_SIZE, sb, textures);
         TextDisplay.getInstance().drawTextInWorld(sb, username, position.x, position.y + 24, .25f, new Color(1f, 1f, 1f, 1f));
     }

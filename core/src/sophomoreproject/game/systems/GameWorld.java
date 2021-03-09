@@ -14,7 +14,6 @@ import sophomoreproject.game.packets.UpdateSleepState;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -93,8 +92,8 @@ public class GameWorld {
         for (PhysicsObject p : physicsObjects.values()) { p.updatePhysics(dt); }
     }
 
-    public void draw(SpriteBatch sb, ShapeRenderer sr) {
-        for (Renderable r : renderables) r.draw(sb, sr);
+    public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
+        for (Renderable r : renderables) r.draw(dt, sb, sr);
     }
 
     public void serverOnly(float dt, ServerNetwork serverNetwork, GameServer server) {

@@ -36,8 +36,8 @@ public class GameClient {
         world.update(dt);
     }
 
-    public void draw(SpriteBatch sb, ShapeRenderer sr) {
-        world.draw(sb, sr);
+    public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
+        world.draw(dt, sb, sr);
     }
 
     public void setClientControlledPlayer(Player player) {
