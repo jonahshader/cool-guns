@@ -33,7 +33,6 @@ public final class PlayerController implements InputProcessor {
     public boolean isDragged;
     public Vector2 mouseLocation = new Vector2();
     private int equippedItemIndex;
-    private boolean inventoryUpdateQueued = false;
 
     private TextDisplay.TextEntry accountIDString;
     private TextDisplay.TextEntry playerNetIDString;
@@ -148,6 +147,7 @@ public final class PlayerController implements InputProcessor {
                 Object gameObj = world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
                 if (gameObj != null) {
                     Item gameItem = (Item) gameObj;
+                    gameItem.setEquipped(true);
                     gameItem.updateItem(dt,Gdx.input.justTouched() && isMouse1Down, isMouse1Down,
                             playerToMouse, player);
                 } else {
@@ -156,12 +156,7 @@ public final class PlayerController implements InputProcessor {
 
                 }
             }
-
-
-
-
         }
-
     }
 
     /**s
@@ -169,20 +164,18 @@ public final class PlayerController implements InputProcessor {
      */
     private void sendUpdatePacketToServer() {
         player.addUpdatePacketToBuffer(updatePacketArray);
-        if (inventoryUpdateQueued) {
-            for (Integer item : player.getInventory()) {
-                if (item != null) {
-                    Object gameObj = world.getGameObjectFromID(item);
-                    if (gameObj != null) {
-                        Item gameItem = (Item) gameObj;
-                        gameItem.addUpdatePacketToBuffer(updatePacketArray);
-                    } else {
-                        System.out.println("Player inventory item not found! Should never happen!");
-                    }
+        for (Integer item : player.getInventory()) {
+            if (item != null) {
+                Object gameObj = world.getGameObjectFromID(item);
+                if (gameObj != null) {
+                    Item gameItem = (Item) gameObj;
+                    gameItem.addUpdatePacketToBuffer(updatePacketArray);
+                } else {
+                    System.out.println("Player inventory item not found! Should never happen!");
                 }
             }
-            inventoryUpdateQueued = false;
         }
+
 
         ClientNetwork.getInstance().sendAllPackets(updatePacketArray);
         updatePacketArray.clear();
@@ -308,7 +301,6 @@ public final class PlayerController implements InputProcessor {
         }
 
         System.out.println("Item index " + equippedItemIndex + " equipped.");
-        inventoryUpdateQueued = true;
         return true;
     }
 
