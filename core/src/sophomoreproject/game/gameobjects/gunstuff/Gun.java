@@ -43,9 +43,6 @@ public class Gun extends Item implements Renderable {
     private Sprite gunSprite = null;
     private float firingTimer;
     private final ArrayList<Object> bulletPackets = new ArrayList<>();
-    private Vector2 angle = new Vector2();
-    private Vector2 position = new Vector2();
-    private int ownerNetId;
     private boolean bursting = false;
     private float burstDelayTimer = 0;
     private int burstShotsFired = 0;

@@ -52,13 +52,13 @@ public class GameWorld {
             if (o instanceof UpdatePhysicsObject) {
                 UpdatePhysicsObject packet = (UpdatePhysicsObject) o;
                 PhysicsObject toUpdate = getPhysicsObjectFromID(packet.netID);
-                if (toUpdate != null) {
+                if (toUpdate != null)
                     toUpdate.updateFromPacket(packet);
-                }
             } else if (o instanceof UpdateItem) {
                 UpdateItem packet = (UpdateItem) o;
                 Item toUpdate = (Item)getGameObjectFromID(packet.netID);
-                toUpdate.receiveUpdate(packet);
+                if (toUpdate != null)
+                    toUpdate.receiveUpdate(packet);
             }
         }
         receiveUpdatePacketBuffer.clear();

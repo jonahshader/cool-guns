@@ -8,6 +8,9 @@ import sophomoreproject.game.packets.UpdateItem;
 import java.util.ArrayList;
 
 public abstract class Item extends GameObject implements Renderable{
+    protected Vector2 position = new Vector2();
+    protected Vector2 angle = new Vector2();
+    protected int ownerNetId;
     private boolean equipped = false;
     public boolean isEquipped() { return equipped; }
     public void setEquipped(boolean equipped) { this.equipped = equipped; }
@@ -16,12 +19,18 @@ public abstract class Item extends GameObject implements Renderable{
 
     @Override
     public void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer) {
-        updatePacketBuffer.add(new UpdateItem(networkID, isEquipped()));
+        updatePacketBuffer.add(new UpdateItem(networkID, isEquipped(), position.x, position.y, angle.x, angle.y));
     }
 
     @Override
     public void receiveUpdate(Object updatePacket) {
-        UpdateItem update = (UpdateItem) updatePacket;
-        setEquipped(update.equipped);
+        if (updatePacket instanceof UpdateItem) {
+            UpdateItem update = (UpdateItem) updatePacket;
+            setEquipped(update.equipped);
+            position.x = update.xPos;
+            position.y = update.yPos;
+            angle.x = update.xAngle;
+            angle.y = update.yAngle;
+        }
     }
 }
