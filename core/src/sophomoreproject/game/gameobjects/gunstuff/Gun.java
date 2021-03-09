@@ -6,23 +6,22 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.gameobjects.Player;
-import sophomoreproject.game.interfaces.GameObject;
+import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.networking.ClientNetwork;
 import sophomoreproject.game.packets.CreateBullet;
 import sophomoreproject.game.packets.CreateInventoryGun;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.CustomAssetManager;
+import sophomoreproject.game.systems.GameServer;
 
 import java.util.ArrayList;
 
-import static sophomoreproject.game.singletons.LocalRandom.RAND;
+import static sophomoreproject.game.singletons.LocalRandom.*;
 
 //This is owned by a player or it is in an inventory (like a shop).
 
-public class Gun extends GameObject implements Renderable {
-
-
+public class Gun extends Item implements Renderable {
     public enum FiringMode {
         AUTO,
         SEMI_AUTO,
@@ -38,18 +37,6 @@ public class Gun extends GameObject implements Renderable {
         SHOTGUN
     }
 
-    //Client Constructor
-    public Gun(CreateInventoryGun packet, int ownerNetId) {
-        this.ownerNetId = ownerNetId;
-        this.info = packet.info;
-        loadTextures();
-    }
-
-    //Server Constructor
-    public Gun(GunInfo info) {
-        this.info = info;
-    }
-
     private GunInfo info;
 
     private static TextureAtlas texAtl = null;
@@ -59,11 +46,75 @@ public class Gun extends GameObject implements Renderable {
     private Vector2 angle = new Vector2();
     private Vector2 position = new Vector2();
     private int ownerNetId;
+    private boolean bursting = false;
+    private float burstDelayTimer = 0;
+    private int burstShotsFired = 0;
+
+    //Client Constructor
+    public Gun(CreateInventoryGun packet) {
+        this.info = packet.info;
+        this.ownerNetId = packet.ownerNetId;
+        this.networkID = packet.netId;
+        loadTextures();
+    }
+
+    //Server Constructor
+    public Gun(GunInfo info, int ownerNetId, int netId) {
+        this.info = info;
+        this.ownerNetId = ownerNetId;
+        this.networkID = netId;
+    }
 
     @Override
-    public void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer) {
+    public void updateItem(float dt, boolean usedOnce, boolean using, Vector2 angle, Player player) {
+        this.angle = angle;
+        this.position = new Vector2(player.position);
+        Vector2 offset = new Vector2(angle);
+        offset.scl(info.gunHoldRadius);
+        position.add(offset);
 
+        if (bursting) {
+            if (burstShotsFired < info.shotsPerBurst) {
+                if (firingTimer <= 0) {
+                    shoot(angle, player);
+                    ++burstShotsFired;
+                }
+            } else {
+                if (burstDelayTimer > 0) {
+                    burstDelayTimer = burstDelayTimer - dt;
+                } else {
+                    bursting = false;
+                    burstShotsFired = 0;
+                }
+            }
+        } else {
+            if (firingTimer <= 0) {
+                switch (info.firingMode) {
+                    case AUTO:
+                        if (using) shoot(angle, player);
+                        break;
+                    case SEMI_AUTO:
+                        if (usedOnce) shoot(angle, player);
+                        break;
+                    case BURST:
+                        bursting = true;
+                        burstDelayTimer = info.burstDelay;
+                        shoot(angle, player);
+                        ++burstShotsFired;
+                        break;
+                    case CHARGE:
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        if (firingTimer > 0) {
+            firingTimer = firingTimer - dt;
+        }
     }
+
 
     @Override
     public void addCreatePacketToBuffer(ArrayList<Object> createPacketBuffer) {
@@ -76,7 +127,7 @@ public class Gun extends GameObject implements Renderable {
     }
 
     @Override
-    public void run(float dt) {
+    public void run(float dt, GameServer server) {
     }
 
     @Override
@@ -86,35 +137,22 @@ public class Gun extends GameObject implements Renderable {
         gunSprite.setPosition(position.x, position.y);
     }
 
-    public void localRun (float dt, boolean shooting, boolean oneShot, Vector2 angle, Player player) {
-        this.angle = angle;
-        this.position = new Vector2(player.position);
-        Vector2 offset = new Vector2(angle);
-        offset.scl(info.gunHoldRadius);
-        position.add(offset);
-
-
-        if (firingTimer > 0) {
-            firingTimer = firingTimer - dt;
-        } else if (info.firingMode == FiringMode.AUTO && shooting){
-            shoot(angle, player);
-        } else if (info.firingMode == FiringMode.SEMI_AUTO && oneShot) {
-            shoot(angle, player);
-        }
-    }
-
     private void shoot(Vector2 angle, Player player) {
-        firingTimer = firingTimer + info.fireRate;
+        firingTimer = firingTimer + info.fireDelay;
         Vector2 baseVelocity = new Vector2(angle);
+        Vector2 knockbackVelocity = new Vector2(angle);
+        knockbackVelocity.scl(-info.playerKnockback);
         baseVelocity.scl(info.bulletSpeed);
 
-
         for (int b = 0; b < info.bulletsPerShot; b++) {
+            player.velocity.add(knockbackVelocity);
             Vector2 uniqueVel = new Vector2(baseVelocity);
-            uniqueVel.rotateRad((float) RAND.nextGaussian()*info.spread)
-                    .scl((float) (info.bulletSpeed*Math.pow(Math.E, RAND.nextGaussian() * info.bulletSpeedVariation)));
-            bulletPackets.add(new CreateBullet(new UpdatePhysicsObject(-1, player.position.x, player.position.y, uniqueVel.x, uniqueVel.y,
-                    0f, 0f), player.getNetworkID(), info.bulletSize));
+            uniqueVel.rotateRad((float) RAND.nextGaussian()*info.spread);
+            uniqueVel.scl(expGaussian(2f,info.bulletSpeedVariation));
+            float uniqueDam = info.bulletDamage + genTriangleDist()*info.bulletDamageVariance;
+
+            bulletPackets.add(new CreateBullet(new UpdatePhysicsObject(-1, player.position.x, player.position.y, uniqueVel.x, uniqueVel.y, 0f, 0f), player.getNetworkID(),
+                    info.bulletSize, uniqueDam, info.shieldDamage,info.armorDamage, info.critScalar, info.enemyKnockback));
         }
         ClientNetwork.getInstance().sendAllPackets(bulletPackets);
         bulletPackets.clear();
@@ -129,6 +167,11 @@ public class Gun extends GameObject implements Renderable {
 
     public GunInfo getInfo() {
         return info;
+    }
+
+    @Override
+    public void renderIcon(SpriteBatch sb, float size, float x, float y) {
+
     }
 
     public int getOwnerNetId() {

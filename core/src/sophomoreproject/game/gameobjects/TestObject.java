@@ -1,6 +1,5 @@
 package sophomoreproject.game.gameobjects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -8,15 +7,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreateTestObject;
-import sophomoreproject.game.packets.RemoveObject;
-import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.utilites.RendingUtilities;
 
 import java.util.ArrayList;
-
-import static sophomoreproject.game.singletons.CustomAssetManager.SPRITE_PACK;
 
 public class TestObject extends PhysicsObject implements Renderable {
     private static GameServer gameServer = null;
@@ -62,7 +57,7 @@ public class TestObject extends PhysicsObject implements Renderable {
     }
 
     @Override
-    public void run(float dt) {
+    public void run(float dt, GameServer server) {
 //        velocity.x = (float) (Math.cos(lifeTime * Math.PI * .5 * (xFactor)) * 3200 * dt);
 //        velocity.y = (float) (Math.sin(lifeTime * Math.PI * .5 * (yFactor)) * 3200 * dt);
 

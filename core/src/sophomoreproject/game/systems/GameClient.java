@@ -32,7 +32,6 @@ public class GameClient {
     }
 
     public void run(float dt) {
-        world.clientOnly(dt);
         world.update(dt);
     }
 

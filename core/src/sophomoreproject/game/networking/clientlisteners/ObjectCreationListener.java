@@ -45,7 +45,7 @@ public class ObjectCreationListener implements Listener {
             CreateTestObject packet = (CreateTestObject) o;
             toQueue = new TestObject(packet);
         } else if (o instanceof CreateBullet) {
-            toQueue = new Bullet((CreateBullet) o);
+            toQueue = new Bullet((CreateBullet) o, true);
         }
 
 

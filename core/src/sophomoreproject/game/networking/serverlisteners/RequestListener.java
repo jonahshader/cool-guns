@@ -52,7 +52,7 @@ public class RequestListener implements Listener {
                 } else {
                     // create player
                     String username = usersLoggedIn.get(playerAccountID).getAccount().username;
-                    Player newPlayer = new Player(new Vector2(), playerAccountID, world.getNewNetID(), username);
+                    Player newPlayer = new Player(new Vector2(), playerAccountID, world.getNewNetID(), username, gameServer);
                     // register with world and distribute
                     gameServer.spawnAndSendGameObject(newPlayer);
                     System.out.println("Created new player with account id " + playerAccountID + " and net id " + newPlayer.getNetworkID() + "!");
@@ -63,7 +63,7 @@ public class RequestListener implements Listener {
             }
         } else if (o instanceof CreateBullet) {
             ((CreateBullet) o).u.netID = world.getNewNetID();
-            Bullet b = new Bullet((CreateBullet) o);
+            Bullet b = new Bullet((CreateBullet) o, false);
             gameServer.spawnAndSendGameObject(b);
         }
     }

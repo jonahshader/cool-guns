@@ -3,6 +3,7 @@ package sophomoreproject.game.networking.serverlisteners;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import sophomoreproject.game.networking.ServerNetwork;
+import sophomoreproject.game.packets.UpdateItem;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.packets.UpdateSleepState;
 import sophomoreproject.game.systems.GameServer;

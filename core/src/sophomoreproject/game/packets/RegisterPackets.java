@@ -1,6 +1,11 @@
 package sophomoreproject.game.packets;
 
 import com.esotericsoftware.kryo.Kryo;
+import sophomoreproject.game.gameobjects.gunstuff.Bullet;
+import sophomoreproject.game.gameobjects.gunstuff.Gun;
+import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
+
+import java.util.ArrayList;
 
 public class RegisterPackets {
     // all packet objects must be registered here so that the client and server are

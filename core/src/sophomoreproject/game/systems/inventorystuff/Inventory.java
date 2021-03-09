@@ -1,7 +1,6 @@
 package sophomoreproject.game.systems.inventorystuff;
 
-import sophomoreproject.game.interfaces.GameObject;
-import sophomoreproject.game.interfaces.InventoryItem;
+import sophomoreproject.game.interfaces.Item;
 
 import java.util.ArrayList;
 
@@ -15,10 +14,10 @@ public class Inventory {
     }
 
     private String name;
-    private ArrayList<InventoryItem> items;
+    private ArrayList<Item> items;
     private int maxSize;
 
-    public void addItem(InventoryItem item) {
+    public void addItem(Item item) {
 
     }
 
@@ -26,7 +25,7 @@ public class Inventory {
 
     }
 
-    public InventoryItem getItem(int index) {
+    public Item getItem(int index) {
         return items.get(index);
     }
 

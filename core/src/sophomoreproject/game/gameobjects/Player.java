@@ -1,13 +1,14 @@
 package sophomoreproject.game.gameobjects;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
 import sophomoreproject.game.interfaces.Renderable;
+import sophomoreproject.game.packets.CreateInventoryGun;
 import sophomoreproject.game.packets.CreatePlayer;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.singletons.TextDisplay;
@@ -28,7 +29,7 @@ public class Player extends PhysicsObject implements Renderable{
     private int accountId;
 
     //Server side constructor
-    public Player(Vector2 position, int accountId, int networkID, String username) {
+    public Player(Vector2 position, int accountId, int networkID, String username, GameServer server) {
         super(position, new Vector2(0,0), new Vector2(0,0), networkID);
         this.accountId = accountId;
         this.username = username;
@@ -57,12 +58,17 @@ public class Player extends PhysicsObject implements Renderable{
         // assume object is of type
     }
 
-    public void run(float dt) {
+    public void run(float dt, GameServer server) {
     }
 
     @Override
     public void draw(SpriteBatch sb, ShapeRenderer sr) {
         RendingUtilities.renderCharacter(position, velocity, PLAYER_SIZE, sb, textures);
+//        for (Item item : inventory) {
+//            if (item != null && item.isEquipped()) {
+//                item.draw(sb,sr);
+//            }
+//        }
         TextDisplay.getInstance().drawTextInWorld(sb, username, position.x, position.y + 24, .25f, new Color(1f, 1f, 1f, 1f));
     }
 

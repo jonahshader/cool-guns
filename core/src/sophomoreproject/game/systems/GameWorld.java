@@ -5,14 +5,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.interfaces.GameObject;
+import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.interfaces.Renderable;
-import sophomoreproject.game.networking.ClientNetwork;
 import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.packets.CreateSleeping;
+import sophomoreproject.game.packets.UpdateItem;
 import sophomoreproject.game.packets.UpdateSleepState;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.locks.ReentrantLock;
@@ -78,8 +78,8 @@ public class GameWorld {
         for (Renderable r : renderables) r.draw(sb, sr);
     }
 
-    public void serverOnly(float dt, ServerNetwork serverNetwork) {
-        for (GameObject g : gameObjects) g.run(dt);
+    public void serverOnly(float dt, ServerNetwork serverNetwork, GameServer server) {
+        for (GameObject g : gameObjects) g.run(dt, server);
         for (GameObject g : gameObjects) {
             if (g.getUpdateFrequency() == GameObject.ServerUpdateFrequency.CONSTANT) {
                 g.addUpdatePacketToBuffer(serverSendUpdatePacketBuffer);
