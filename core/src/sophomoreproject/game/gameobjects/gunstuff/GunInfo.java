@@ -40,7 +40,7 @@ public class GunInfo {
         shotsPerBurst *= expGaussian(2f, randomness);
         bulletSize *= expGaussian(2f, randomness);
         bulletDamage *= expGaussian(2f, randomness);
-        bulletDamageVariance *= expGaussian(2f, randomness);;
+        bulletDamageVariance *= expGaussian(2f, randomness);
         critScalar *= expGaussian(2f, randomness);
         playerKnockback *= expGaussian(2f, randomness);
         enemyKnockback *= expGaussian(2f, randomness);
