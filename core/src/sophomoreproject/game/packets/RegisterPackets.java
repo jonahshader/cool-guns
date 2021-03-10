@@ -26,6 +26,7 @@ public class RegisterPackets {
         kryo.register(RequestNewAccount.class);
         kryo.register(UpdateItem.class);
         kryo.register(UpdatePhysicsObject.class);
+        kryo.register(UpdatePlayer.class);
         kryo.register(UpdateSleepState.class);
 
         kryo.register(GunInfo.class);

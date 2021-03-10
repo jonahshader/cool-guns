@@ -22,7 +22,7 @@ public class GunInfo {
     public float playerKnockback = 25f;
     public float enemyKnockback = 15f;
     public Gun.GunType gunType = Gun.GunType.PISTOL;
-    public float gunHoldRadius = 15f;
+    public float gunHoldRadius = 18f;
     public int shieldDamage = 0;
     public int armorDamage = 0;
 

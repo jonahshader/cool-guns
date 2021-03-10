@@ -15,7 +15,7 @@ import static sophomoreproject.game.singletons.CustomAssetManager.MAP_PACK;
 
 public class Map {
     public static final int LOAD_CHUNK_RADIUS = 2;
-    public static final int UNLOAD_CHUNK_RADIUS = 3;
+    public static final int UNLOAD_CHUNK_RADIUS = 2;
 
     private HashMap<String, MapChunk> keyToChunk;
     private MapGenerator mapGen;

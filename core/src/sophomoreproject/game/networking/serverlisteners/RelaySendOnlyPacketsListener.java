@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Listener;
 import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.packets.UpdateItem;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
+import sophomoreproject.game.packets.UpdatePlayer;
 import sophomoreproject.game.packets.UpdateSleepState;
 import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.systems.GameWorld;
@@ -35,6 +36,9 @@ public class RelaySendOnlyPacketsListener implements Listener {
         } else if (o instanceof UpdateSleepState) {
             gameServer.setAndSendSleepState((UpdateSleepState) o);
         } else if (o instanceof UpdateItem) {
+            world.queueAddUpdatePacket(o);
+            serverNetwork.sendPacketToAllExcept(c, o);
+        } else if (o instanceof UpdatePlayer) {
             world.queueAddUpdatePacket(o);
             serverNetwork.sendPacketToAllExcept(c, o);
         }

@@ -23,7 +23,7 @@ public class GreenBiome implements Biome{
         selection.addOctaveFractal(0.002, 1.0, 2.0, 0.5, 2);
 
         terrain = new OctaveSet(random);
-        terrain.addOctaveFractal(0.005, 1.0, 2.0, 0.5, 4);
+        terrain.addOctaveFractal(0.005, 1.0, 2.0, 0.5, 5);
 
         yellowFlowerSelect = new OctaveSet(random);
         yellowFlowerSelect.addOctave(13.59153, 1.0);
@@ -51,7 +51,7 @@ public class GreenBiome implements Biome{
             return map.grassYellowFlowerCell;
         } else if (yellowFlowerBigSelect.getValue(x, y) > 0.98) {
             return map.grassYellowFlowerBiggerCell;
-        } else if (redFlowerSelect.getValue(x, y) > 0.92) {
+        } else if (redFlowerSelect.getValue(x, y) > 0.94) {
             return map.grassRedFlowerCell;
         } else {
             return map.grassCell;

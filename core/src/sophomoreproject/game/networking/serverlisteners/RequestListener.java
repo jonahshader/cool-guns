@@ -64,8 +64,8 @@ public class RequestListener implements Listener {
                     // make more guns
                     GunInfo autoGunInfo = new GunInfo();
                     autoGunInfo.firingMode = Gun.FiringMode.AUTO;
-                    autoGunInfo.fireDelay = 1/60f;
-                    autoGunInfo.bulletsPerShot = 1;
+                    autoGunInfo.fireDelay = 7/60f;
+                    autoGunInfo.bulletsPerShot = 7;
 //                    autoGunInfo.playerKnockback = 1f;
                     Gun autoGun = new Gun(autoGunInfo, newPlayer.getNetworkID(), world.getNewNetID());
                     gameServer.spawnAndSendGameObject(autoGun);

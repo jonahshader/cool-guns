@@ -129,8 +129,8 @@ public class Gun extends Item implements Renderable {
     public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
         if (isEquipped()) {
             gunSprite.setFlip(false,angle.x < 0);
-            gunSprite.setPosition(position.x, position.y);
             gunSprite.setRotation(angle.angleDeg());
+            gunSprite.setOriginBasedPosition(position.x, position.y);
             gunSprite.draw(sb);
         }
     }

@@ -143,6 +143,7 @@ public final class PlayerController implements InputProcessor {
             Vector2 mouseWorldCoords2D = new Vector2(mouseWorldCoords.x, mouseWorldCoords.y);
             Vector2 playerToMouse = mouseWorldCoords2D.sub(player.position);
             playerToMouse.nor();
+            player.updateLookDirection(playerToMouse);
             if (player.getInventory().get(equippedItemIndex) != null) {
                 Object gameObj = world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
                 if (gameObj != null) {
@@ -181,6 +182,28 @@ public final class PlayerController implements InputProcessor {
         updatePacketArray.clear();
     }
 
+    private void changeEquippedItem(int newIndex) {
+        if (player.getInventory().get(equippedItemIndex) != null) {
+            Object gameObj = world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
+            if (gameObj != null) {
+                Item gameItem = (Item) gameObj;
+                gameItem.setEquipped(false);
+            }
+        }
+
+        equippedItemIndex = newIndex;
+        equippedItemIndex = MathUtilities.wrap(equippedItemIndex, 0, player.getInventorySize());
+        if (player.getInventory().get(equippedItemIndex) != null) {
+            Object gameObj = world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
+            if (gameObj != null) {
+                Item gameItem = (Item) gameObj;
+                gameItem.setEquipped(true);
+            }
+        }
+
+        System.out.println("Item index " + equippedItemIndex + " equipped.");
+    }
+
 
     // Later we will have adjustable controls.
     @Override
@@ -207,6 +230,39 @@ public final class PlayerController implements InputProcessor {
             case Keys.SHIFT_LEFT:
                 shift = true;
                 keyProc = true;
+                break;
+            case Keys.NUM_1:
+                changeEquippedItem(0);
+                keyProc = true;
+                break;
+            case Keys.NUM_2:
+                changeEquippedItem(1);
+                keyProc = true;
+                break;
+            case Keys.NUM_3:
+                changeEquippedItem(2);
+                keyProc = true;
+                break;
+            case Keys.NUM_4:
+                changeEquippedItem(3);
+                keyProc = true;
+                break;
+            case Keys.NUM_5:
+                changeEquippedItem(4);
+                keyProc = true;
+                break;
+            case Keys.NUM_6:
+                changeEquippedItem(5);
+                keyProc = true;
+                break;
+            case Keys.NUM_7:
+                changeEquippedItem(6);
+                keyProc = true;
+                break;
+            case Keys.NUM_8:
+                changeEquippedItem(7);
+                keyProc = true;
+                break;
         }
         return keyProc;
     }
@@ -282,25 +338,7 @@ public final class PlayerController implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        if (player.getInventory().get(equippedItemIndex) != null) {
-            Object gameObj = world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
-            if (gameObj != null) {
-                Item gameItem = (Item) gameObj;
-                gameItem.setEquipped(false);
-            }
-        }
-
-        equippedItemIndex -= Math.round(amountY);
-        equippedItemIndex = MathUtilities.wrap(equippedItemIndex, 0, player.getInventorySize());
-        if (player.getInventory().get(equippedItemIndex) != null) {
-            Object gameObj = world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
-            if (gameObj != null) {
-                Item gameItem = (Item) gameObj;
-                gameItem.setEquipped(true);
-            }
-        }
-
-        System.out.println("Item index " + equippedItemIndex + " equipped.");
+        changeEquippedItem(-Math.round(amountY) + equippedItemIndex);
         return true;
     }
 

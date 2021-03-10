@@ -8,10 +8,7 @@ import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.networking.ServerNetwork;
-import sophomoreproject.game.packets.CreateSleeping;
-import sophomoreproject.game.packets.UpdateItem;
-import sophomoreproject.game.packets.UpdateSleepState;
-import sophomoreproject.game.packets.UpdatePhysicsObject;
+import sophomoreproject.game.packets.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +53,11 @@ public class GameWorld {
             } else if (o instanceof UpdateItem) {
                 UpdateItem packet = (UpdateItem) o;
                 Item toUpdate = (Item)getGameObjectFromID(packet.netID);
+                if (toUpdate != null)
+                    toUpdate.receiveUpdate(packet);
+            } else if (o instanceof UpdatePlayer) {
+                UpdatePlayer packet = (UpdatePlayer) o;
+                Player toUpdate = (Player)getGameObjectFromID(packet.netID);
                 if (toUpdate != null)
                     toUpdate.receiveUpdate(packet);
             }
@@ -211,7 +213,7 @@ public class GameWorld {
         return worldCopy;
     }
 
-    public int getNewNetID() {
+    public synchronized int getNewNetID() {
 //        if (gameObjectAddQueue.size() == 0) {
 //            if (gameObjects.size() == 0) return 0;
 //            else return gameObjects.get(gameObjects.size() - 1).getNetworkID() + 1;
