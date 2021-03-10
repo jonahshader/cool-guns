@@ -64,8 +64,8 @@ public class Gun extends Item implements Renderable {
 
     @Override
     public void updateItem(float dt, boolean usedOnce, boolean using, Vector2 angle, Player player) {
-        this.angle = angle;
-        this.position = new Vector2(player.position);
+        this.angle.set(angle);
+        this.position.set(player.position);
         Vector2 offset = new Vector2(angle);
         offset.scl(info.gunHoldRadius);
         position.add(offset);
@@ -140,19 +140,24 @@ public class Gun extends Item implements Renderable {
         Vector2 baseVelocity = new Vector2(angle);
         baseVelocity.scl(info.bulletSpeed);
 
+        Vector2 accumulatedKnockback = new Vector2();
+
         for (int b = 0; b < info.bulletsPerShot; b++) {
             Vector2 uniqueVel = new Vector2(baseVelocity);
             uniqueVel.rotateRad((float) RAND.nextGaussian()*info.spread);
             uniqueVel.scl(expGaussian(2f,info.bulletSpeedVariation));
 
             Vector2 uniqueKnockback = new Vector2(uniqueVel).nor().scl(-info.playerKnockback);
-            player.velocity.add(uniqueKnockback);
+            accumulatedKnockback.add(uniqueKnockback);
+
+            uniqueVel.add(player.velocity); // inherit velocity from player
 
             float uniqueDam = info.bulletDamage + genTriangleDist()*info.bulletDamageVariance;
 
             bulletPackets.add(new CreateBullet(new UpdatePhysicsObject(-1, gunSprite.getX(), gunSprite.getY(), uniqueVel.x, uniqueVel.y, 0f, 0f), player.getNetworkID(),
                     info.bulletSize, uniqueDam, info.shieldDamage,info.armorDamage, info.critScalar, info.enemyKnockback));
         }
+        player.velocity.add(accumulatedKnockback);
         ClientNetwork.getInstance().sendAllPackets(bulletPackets);
         bulletPackets.clear();
     }
