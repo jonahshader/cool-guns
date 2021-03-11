@@ -16,6 +16,7 @@ public class MapChunk implements Disposable {
 
     private static final int[] backgroundLayers = { 0 };    // list of background layers
     private static final int[] foregroundLayers = { 1 };    // list of foreground layers
+    private static final int[] allLayers = { 0, 1 };
 
     private TiledMap map;
     private MapRenderer mapRenderer;
@@ -42,6 +43,8 @@ public class MapChunk implements Disposable {
                 // background.setCell(xx, yy, cell)
                 background.setCell(xx, yy,
                         mapGen.getBackgroundCell(x * CHUNK_SIZE_TILES + xx, y * CHUNK_SIZE_TILES + yy));
+                foreground.setCell(xx, yy,
+                        mapGen.getForegroundCell(x * CHUNK_SIZE_TILES + xx, y * CHUNK_SIZE_TILES + yy));
             }
         }
 
@@ -56,19 +59,16 @@ public class MapChunk implements Disposable {
         return x + " " + y;
     }
 
-    public void renderBackground(OrthographicCamera cam) {
+    public void render(OrthographicCamera cam) {
         cam.translate(-getXInTiles() * TILE_SIZE, -getYInTiles() * TILE_SIZE);
         cam.update();
         mapRenderer.setView(cam);
         mapRenderer.render(backgroundLayers);
+        mapRenderer.render(foregroundLayers);
         cam.translate(getXInTiles() * TILE_SIZE, getYInTiles() * TILE_SIZE);
         cam.update();
     }
 
-    public void renderForeground(OrthographicCamera cam) {
-        mapRenderer.setView(cam);
-        mapRenderer.render(foregroundLayers);
-    }
 
     public int getX() {
         return x;

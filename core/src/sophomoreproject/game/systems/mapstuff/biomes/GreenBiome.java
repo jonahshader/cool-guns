@@ -16,6 +16,7 @@ public class GreenBiome implements Biome{
     private OctaveSet yellowFlowerBigSelect;
     private OctaveSet redFlowerSelect;
     private OctaveSet denseGrassSelect;
+    private OctaveSet enemySpawnSelect;
 
     public GreenBiome(Map map, Random random) {
         this.map = map;
@@ -36,6 +37,9 @@ public class GreenBiome implements Biome{
 
         denseGrassSelect = new OctaveSet(random);
         denseGrassSelect.addOctaveFractal(0.05, 1.0, 2.0, 0.5, 2);
+
+        enemySpawnSelect = new OctaveSet(random);
+        enemySpawnSelect.addOctaveFractal(0.033, 1.0, 2.0, 0.5, 4);
     }
 
     @Override
@@ -45,7 +49,7 @@ public class GreenBiome implements Biome{
             return map.waterCell;
         } else if (val < -0.175) {
             return map.sandCell;
-        } else if (denseGrassSelect.getValue(x, y) > .75) {
+        } else if (denseGrassSelect.getValue(x, y) > .5) {
             return map.grassDenseCell;
         } else if (yellowFlowerSelect.getValue(x, y) > 0.95) {
             return map.grassYellowFlowerCell;
@@ -60,12 +64,21 @@ public class GreenBiome implements Biome{
 
     @Override
     public TiledMapTileLayer.Cell getForegroundCell(int x, int y) {
-        return null;
+        if (isEnemySpawn(x, y)) {
+            return map.holeCell;
+        } else {
+            return null;
+        }
     }
 
     @Override
     public double getSelectValue(int x, int y) {
 //        return selection.getValue(x, y) - Math.sqrt(x * x + y * y) * 0.0001;
         return selection.getValue(x, y);
+    }
+
+    @Override
+    public boolean isEnemySpawn(int x, int y) {
+        return (terrain.getValue(x, y) >= -0.25) && (enemySpawnSelect.getValue(x, y) > 0.8);
     }
 }

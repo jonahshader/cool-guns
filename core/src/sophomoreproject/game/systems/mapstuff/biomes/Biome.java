@@ -6,4 +6,5 @@ public interface Biome {
     TiledMapTileLayer.Cell getBackgroundCell(int x, int y);
     TiledMapTileLayer.Cell getForegroundCell(int x, int y);
     double getSelectValue(int x, int y);
+    boolean isEnemySpawn(int x, int y);
 }

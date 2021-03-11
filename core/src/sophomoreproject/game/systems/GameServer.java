@@ -10,14 +10,18 @@ import sophomoreproject.game.systems.gameplaysystems.GameSystem;
 import sophomoreproject.game.systems.gameplaysystems.spawners.TestObjectSpawner;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class GameServer {
     private GameWorld world;
     private ServerNetwork serverNetwork;
-    private double time = 0.0;
 
     private ArrayList<Object> createPackets = new ArrayList<>();
     private ArrayList<GameSystem> gameSystems = new ArrayList<>();
+    private ArrayList<GameObject> forceUpdateQueue = new ArrayList<>();
+    private ArrayList<Object> forceUpdatePackets = new ArrayList<>();
+
+    private ReentrantLock forceUpdateQueueLock = new ReentrantLock();
 
     public GameServer(ServerNetwork serverNetwork) {
         world = new GameWorld();
@@ -37,7 +41,15 @@ public class GameServer {
         world.serverOnly(dt, serverNetwork, this);
         world.update(dt);
 
-        time += dt;
+        // send manual updates
+        forceUpdateQueueLock.lock();
+        for (GameObject toUpdate : forceUpdateQueue) {
+            toUpdate.addUpdatePacketToBuffer(forceUpdatePackets);
+        }
+        serverNetwork.sendPacketsToAll(forceUpdatePackets);
+        forceUpdatePackets.clear();
+        forceUpdateQueue.clear();
+        forceUpdateQueueLock.unlock();
     }
 
     /**
@@ -89,5 +101,18 @@ public class GameServer {
         GameObject obj = world.getGameObjectFromID(packet.networkID);
         world.queueRemoveObject(obj);
         serverNetwork.sendPacketToAll(packet);
+    }
+
+    /**
+     * queues gameobject with id to update manually
+     * @param itemID
+     */
+    public void queueForceUpdate(int itemID) {
+        GameObject toUpdate = world.getGameObjectFromID(itemID);
+        if (toUpdate!= null) {
+            forceUpdateQueueLock.lock();
+            forceUpdateQueue.add(toUpdate);
+            forceUpdateQueueLock.unlock();
+        }
     }
 }

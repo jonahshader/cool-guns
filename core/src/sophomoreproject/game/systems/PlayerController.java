@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.networking.ClientNetwork;
 import sophomoreproject.game.packets.CreateBullet;
@@ -37,6 +38,7 @@ public final class PlayerController implements InputProcessor {
     private TextDisplay.TextEntry accountIDString;
     private TextDisplay.TextEntry playerNetIDString;
     private TextDisplay.TextEntry fpsString;
+    private TextDisplay.TextEntry clipString;
 
 
     private final ArrayList<Object> updatePacketArray = new ArrayList<>();
@@ -50,10 +52,12 @@ public final class PlayerController implements InputProcessor {
         accountIDString = new TextDisplay.TextEntry("temp");
         playerNetIDString = new TextDisplay.TextEntry("temp");
         fpsString = new TextDisplay.TextEntry("temp");
+        clipString = new TextDisplay.TextEntry("temp");
 
         TextDisplay.getInstance().addHudText(accountIDString, TextDisplay.TextPosition.TOP_LEFT);
         TextDisplay.getInstance().addHudText(playerNetIDString, TextDisplay.TextPosition.TOP_LEFT);
         TextDisplay.getInstance().addHudText(fpsString, TextDisplay.TextPosition.TOP_LEFT);
+        TextDisplay.getInstance().addHudText(clipString, TextDisplay.TextPosition.TOP);
     }
 
     public synchronized static PlayerController getInstance() {
@@ -151,6 +155,10 @@ public final class PlayerController implements InputProcessor {
                     gameItem.setEquipped(true);
                     gameItem.updateItem(dt,Gdx.input.justTouched() && isMouse1Down, isMouse1Down,
                             playerToMouse, player);
+
+                    if (gameItem instanceof Gun) {
+                        clipString.entry = "Clip: " + ((Gun)gameItem).getCurrentClip();
+                    }
                 } else {
                     // inventory item not found!
                     System.out.println("Player inventory item not found! Should never happen!");

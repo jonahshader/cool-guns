@@ -78,7 +78,7 @@ public class TextDisplay {
             drawText(sb, topLeftText.get(i).toString(), TEXT_PADDING, hudVp.getWorldHeight() - (TEXT_PADDING + i * font.getLineHeight() * TEXT_OFFSET_PERCENT), .25f, Color.WHITE, Align.topLeft);
         }
         for (int i = 0; i < topText.size(); ++i) {
-            drawText(sb, topText.get(i).toString(), TEXT_PADDING, hudVp.getWorldHeight() - (TEXT_PADDING + i * font.getLineHeight() * TEXT_OFFSET_PERCENT), .25f, Color.WHITE, Align.center);
+            drawText(sb, topText.get(i).toString(), hudVp.getWorldWidth() / 2f, hudVp.getWorldHeight() - (TEXT_PADDING + i * font.getLineHeight() * TEXT_OFFSET_PERCENT), .25f, Color.WHITE, Align.center);
         }
 
     }

@@ -40,19 +40,26 @@ public class Gun extends Item implements Renderable {
     private GunInfo info;
 
     private static TextureAtlas texAtl = null;
+    private final ArrayList<Object> bulletPackets = new ArrayList<>();
     private Sprite gunSprite = null;
     private float firingTimer;
-    private final ArrayList<Object> bulletPackets = new ArrayList<>();
-    private boolean bursting = false;
     private float burstDelayTimer = 0;
+    private float reloadTimer = 0;
+    private boolean bursting = false;
     private int burstShotsFired = 0;
+    private int currentClip;
 
     //Client Constructor
     public Gun(CreateInventoryGun packet) {
         this.info = packet.info;
         this.ownerNetId = packet.ownerNetId;
         this.networkID = packet.netId;
+
+        currentClip = info.clipSize;
+
         loadTextures();
+
+        updateFrequency = ServerUpdateFrequency.SEND_ONLY;
     }
 
     //Server Constructor
@@ -60,6 +67,10 @@ public class Gun extends Item implements Renderable {
         this.info = info;
         this.ownerNetId = ownerNetId;
         this.networkID = netId;
+
+        currentClip = info.clipSize;
+
+        updateFrequency = ServerUpdateFrequency.SEND_ONLY;
     }
 
     @Override
@@ -72,9 +83,8 @@ public class Gun extends Item implements Renderable {
 
         if (bursting) {
             if (burstShotsFired < info.shotsPerBurst) {
-                if (firingTimer <= 0) {
+                if (firingTimer <= 0 && reloadTimer <= 0) {
                     shoot(angle, player);
-                    ++burstShotsFired;
                 }
             } else {
                 if (burstDelayTimer > 0) {
@@ -85,7 +95,7 @@ public class Gun extends Item implements Renderable {
                 }
             }
         } else {
-            if (firingTimer <= 0) {
+            if (firingTimer <= 0 && reloadTimer <= 0) {
                 switch (info.firingMode) {
                     case AUTO:
                         if (using) shoot(angle, player);
@@ -98,7 +108,8 @@ public class Gun extends Item implements Renderable {
                             bursting = true;
                             burstDelayTimer = info.burstDelay;
                             shoot(angle, player);
-                            ++burstShotsFired;
+//                            --currentClip;
+//                            ++burstShotsFired;
                         }
                         break;
                     case CHARGE:
@@ -111,6 +122,10 @@ public class Gun extends Item implements Renderable {
 
         if (firingTimer > 0) {
             firingTimer = firingTimer - dt;
+        }
+
+        if (reloadTimer > 0) {
+            reloadTimer = reloadTimer - dt;
         }
     }
 
@@ -143,19 +158,35 @@ public class Gun extends Item implements Renderable {
         Vector2 accumulatedKnockback = new Vector2();
 
         for (int b = 0; b < info.bulletsPerShot; b++) {
-            Vector2 uniqueVel = new Vector2(baseVelocity);
-            uniqueVel.rotateRad((float) RAND.nextGaussian()*info.spread);
-            uniqueVel.scl(expGaussian(2f,info.bulletSpeedVariation));
+            if (currentClip > 0) {
+                Vector2 uniqueVel = new Vector2(baseVelocity);
+                uniqueVel.rotateRad((float) RAND.nextGaussian()*info.spread);
+                uniqueVel.scl(expGaussian(2f,info.bulletSpeedVariation));
 
-            Vector2 uniqueKnockback = new Vector2(uniqueVel).nor().scl(-info.playerKnockback);
-            accumulatedKnockback.add(uniqueKnockback);
+                Vector2 uniqueKnockback = new Vector2(uniqueVel).nor().scl(-info.playerKnockback);
+                accumulatedKnockback.add(uniqueKnockback);
 
-            uniqueVel.add(player.velocity); // inherit velocity from player
+                uniqueVel.add(player.velocity); // inherit velocity from player
 
-            float uniqueDam = info.bulletDamage + genTriangleDist()*info.bulletDamageVariance;
+                float uniqueDam = info.bulletDamage + genTriangleDist()*info.bulletDamageVariance;
 
-            bulletPackets.add(new CreateBullet(new UpdatePhysicsObject(-1, gunSprite.getX(), gunSprite.getY(), uniqueVel.x, uniqueVel.y, 0f, 0f), player.getNetworkID(),
-                    info.bulletSize, uniqueDam, info.shieldDamage,info.armorDamage, info.critScalar, info.enemyKnockback));
+                bulletPackets.add(new CreateBullet(new UpdatePhysicsObject(-1, gunSprite.getX(), gunSprite.getY(), uniqueVel.x, uniqueVel.y, 0f, 0f), player.getNetworkID(),
+                        info.bulletSize, uniqueDam, info.shieldDamage,info.armorDamage, info.critScalar, info.enemyKnockback));
+                currentClip--;
+                ++burstShotsFired;
+            } else {
+                reloadTimer += info.reloadDelay;
+                currentClip = info.clipSize;
+                bursting = false;
+                burstShotsFired = 0;
+                break; // break out of for loop
+            }
+        }
+        if (currentClip == 0) {
+            reloadTimer += info.reloadDelay;
+            currentClip = info.clipSize;
+            bursting = false;
+            burstShotsFired = 0;
         }
         player.velocity.add(accumulatedKnockback);
         ClientNetwork.getInstance().sendAllPackets(bulletPackets);
@@ -183,5 +214,9 @@ public class Gun extends Item implements Renderable {
 
     public int getOwnerNetId() {
         return ownerNetId;
+    }
+
+    public int getCurrentClip() {
+        return currentClip;
     }
 }
