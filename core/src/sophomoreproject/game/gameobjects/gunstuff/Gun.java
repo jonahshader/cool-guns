@@ -64,8 +64,8 @@ public class Gun extends Item implements Renderable {
 
     @Override
     public void updateItem(float dt, boolean usedOnce, boolean using, Vector2 angle, Player player) {
-        this.angle = angle;
-        this.position = new Vector2(player.position);
+        this.angle.set(angle);
+        this.position.set(player.position);
         Vector2 offset = new Vector2(angle);
         offset.scl(info.gunHoldRadius);
         position.add(offset);
@@ -147,6 +147,8 @@ public class Gun extends Item implements Renderable {
 
             Vector2 uniqueKnockback = new Vector2(uniqueVel).nor().scl(-info.playerKnockback);
             player.velocity.add(uniqueKnockback);
+
+            uniqueVel.add(player.velocity);
 
             float uniqueDam = info.bulletDamage + genTriangleDist()*info.bulletDamageVariance;
 
