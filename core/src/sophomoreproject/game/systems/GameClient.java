@@ -21,6 +21,7 @@ public class GameClient {
     public GameClient(int accountID) {
         this.accountID = accountID;
         world = new GameWorld();
+        PlayerController.getInstance().setGameWorld(world);
         ClientNetwork client = ClientNetwork.getInstance();
         client.addListener(new ObjectCreationListener(world, this));
         client.addListener(new ObjectRemoveListener(world));
@@ -32,12 +33,11 @@ public class GameClient {
     }
 
     public void run(float dt) {
-        world.clientOnly(dt);
         world.update(dt);
     }
 
-    public void draw(SpriteBatch sb, ShapeRenderer sr) {
-        world.draw(sb, sr);
+    public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
+        world.draw(dt, sb, sr);
     }
 
     public void setClientControlledPlayer(Player player) {

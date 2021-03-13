@@ -3,11 +3,14 @@ package sophomoreproject.game.networking.serverlisteners;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.gameobjects.gunstuff.Gun;
+import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
 import sophomoreproject.game.networking.ConnectedAccount;
 import sophomoreproject.game.networking.ServerNetwork;
+import sophomoreproject.game.packets.CreateBullet;
 import sophomoreproject.game.packets.RequestGameData;
-import sophomoreproject.game.packets.UpdateSleepState;
 import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.systems.GameWorld;
 
@@ -51,7 +54,41 @@ public class RequestListener implements Listener {
                 } else {
                     // create player
                     String username = usersLoggedIn.get(playerAccountID).getAccount().username;
-                    Player newPlayer = new Player(new Vector2(), playerAccountID, world.getNewNetID(), username, false);
+                    Player newPlayer = new Player(new Vector2(), playerAccountID, world.getNewNetID(), username);
+
+                    // make a default gun
+                    GunInfo gunInfo = new GunInfo();
+                    Gun gun = new Gun(gunInfo, newPlayer.getNetworkID(), world.getNewNetID());
+                    gameServer.spawnAndSendGameObject(gun);
+
+                    // make more guns
+                    GunInfo autoGunInfo = new GunInfo();
+                    autoGunInfo.firingMode = Gun.FiringMode.AUTO;
+                    autoGunInfo.fireDelay = 1/60f;
+                    autoGunInfo.bulletsPerShot = 1;
+//                    autoGunInfo.playerKnockback = 1f;
+                    Gun autoGun = new Gun(autoGunInfo, newPlayer.getNetworkID(), world.getNewNetID());
+                    gameServer.spawnAndSendGameObject(autoGun);
+
+                    GunInfo burstGunInfo = new GunInfo();
+                    burstGunInfo.firingMode = Gun.FiringMode.BURST;
+                    burstGunInfo.fireDelay = 0.05f;
+                    Gun burstGun = new Gun(burstGunInfo, newPlayer.getNetworkID(), world.getNewNetID());
+                    gameServer.spawnAndSendGameObject(burstGun);
+
+                    GunInfo shotgunInfo = new GunInfo();
+                    shotgunInfo.bulletsPerShot = 12;
+                    shotgunInfo.bulletSpeed = 150;
+                    shotgunInfo.bulletSize = .8f;
+                    Gun shotgun = new Gun(shotgunInfo, newPlayer.getNetworkID(), world.getNewNetID());
+                    gameServer.spawnAndSendGameObject(shotgun);
+
+                    // put gun in player inventory
+                    newPlayer.getInventory().set(0, gun.getNetworkID()); // first slot
+                    newPlayer.getInventory().set(1, autoGun.getNetworkID()); // second slot
+                    newPlayer.getInventory().set(2, burstGun.getNetworkID()); // third slot
+                    newPlayer.getInventory().set(3, shotgun.getNetworkID());
+
                     // register with world and distribute
                     gameServer.spawnAndSendGameObject(newPlayer);
                     System.out.println("Created new player with account id " + playerAccountID + " and net id " + newPlayer.getNetworkID() + "!");
@@ -60,6 +97,10 @@ public class RequestListener implements Listener {
                 System.out.println("WARNING: Account not found corresponding to connection " + c.toString());
                 System.out.println("This should never happen...");
             }
+        } else if (o instanceof CreateBullet) {
+            ((CreateBullet) o).u.netID = world.getNewNetID();
+            Bullet b = new Bullet((CreateBullet) o, false);
+            gameServer.spawnAndSendGameObject(b);
         }
     }
 }
