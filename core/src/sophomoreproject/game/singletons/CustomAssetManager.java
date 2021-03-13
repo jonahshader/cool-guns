@@ -15,9 +15,11 @@ public final class CustomAssetManager {
 
     //Textures
     public static final String SPRITE_PACK = "graphics/spritesheets/sprites.atlas";
+    public static final String MAP_PACK = "graphics/spritesheets/terrain.atlas";
 
     public void loadImages() {
         manager.load(SPRITE_PACK, TextureAtlas.class);
+        manager.load(MAP_PACK, TextureAtlas.class);
     }
 
     //Sounds

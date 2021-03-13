@@ -15,7 +15,11 @@ import sophomoreproject.game.singletons.CustomAssetManager;
 public class CoolGuns extends Game {
 	public SpriteBatch batch;
 	public ShapeRenderer shapeRenderer;
+	private boolean useLocalHost;
 
+    public CoolGuns(boolean useLocalHost) {
+        this.useLocalHost = useLocalHost;
+    }
 
     @Override
 	public void create () {
@@ -26,7 +30,7 @@ public class CoolGuns extends Game {
 		CustomAssetManager.getInstance().loadSounds();
 		CustomAssetManager.getInstance().manager.finishLoading();
         // change screen to a new instance of LoginScreen
-        setScreen(new TempBypassScreen(this));
+        setScreen(new ConnectServerScreen(this));
 //		setScreen(new MainMenuScreen(this, 0));
 	}
 

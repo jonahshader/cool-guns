@@ -25,7 +25,6 @@ public class TestObjectSpawner implements GameSystem {
             // spawn test object
             for (int i = 0; i < 1; i++) {
                 gameServer.spawnAndSendGameObject(new TestObject(new Vector2(), world.getNewNetID()));
-                // test commit
             }
         }
 

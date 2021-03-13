@@ -1,5 +1,7 @@
 package sophomoreproject.game.packets;
 
+
+
 public class RequestNewAccount {
     public String username;
     public String password;
@@ -10,4 +12,6 @@ public class RequestNewAccount {
     }
 
     public RequestNewAccount(){} // no arg constructor for KryoNet internal usage
+
+
 }

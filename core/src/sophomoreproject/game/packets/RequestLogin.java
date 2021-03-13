@@ -1,5 +1,7 @@
 package sophomoreproject.game.packets;
 
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+
 public class RequestLogin {
     public String username;
     public String password;

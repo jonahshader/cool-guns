@@ -12,6 +12,18 @@ import java.util.ArrayList;
 import static sophomoreproject.game.singletons.CustomAssetManager.MENU_FONT;
 
 public class TextDisplay {
+    public static class TextEntry {
+        public String entry;
+
+        public TextEntry(String entry) {
+            this.entry = entry;
+        }
+
+        @Override
+        public String toString() {
+            return entry;
+        }
+    }
     private static TextDisplay instance;
 
     private static final float UNDERTEXT_OFFSET = 3f;
@@ -19,8 +31,8 @@ public class TextDisplay {
     private static final float TEXT_PADDING = 3f;
     private final BitmapFont font;
 
-    private final ArrayList<String[]> topLeftText;
-    private final ArrayList<String[]> topText;
+    private final ArrayList<TextEntry> topLeftText;
+    private final ArrayList<TextEntry> topText;
 //    private final ArrayList<String> topRightText;
 
     public enum TextPosition {
@@ -38,7 +50,7 @@ public class TextDisplay {
 //        topRightText = new ArrayList<>();
     }
 
-    public void addHudText(String[] text, TextPosition pos) {
+    public void addHudText(TextEntry text, TextPosition pos) {
         switch (pos) {
             case TOP_LEFT:
                 topLeftText.add(text);
@@ -63,10 +75,10 @@ public class TextDisplay {
     public void draw(SpriteBatch sb, Viewport hudVp) {
         font.getData().setScale(0.25f);
         for (int i = 0; i < topLeftText.size(); ++i) {
-            drawText(sb, topLeftText.get(i)[0], TEXT_PADDING, hudVp.getWorldHeight() - (TEXT_PADDING + i * font.getLineHeight() * TEXT_OFFSET_PERCENT), .25f, Color.WHITE, Align.topLeft);
+            drawText(sb, topLeftText.get(i).toString(), TEXT_PADDING, hudVp.getWorldHeight() - (TEXT_PADDING + i * font.getLineHeight() * TEXT_OFFSET_PERCENT), .25f, Color.WHITE, Align.topLeft);
         }
         for (int i = 0; i < topText.size(); ++i) {
-            drawText(sb, topText.get(i)[0], TEXT_PADDING, hudVp.getWorldHeight() - (TEXT_PADDING + i * font.getLineHeight() * TEXT_OFFSET_PERCENT), .25f, Color.WHITE, Align.center);
+            drawText(sb, topText.get(i).toString(), TEXT_PADDING, hudVp.getWorldHeight() - (TEXT_PADDING + i * font.getLineHeight() * TEXT_OFFSET_PERCENT), .25f, Color.WHITE, Align.center);
         }
 
     }
@@ -79,7 +91,7 @@ public class TextDisplay {
         font.setUseIntegerPositions(false);
         font.getData().setScale(scale);
         font.setColor(0f, 0f, 0f, c.a);
-        font.draw(sb, text, x + UNDERTEXT_OFFSET * scale, y + UNDERTEXT_OFFSET * scale, 0f, align, false);
+        font.draw(sb, text, x - UNDERTEXT_OFFSET * scale, y - UNDERTEXT_OFFSET * scale, 0f, align, false);
 
         font.setColor(c);
         font.draw(sb, text, x, y, 0f, align, false);
