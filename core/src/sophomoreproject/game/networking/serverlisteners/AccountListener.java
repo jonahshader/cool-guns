@@ -2,6 +2,8 @@ package sophomoreproject.game.networking.serverlisteners;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.networking.Accounts;
 import sophomoreproject.game.networking.ConnectedAccount;
 import sophomoreproject.game.packets.ReplyAccountEvent;
@@ -37,10 +39,23 @@ public class AccountListener implements Listener {
             usersLoggedIn.remove(disconnectedAccountID);
             connectionToAccountID.remove(connection);
 
+
+
             // make player go to sleep
 //            world.handleSetSleepStatePacket(new SetSleepState());
             int playerNetID = world.getPlayerNetIDFromAccountID(disconnectedAccountID);
             gameServer.setAndSendSleepState(playerNetID, true);
+
+            // un equip inventory
+            Player player = (Player)world.getGameObjectFromID(playerNetID);
+            for (Integer itemID : player.getInventory()) {
+                if (itemID != null) {
+                    Item item = (Item)world.getGameObjectFromID(itemID);
+                    item.setEquipped(false);
+                    gameServer.queueForceUpdate(itemID);
+//                    gameServer.setAndSendSleepState(itemID, true);
+                }
+            }
         }
     }
 

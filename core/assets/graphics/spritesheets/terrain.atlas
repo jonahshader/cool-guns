@@ -1,152 +1,159 @@
 
 terrain.png
-size: 64,128
+size: 512,32
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 cobblestone
   rotate: false
-  xy: 1, 19
+  xy: 235, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 grass
   rotate: false
-  xy: 19, 55
+  xy: 199, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 grass_dense
   rotate: false
-  xy: 19, 109
+  xy: 37, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 grass_red_flower
   rotate: false
-  xy: 19, 1
+  xy: 343, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 grass_yellow_flower
   rotate: false
-  xy: 37, 73
+  xy: 217, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 grass_yellow_flower_bigger
   rotate: false
-  xy: 1, 37
+  xy: 181, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 hell
   rotate: false
-  xy: 1, 55
+  xy: 127, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+hole
+  rotate: false
+  xy: 109, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 palace_floor
   rotate: false
-  xy: 37, 19
+  xy: 361, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 sand
   rotate: false
-  xy: 37, 91
+  xy: 145, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 strange_tiled_floor
   rotate: false
-  xy: 1, 1
+  xy: 253, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 tech
   rotate: false
-  xy: 37, 37
+  xy: 289, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 wall_bottom
   rotate: false
-  xy: 37, 109
+  xy: 73, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 wall_bottom_left
   rotate: false
-  xy: 37, 55
+  xy: 271, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 wall_bottom_right
   rotate: false
-  xy: 1, 73
+  xy: 55, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 wall_center
   rotate: false
-  xy: 19, 73
+  xy: 163, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 wall_left
   rotate: false
-  xy: 37, 1
+  xy: 379, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 wall_right
   rotate: false
-  xy: 1, 109
+  xy: 1, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 wall_top
   rotate: false
-  xy: 19, 37
+  xy: 307, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 wall_top_left
   rotate: false
-  xy: 19, 91
+  xy: 91, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 wall_top_right
   rotate: false
-  xy: 1, 91
+  xy: 19, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 water
   rotate: false
-  xy: 19, 19
+  xy: 325, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

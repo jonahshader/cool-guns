@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreatePlayer;
+import sophomoreproject.game.packets.UpdatePlayer;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.singletons.TextDisplay;
 import sophomoreproject.game.systems.GameServer;
@@ -24,6 +25,7 @@ public class Player extends PhysicsObject implements Renderable{
 
     private final String username;
 
+    private Vector2 lookDirection = new Vector2();
     private ArrayList<Integer> inventory = new ArrayList<>();
     private int inventorySize = 8;
 
@@ -63,8 +65,16 @@ public class Player extends PhysicsObject implements Renderable{
     }
 
     @Override
+    public void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer) {
+        super.addUpdatePacketToBuffer(updatePacketBuffer);
+        updatePacketBuffer.add(new UpdatePlayer(networkID, lookDirection.x, lookDirection.y));
+    }
+
+    @Override
     public void receiveUpdate(Object updatePacket) {
         // assume object is of type
+        UpdatePlayer packet = (UpdatePlayer) updatePacket;
+        lookDirection.set(packet.xLook, packet.yLook);
     }
 
     public void run(float dt, GameServer server) {
@@ -72,8 +82,12 @@ public class Player extends PhysicsObject implements Renderable{
 
     @Override
     public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
-        RendingUtilities.renderCharacter(position, velocity, PLAYER_SIZE, sb, textures);
+        RendingUtilities.renderCharacter(position, lookDirection, PLAYER_SIZE, sb, textures);
         TextDisplay.getInstance().drawTextInWorld(sb, username, position.x, position.y + 24, .25f, new Color(1f, 1f, 1f, 1f));
+    }
+
+    public void updateLookDirection(Vector2 lookDirection) {
+        this.lookDirection.set(lookDirection);
     }
 
     public int getAccountId() {

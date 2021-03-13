@@ -19,7 +19,7 @@ public abstract class Item extends GameObject implements Renderable{
 
     @Override
     public void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer) {
-        updatePacketBuffer.add(new UpdateItem(networkID, isEquipped(), position.x, position.y, angle.x, angle.y));
+        updatePacketBuffer.add(new UpdateItem(networkID, equipped, position.x, position.y, angle.x, angle.y));
     }
 
     @Override

@@ -22,7 +22,7 @@ public class GunInfo {
     public float playerKnockback = 25f;
     public float enemyKnockback = 15f;
     public Gun.GunType gunType = Gun.GunType.PISTOL;
-    public float gunHoldRadius = 15f;
+    public float gunHoldRadius = 18f;
     public int shieldDamage = 0;
     public int armorDamage = 0;
 
@@ -40,7 +40,7 @@ public class GunInfo {
         shotsPerBurst *= expGaussian(2f, randomness);
         bulletSize *= expGaussian(2f, randomness);
         bulletDamage *= expGaussian(2f, randomness);
-        bulletDamageVariance *= expGaussian(2f, randomness);;
+        bulletDamageVariance *= expGaussian(2f, randomness);
         critScalar *= expGaussian(2f, randomness);
         playerKnockback *= expGaussian(2f, randomness);
         enemyKnockback *= expGaussian(2f, randomness);

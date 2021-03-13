@@ -15,7 +15,7 @@ import static sophomoreproject.game.singletons.CustomAssetManager.MAP_PACK;
 
 public class Map {
     public static final int LOAD_CHUNK_RADIUS = 2;
-    public static final int UNLOAD_CHUNK_RADIUS = 3;
+    public static final int UNLOAD_CHUNK_RADIUS = 2;
 
     private HashMap<String, MapChunk> keyToChunk;
     private MapGenerator mapGen;
@@ -31,6 +31,7 @@ public class Map {
     public TiledMapTileLayer.Cell grassYellowFlowerCell = new TiledMapTileLayer.Cell();
     public TiledMapTileLayer.Cell grassYellowFlowerBiggerCell = new TiledMapTileLayer.Cell();
     public TiledMapTileLayer.Cell hellCell = new TiledMapTileLayer.Cell();
+    public TiledMapTileLayer.Cell holeCell = new TiledMapTileLayer.Cell();
     public TiledMapTileLayer.Cell palaceFloorCell = new TiledMapTileLayer.Cell();
     public TiledMapTileLayer.Cell sandCell = new TiledMapTileLayer.Cell();
     public TiledMapTileLayer.Cell techCell = new TiledMapTileLayer.Cell();
@@ -56,6 +57,7 @@ public class Map {
         StaticTiledMapTile grassYellowFlowerTile = new StaticTiledMapTile(mapAtlas.findRegion("grass_yellow_flower"));
         StaticTiledMapTile grassYellowFlowerBiggerTile = new StaticTiledMapTile(mapAtlas.findRegion("grass_yellow_flower_bigger"));
         StaticTiledMapTile hellTile = new StaticTiledMapTile(mapAtlas.findRegion("hell"));
+        StaticTiledMapTile holeTile = new StaticTiledMapTile(mapAtlas.findRegion("hole"));
         StaticTiledMapTile palaceFloorTile = new StaticTiledMapTile(mapAtlas.findRegion("palace_floor"));
         StaticTiledMapTile sandTile = new StaticTiledMapTile(mapAtlas.findRegion("sand"));
         StaticTiledMapTile techTile = new StaticTiledMapTile(mapAtlas.findRegion("tech"));
@@ -77,6 +79,7 @@ public class Map {
         grassYellowFlowerCell.setTile(grassYellowFlowerTile);
         grassYellowFlowerBiggerCell.setTile(grassYellowFlowerBiggerTile);
         hellCell.setTile(hellTile);
+        holeCell.setTile(holeTile);
         palaceFloorCell.setTile(palaceFloorTile);
         sandCell.setTile(sandTile);
         techCell.setTile(techTile);
@@ -124,7 +127,7 @@ public class Map {
     public void render(OrthographicCamera cam) {
         updateLoadCenterChunk(cam);
         for (MapChunk chunk : keyToChunk.values()) {
-            chunk.renderBackground(cam);
+            chunk.render(cam);
         }
     }
 

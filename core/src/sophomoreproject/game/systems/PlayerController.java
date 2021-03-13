@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.networking.ClientNetwork;
 import sophomoreproject.game.packets.CreateBullet;
@@ -37,6 +38,7 @@ public final class PlayerController implements InputProcessor {
     private TextDisplay.TextEntry accountIDString;
     private TextDisplay.TextEntry playerNetIDString;
     private TextDisplay.TextEntry fpsString;
+    private TextDisplay.TextEntry clipString;
 
 
     private final ArrayList<Object> updatePacketArray = new ArrayList<>();
@@ -50,10 +52,12 @@ public final class PlayerController implements InputProcessor {
         accountIDString = new TextDisplay.TextEntry("temp");
         playerNetIDString = new TextDisplay.TextEntry("temp");
         fpsString = new TextDisplay.TextEntry("temp");
+        clipString = new TextDisplay.TextEntry("temp");
 
         TextDisplay.getInstance().addHudText(accountIDString, TextDisplay.TextPosition.TOP_LEFT);
         TextDisplay.getInstance().addHudText(playerNetIDString, TextDisplay.TextPosition.TOP_LEFT);
         TextDisplay.getInstance().addHudText(fpsString, TextDisplay.TextPosition.TOP_LEFT);
+        TextDisplay.getInstance().addHudText(clipString, TextDisplay.TextPosition.TOP);
     }
 
     public synchronized static PlayerController getInstance() {
@@ -143,6 +147,7 @@ public final class PlayerController implements InputProcessor {
             Vector2 mouseWorldCoords2D = new Vector2(mouseWorldCoords.x, mouseWorldCoords.y);
             Vector2 playerToMouse = mouseWorldCoords2D.sub(player.position);
             playerToMouse.nor();
+            player.updateLookDirection(playerToMouse);
             if (player.getInventory().get(equippedItemIndex) != null) {
                 Object gameObj = world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
                 if (gameObj != null) {
@@ -150,6 +155,10 @@ public final class PlayerController implements InputProcessor {
                     gameItem.setEquipped(true);
                     gameItem.updateItem(dt,Gdx.input.justTouched() && isMouse1Down, isMouse1Down,
                             playerToMouse, player);
+
+                    if (gameItem instanceof Gun) {
+                        clipString.entry = "Clip: " + ((Gun)gameItem).getCurrentClip();
+                    }
                 } else {
                     // inventory item not found!
                     System.out.println("Player inventory item not found! Should never happen!");
@@ -181,6 +190,28 @@ public final class PlayerController implements InputProcessor {
         updatePacketArray.clear();
     }
 
+    private void changeEquippedItem(int newIndex) {
+        if (player.getInventory().get(equippedItemIndex) != null) {
+            Object gameObj = world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
+            if (gameObj != null) {
+                Item gameItem = (Item) gameObj;
+                gameItem.setEquipped(false);
+            }
+        }
+
+        equippedItemIndex = newIndex;
+        equippedItemIndex = MathUtilities.wrap(equippedItemIndex, 0, player.getInventorySize());
+        if (player.getInventory().get(equippedItemIndex) != null) {
+            Object gameObj = world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
+            if (gameObj != null) {
+                Item gameItem = (Item) gameObj;
+                gameItem.setEquipped(true);
+            }
+        }
+
+        System.out.println("Item index " + equippedItemIndex + " equipped.");
+    }
+
 
     // Later we will have adjustable controls.
     @Override
@@ -207,6 +238,39 @@ public final class PlayerController implements InputProcessor {
             case Keys.SHIFT_LEFT:
                 shift = true;
                 keyProc = true;
+                break;
+            case Keys.NUM_1:
+                changeEquippedItem(0);
+                keyProc = true;
+                break;
+            case Keys.NUM_2:
+                changeEquippedItem(1);
+                keyProc = true;
+                break;
+            case Keys.NUM_3:
+                changeEquippedItem(2);
+                keyProc = true;
+                break;
+            case Keys.NUM_4:
+                changeEquippedItem(3);
+                keyProc = true;
+                break;
+            case Keys.NUM_5:
+                changeEquippedItem(4);
+                keyProc = true;
+                break;
+            case Keys.NUM_6:
+                changeEquippedItem(5);
+                keyProc = true;
+                break;
+            case Keys.NUM_7:
+                changeEquippedItem(6);
+                keyProc = true;
+                break;
+            case Keys.NUM_8:
+                changeEquippedItem(7);
+                keyProc = true;
+                break;
         }
         return keyProc;
     }
@@ -282,25 +346,7 @@ public final class PlayerController implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        if (player.getInventory().get(equippedItemIndex) != null) {
-            Object gameObj = world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
-            if (gameObj != null) {
-                Item gameItem = (Item) gameObj;
-                gameItem.setEquipped(false);
-            }
-        }
-
-        equippedItemIndex -= Math.round(amountY);
-        equippedItemIndex = MathUtilities.wrap(equippedItemIndex, 0, player.getInventorySize());
-        if (player.getInventory().get(equippedItemIndex) != null) {
-            Object gameObj = world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
-            if (gameObj != null) {
-                Item gameItem = (Item) gameObj;
-                gameItem.setEquipped(true);
-            }
-        }
-
-        System.out.println("Item index " + equippedItemIndex + " equipped.");
+        changeEquippedItem(-Math.round(amountY) + equippedItemIndex);
         return true;
     }
 

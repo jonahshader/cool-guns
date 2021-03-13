@@ -1,89 +1,96 @@
 
 sprites.png
-size: 128, 32
+size: 32,128
 format: RGBA8888
-filter: Nearest, Nearest
+filter: Nearest,Nearest
 repeat: none
 bullet
   rotate: false
-  xy: 42, 6
+  xy: 27, 121
   size: 4, 4
   orig: 4, 4
   offset: 0, 0
   index: -1
 default_gun
   rotate: false
-  xy: 28, 2
+  xy: 13, 32
   size: 12, 8
   orig: 12, 8
   offset: 0, 0
   index: -1
+enemy
+  rotate: false
+  xy: 1, 84
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 player_back
   rotate: false
-  xy: 42, 12
+  xy: 1, 64
   size: 12, 18
   orig: 12, 18
   offset: 0, 0
   index: -1
 player_bottom_left
   rotate: false
-  xy: 80, 12
+  xy: 1, 4
   size: 10, 18
   orig: 10, 18
   offset: 0, 0
   index: -1
 player_bottom_right
   rotate: false
-  xy: 56, 12
+  xy: 1, 44
   size: 10, 18
   orig: 10, 18
   offset: 0, 0
   index: -1
 player_front
   rotate: false
-  xy: 28, 12
+  xy: 19, 82
   size: 12, 18
   orig: 12, 18
   offset: 0, 0
   index: -1
 player_left
   rotate: false
-  xy: 104, 12
+  xy: 13, 42
   size: 8, 18
   orig: 8, 18
   offset: 0, 0
   index: -1
 player_right
   rotate: false
-  xy: 114, 12
+  xy: 23, 42
   size: 8, 18
   orig: 8, 18
   offset: 0, 0
   index: -1
 player_top_left
   rotate: false
-  xy: 68, 12
+  xy: 1, 24
   size: 10, 18
   orig: 10, 18
   offset: 0, 0
   index: -1
 player_top_right
   rotate: false
-  xy: 92, 12
+  xy: 15, 62
   size: 10, 18
   orig: 10, 18
   offset: 0, 0
   index: -1
 smoke
   rotate: false
-  xy: 2, 7
+  xy: 1, 102
   size: 24, 23
   orig: 24, 23
   offset: 0, 0
   index: -1
 white_pixel
   rotate: false
-  xy: 2, 4
+  xy: 1, 1
   size: 1, 1
   orig: 1, 1
   offset: 0, 0

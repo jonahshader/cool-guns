@@ -33,7 +33,7 @@ public class Bullet extends PhysicsObject implements Renderable {
     private float critScalar;
     private float enemyKnockback;
     private Vector2 bulletSpawn;
-    private static final float MAX_RANGE = 170;
+    private static final float MAX_RANGE = 400;
 
     private float spin;
 

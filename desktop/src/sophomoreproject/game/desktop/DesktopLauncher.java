@@ -18,10 +18,11 @@ public class DesktopLauncher {
     private static LwjglApplicationConfiguration makeConfig() {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.vSyncEnabled = false;
-        config.foregroundFPS = 120;
-        config.backgroundFPS = 20;
+        config.foregroundFPS = 165;
+        config.backgroundFPS = 60;
         config.width = 1280;
         config.height = 720;
+//        config.fullscreen = true;
         return config;
     }
 }

@@ -53,9 +53,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        PlayerController.getInstance().run(delta);
         map.run();
         gameClient.run(delta);
+        PlayerController.getInstance().run(delta);
         worldViewport.apply();
         worldCamera.update();
 

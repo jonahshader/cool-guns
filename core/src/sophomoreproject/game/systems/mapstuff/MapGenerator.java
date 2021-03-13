@@ -19,10 +19,18 @@ public class MapGenerator {
         biomes.add(new GreenBiome(map, random));
     }
 
+    public Spawner getSpawner(int x, int y) {
+        return biomes.get(0).makeSpawner(x, y);
+    }
+
     public TiledMapTileLayer.Cell getBackgroundCell(int x, int y) {
         // TODO: write a function that selects max value from all biome selection functions
 
         // for now, we only have the GreenBiome so ill just return that
         return biomes.get(0).getBackgroundCell(x, y);
+    }
+
+    public TiledMapTileLayer.Cell getForegroundCell(int x, int y) {
+        return biomes.get(0).getForegroundCell(x, y);
     }
 }
