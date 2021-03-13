@@ -1,9 +1,8 @@
 package sophomoreproject.game.systems.mapstuff.biomes;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import sophomoreproject.game.systems.mapstuff.Map;
-import sophomoreproject.game.systems.mapstuff.Octave;
-import sophomoreproject.game.systems.mapstuff.OctaveSet;
+import sophomoreproject.game.systems.GameServer;
+import sophomoreproject.game.systems.mapstuff.*;
 
 import java.util.Random;
 
@@ -17,6 +16,14 @@ public class GreenBiome implements Biome{
     private OctaveSet redFlowerSelect;
     private OctaveSet denseGrassSelect;
     private OctaveSet enemySpawnSelect;
+
+    private SpawnAction spawnAction = new SpawnAction() {
+        @Override
+        public void spawn(GameServer server, int x, int y) {
+            double diff = Math.sqrt(x * x + y * y);
+            // spawn an enemy at x y with correct diff
+        }
+    };
 
     public GreenBiome(Map map, Random random) {
         this.map = map;
@@ -80,5 +87,13 @@ public class GreenBiome implements Biome{
     @Override
     public boolean isEnemySpawn(int x, int y) {
         return (terrain.getValue(x, y) >= -0.25) && (enemySpawnSelect.getValue(x, y) > 0.8);
+    }
+
+    @Override
+    public Spawner makeSpawner(int x, int y) {
+        if (isEnemySpawn(x, y)) {
+            return new Spawner(x, y, 5, 5, 3f, 20f, spawnAction);
+        }
+        return null;
     }
 }

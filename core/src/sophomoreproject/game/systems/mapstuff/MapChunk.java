@@ -9,6 +9,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.Disposable;
 
+import java.util.ArrayList;
+
 public class MapChunk implements Disposable {
     public static final int CHUNK_SIZE_TILES = 32; // length of side of chunk in tiles
     public static final int TILE_SIZE = 16; // size in pixels
@@ -22,9 +24,12 @@ public class MapChunk implements Disposable {
     private MapRenderer mapRenderer;
     private TiledMapTileLayer background, foreground;
 
-    private final int x, y;
+    private MapGenerator mapGen;
+    private final int x;
+    private final int y;
 
     public MapChunk(MapGenerator mapGen, int x, int y, SpriteBatch batch) {
+        this.mapGen = mapGen;
         this.x = x;
         this.y = y;
 
@@ -51,6 +56,30 @@ public class MapChunk implements Disposable {
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1, batch);
     }
 
+    public static ArrayList<Spawner> getSpawners(int xChunk, int yChunk, MapGenerator mapGen) {
+        ArrayList<Spawner> spawners = new ArrayList<>();
+        for (int yy = 0; yy < CHUNK_SIZE_TILES; ++yy) {
+            for (int xx = 0; xx < CHUNK_SIZE_TILES; ++xx) {
+                Spawner spawner = mapGen.getSpawner(xChunk * CHUNK_SIZE_TILES + xx, yChunk * CHUNK_SIZE_TILES + yy);
+                if (spawner != null)
+                    spawners.add(spawner);
+            }
+        }
+        return spawners;
+    }
+
+    public ArrayList<Spawner> getSpawners() {
+        ArrayList<Spawner> spawners = new ArrayList<>();
+        for (int yy = 0; yy < CHUNK_SIZE_TILES; ++yy) {
+            for (int xx = 0; xx < CHUNK_SIZE_TILES; ++xx) {
+                Spawner spawner = mapGen.getSpawner(x * CHUNK_SIZE_TILES + xx, y * CHUNK_SIZE_TILES + yy);
+                if (spawner != null)
+                    spawners.add(spawner);
+            }
+        }
+        return spawners;
+    }
+
     public String getKey() {
         return x + " " + y;
     }
@@ -63,8 +92,8 @@ public class MapChunk implements Disposable {
         cam.translate(-getXInTiles() * TILE_SIZE, -getYInTiles() * TILE_SIZE);
         cam.update();
         mapRenderer.setView(cam);
-        mapRenderer.render(backgroundLayers);
-        mapRenderer.render(foregroundLayers);
+        mapRenderer.render(allLayers);
+//        mapRenderer.render(foregroundLayers);
         cam.translate(getXInTiles() * TILE_SIZE, getYInTiles() * TILE_SIZE);
         cam.update();
     }
