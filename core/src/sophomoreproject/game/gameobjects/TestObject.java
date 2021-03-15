@@ -14,8 +14,6 @@ import sophomoreproject.game.utilites.RendingUtilities;
 import java.util.ArrayList;
 
 public class TestObject extends PhysicsObject implements Renderable {
-    private static GameServer gameServer = null;
-
     private static TextureAtlas texAtl = null;
     private static TextureRegion[] textures = null;
 
@@ -62,7 +60,7 @@ public class TestObject extends PhysicsObject implements Renderable {
 //        velocity.y = (float) (Math.sin(lifeTime * Math.PI * .5 * (yFactor)) * 3200 * dt);
 
         if (lifeTime > LIFE_SPAN) {
-            gameServer.removeObject(networkID);
+            server.removeObject(networkID);
         }
 
 
@@ -108,9 +106,5 @@ public class TestObject extends PhysicsObject implements Renderable {
             textures[6] = texAtl.findRegion("player_front");
             textures[7] = texAtl.findRegion("player_bottom_right");
         }
-    }
-
-    public static void setGameServer(GameServer gameServer) {
-        TestObject.gameServer = gameServer;
     }
 }

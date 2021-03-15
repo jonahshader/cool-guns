@@ -8,6 +8,7 @@ import java.io.IOException;
 
 /**
  * TODO: this will mess up ServerNetwork's HashMap<Connection, Integer> connectionToAccountID
+ * need to rework this to fully reconnect and retransmit game data
  */
 
 public class ReconnectListener implements Listener {

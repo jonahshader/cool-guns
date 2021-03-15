@@ -45,6 +45,7 @@ public class Spawner {
     }
 
     private boolean isRunning() {
+        // TODO: run if a player is nearby. iterate through gameServer.getServerMap().getNearbyPlayers()
         return false;
     }
 }

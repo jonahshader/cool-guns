@@ -7,12 +7,13 @@ import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 import java.util.ArrayList;
 
 public class MapChunk implements Disposable {
-    public static final int CHUNK_SIZE_TILES = 32; // length of side of chunk in tiles
+    public static final int CHUNK_SIZE_TILES = 48; // length of side of chunk in tiles
     public static final int TILE_SIZE = 16; // size in pixels
     public static final int CHUNK_SIZE_PIXELS = CHUNK_SIZE_TILES * TILE_SIZE;
 
@@ -86,6 +87,10 @@ public class MapChunk implements Disposable {
 
     public static String coordToKey(int x, int y) {
         return x + " " + y;
+    }
+
+    public static String worldPosToKey(Vector2 pos) {
+        return coordToKey((int)Math.floor(pos.x / CHUNK_SIZE_PIXELS), (int)Math.floor(pos.y / CHUNK_SIZE_PIXELS));
     }
 
     public void render(OrthographicCamera cam) {

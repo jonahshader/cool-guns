@@ -17,6 +17,8 @@ import sophomoreproject.game.systems.GameClient;
 import sophomoreproject.game.systems.PlayerController;
 import sophomoreproject.game.systems.mapstuff.Map;
 
+import static sophomoreproject.game.systems.GameServer.GAME_SEED;
+
 public class GameScreen implements Screen {
     private OrthographicCamera worldCamera;
     private Camera hudCamera;
@@ -43,7 +45,7 @@ public class GameScreen implements Screen {
         Gdx.input.setInputProcessor(PlayerController.getInstance());
         PlayerController.getInstance().setCam(worldCamera);
 
-        map = new Map(game, 81528512);
+        map = new Map(game, GAME_SEED);
     }
 
     @Override

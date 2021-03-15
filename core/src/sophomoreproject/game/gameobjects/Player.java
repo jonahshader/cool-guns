@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreatePlayer;
+import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.packets.UpdatePlayer;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.singletons.TextDisplay;
@@ -68,6 +69,13 @@ public class Player extends PhysicsObject implements Renderable{
     public void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer) {
         super.addUpdatePacketToBuffer(updatePacketBuffer);
         updatePacketBuffer.add(new UpdatePlayer(networkID, lookDirection.x, lookDirection.y));
+    }
+
+    @Override
+    public void updateFromPacket(UpdatePhysicsObject packet) {
+        packet.xAccel = 0;
+        packet.yAccel = 0; // set acceleration to zero, should make game appear less laggy when the connection is bad
+        super.updateFromPacket(packet);
     }
 
     @Override

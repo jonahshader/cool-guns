@@ -11,6 +11,7 @@ import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.packets.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,6 +21,7 @@ public class GameWorld {
     // note: the contents of these arrays are mutually exclusive.
     // one object should only exist in one array at a time, even though objects can be both PhysicsObject and GameObject
     private final Map<Integer, PhysicsObject> physicsObjects = new ConcurrentHashMap<>();
+    private final Map<Integer, Player> players = new ConcurrentHashMap<>();
     private final Map<Integer, GameObject> gameObjects = new ConcurrentHashMap<>();
     private final Map<Integer, GameObject> sleepingGameObjects = new ConcurrentHashMap<>();
     private final List<Renderable> renderables = new ArrayList<>();
@@ -165,6 +167,7 @@ public class GameWorld {
     private void addObject(GameObject o) {
         if (o instanceof PhysicsObject) physicsObjects.put(o.getNetworkID(), (PhysicsObject) o);
         if (o instanceof Renderable) renderables.add((Renderable) o);
+        if (o instanceof Player) players.put(o.getNetworkID(), (Player)o);
         gameObjects.put(o.getNetworkID(), o);
     }
 
@@ -173,6 +176,7 @@ public class GameWorld {
         if (o instanceof Renderable) renderables.remove(o);
         gameObjects.remove(o.getNetworkID());
         sleepingGameObjects.remove(o.getNetworkID());
+        players.remove(o.getNetworkID());
     }
 
     public GameObject getGameObjectFromID(int networkID) {
@@ -247,5 +251,13 @@ public class GameWorld {
             }
         }
         return -1;
+    }
+
+    public Collection<PhysicsObject> getPhysicsObjects() {
+        return physicsObjects.values();
+    }
+
+    public Collection<Player> getPlayers() {
+        return players.values();
     }
 }

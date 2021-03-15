@@ -1,13 +1,19 @@
 package sophomoreproject.game.systems.mapstuff.biomes;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Vector2;
+import sophomoreproject.game.gameobjects.TestObject;
+import sophomoreproject.game.gameobjects.enemystuff.Enemy;
+import sophomoreproject.game.gameobjects.enemystuff.EnemyInfo;
 import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.systems.mapstuff.*;
 
 import java.util.Random;
 
+import static sophomoreproject.game.systems.mapstuff.MapChunk.TILE_SIZE;
+
 public class GreenBiome implements Biome{
-    private Map map;
+    private final Map map;
     private OctaveSet selection;
     private OctaveSet terrain;
 
@@ -17,12 +23,11 @@ public class GreenBiome implements Biome{
     private OctaveSet denseGrassSelect;
     private OctaveSet enemySpawnSelect;
 
-    private SpawnAction spawnAction = new SpawnAction() {
-        @Override
-        public void spawn(GameServer server, int x, int y) {
-            double diff = Math.sqrt(x * x + y * y);
-            // spawn an enemy at x y with correct diff
-        }
+    private SpawnAction spawnAction = (server, x, y) -> {
+        double diff = Math.sqrt(x * x + y * y) / MapChunk.CHUNK_SIZE_TILES;
+        // spawn an enemy at x y with correct diff
+        server.spawnAndSendGameObject(new Enemy(new EnemyInfo((float)diff), new Vector2((x * TILE_SIZE) + TILE_SIZE/2, (y * TILE_SIZE) + TILE_SIZE/2), server.getGameWorld().getNewNetID()));
+//            server.spawnAndSendGameObject(new TestObject(new Vector2((x * TILE_SIZE) + TILE_SIZE/2, (y * TILE_SIZE) + TILE_SIZE/2), server.getGameWorld().getNewNetID()));
     };
 
     public GreenBiome(Map map, Random random) {
