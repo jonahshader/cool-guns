@@ -8,8 +8,8 @@ public class EnemyInfo {
     public float maxAcceleration = 200;
     public float maxActiveVelocity = 50;
 
-    public float approachRadius = 150;
-    public float attackRadius = 75;
+    public float approachRadius = 180;
+    public float attackRadius = 50;
     public float size = 1;
     public float attackDamage = 1;
     public float attackDelay = 1.5f;
@@ -21,14 +21,15 @@ public class EnemyInfo {
         float sqrtDiff = (float) Math.sqrt(difficulty);
         float cbrtDiff = (float) Math.cbrt(difficulty);
         approachAngle = (float) (cbrtDiff * LocalRandom.RAND.nextGaussian() * 0.3);
-        maxIdleVelocity *= cbrtDiff;
-        maxAcceleration *= sqrtDiff;
+        maxIdleVelocity *= sqrtDiff;
+        maxAcceleration *= sqrtDiff * 0.75;
         maxActiveVelocity *= cbrtDiff;
 
-        approachRadius *= cbrtDiff;
-        size *= cbrtDiff;
-        attackDamage *= cbrtDiff;
-        attackDelay /= cbrtDiff;
+        approachRadius *= Math.pow(difficulty, 1/3f);
+        attackRadius *= Math.pow(difficulty, 1/3.5f);
+        size *= .5 + (cbrtDiff * 0.5);
+        attackDamage *= 1 + cbrtDiff * 0.5;
+        attackDelay /= 1 + cbrtDiff * 0.5;
         health *= cbrtDiff;
     }
 }

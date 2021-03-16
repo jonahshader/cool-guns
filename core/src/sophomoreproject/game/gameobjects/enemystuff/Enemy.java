@@ -24,6 +24,7 @@ public class Enemy extends PhysicsObject implements Renderable {
     private static float WALK_DELAY = 2f;
     private static float IDLE_WAIT_VARIANCE = 1;
     private static float WALK_VARIANCE = 1;
+    private static float TARGET_UPDATE_DELAY = 1;
     private static float MAX_AGE = 4 * 60; // 4 minutes
 
     private static Vector2 IDLE_VEL = new Vector2(); // just zero vector
@@ -41,13 +42,14 @@ public class Enemy extends PhysicsObject implements Renderable {
     private static TextureAtlas texAtl = null;
     private Sprite sprite;
 
-    private EnemyState state = EnemyState.IDLE_WAIT;
+    private EnemyState state = EnemyState.IDLE_WALK;
     private Vector2 targetVelocity = new Vector2();
     private Vector2 playerMinusPos = new Vector2();
     private Player targetPlayer;
 
     private float idleWaitTimer = IDLE_WAIT_DELAY;
     private float walkTimer = WALK_DELAY;
+    private float targetUpdateTimer = TARGET_UPDATE_DELAY;
     private float age = 0;
 
 
@@ -138,17 +140,28 @@ public class Enemy extends PhysicsObject implements Renderable {
                 }
                 break;
             case ATTACKING_TARGET:
-                playerMinusPos.set(targetPlayer.position);
-                playerMinusPos.sub(position);
-                radius = playerMinusPos.len();
-                if (radius > info.attackRadius) {
-                    // go back to approaching target state
-                    state = EnemyState.APPROACHING_TARGET;
-                } else {
-                    playerMinusPos.nor().scl(info.maxActiveVelocity);
-                    targetVelocity.set(playerMinusPos);
-                    // TODO: determine if enemy is touching player. if true, damage player and set cooldown timer
+                targetUpdateTimer -= dt;
+                if (targetUpdateTimer <= 0) {
+                    targetUpdateTimer += TARGET_UPDATE_DELAY;
+                    tryFindPlayer(server);
                 }
+                if (targetPlayer != null) {
+                    playerMinusPos.set(targetPlayer.position);
+                    playerMinusPos.sub(position);
+                    radius = playerMinusPos.len();
+                    if (radius > info.attackRadius) {
+                        // go back to approaching target state
+                        state = EnemyState.APPROACHING_TARGET;
+                    } else {
+                        playerMinusPos.nor().scl(info.maxActiveVelocity);
+                        targetVelocity.set(playerMinusPos);
+                        // TODO: determine if enemy is touching player. if true, damage player and set cooldown timer
+                    }
+                } else {
+                    state = EnemyState.IDLE_WAIT;
+                    targetVelocity.set(0, 0);
+                }
+
                 break;
             case RETURNING_TO_SPAWN:
                 // unused for now
