@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.esotericsoftware.kryonet.Server.DEFAULT_OBJECT_BUUFER_SIZE;
+import static com.esotericsoftware.kryonet.Server.DEFAULT_WRITE_BUFFER_SIZE;
+
 public class ServerNetwork {
     private Server server; // kryonet server for sending and receiving packets
     private Accounts accounts; // this is the collection of registered accounts
@@ -29,7 +32,7 @@ public class ServerNetwork {
             accounts = new Accounts();
         }
 
-        server = new Server();
+        server = new Server(DEFAULT_WRITE_BUFFER_SIZE * 32, DEFAULT_OBJECT_BUUFER_SIZE * 32);
         server.start();
         RegisterPackets.registerPackets(server.getKryo());
         try {

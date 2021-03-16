@@ -8,6 +8,9 @@ import sophomoreproject.game.packets.RegisterPackets;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static com.esotericsoftware.kryonet.Client.DEFAULT_OBJECT_BUUFER_SIZE;
+import static com.esotericsoftware.kryonet.Client.DEFAULT_WRITE_BUFFER_SIZE;
+
 public final class ClientNetwork {
     private static ClientNetwork instance = null;
     private final Client client;
@@ -15,7 +18,7 @@ public final class ClientNetwork {
     private int accountID = -1;
 
     private ClientNetwork() {
-        client = new Client();
+        client = new Client(DEFAULT_WRITE_BUFFER_SIZE * 32, DEFAULT_OBJECT_BUUFER_SIZE * 32);
         RegisterPackets.registerPackets(client.getKryo());
         client.start();
 
