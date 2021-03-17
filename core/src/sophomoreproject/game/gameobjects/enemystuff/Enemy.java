@@ -25,9 +25,7 @@ public class Enemy extends PhysicsObject implements Renderable {
     private static float IDLE_WAIT_VARIANCE = 1;
     private static float WALK_VARIANCE = 1;
     private static float TARGET_UPDATE_DELAY = 1;
-    private static float MAX_AGE = 4 * 60; // 4 minutes
-
-    private static Vector2 IDLE_VEL = new Vector2(); // just zero vector
+    private static float MAX_IDLE_TIME = 20; // 20 seconds
 
 
     public enum EnemyState {
@@ -51,6 +49,7 @@ public class Enemy extends PhysicsObject implements Renderable {
     private float walkTimer = WALK_DELAY;
     private float targetUpdateTimer = TARGET_UPDATE_DELAY;
     private float age = 0;
+    private float idleTime = 0;
 
 
     // server constructor
@@ -86,6 +85,7 @@ public class Enemy extends PhysicsObject implements Renderable {
         switch (state) {
             case IDLE_WAIT:
                 idleWaitTimer -= dt;
+                idleTime += dt;
                 if (idleWaitTimer <= 0) {
                     idleWaitTimer += IDLE_WAIT_DELAY + LocalRandom.randomPosNeg() * IDLE_WAIT_VARIANCE;
                     tryFindPlayer(server); // try to find a player at this point
@@ -104,6 +104,7 @@ public class Enemy extends PhysicsObject implements Renderable {
                 break;
             case IDLE_WALK:
                 walkTimer -= dt;
+                idleTime += dt;
                 if (walkTimer <= 0) {
                     walkTimer += WALK_DELAY + LocalRandom.randomPosNeg() * WALK_VARIANCE;
                     tryFindPlayer(server); // try to find a player at this point
@@ -120,6 +121,7 @@ public class Enemy extends PhysicsObject implements Renderable {
                 }
                 break;
             case APPROACHING_TARGET:
+                idleTime = 0;
                 playerMinusPos.set(targetPlayer.position);
                 playerMinusPos.sub(position);
                 radius = playerMinusPos.len();
@@ -140,6 +142,7 @@ public class Enemy extends PhysicsObject implements Renderable {
                 }
                 break;
             case ATTACKING_TARGET:
+                idleTime = 0;
                 targetUpdateTimer -= dt;
                 if (targetUpdateTimer <= 0) {
                     targetUpdateTimer += TARGET_UPDATE_DELAY;
@@ -164,11 +167,12 @@ public class Enemy extends PhysicsObject implements Renderable {
 
                 break;
             case RETURNING_TO_SPAWN:
+                idleTime += dt;
                 // unused for now
                 break;
         }
 
-        if (age > MAX_AGE) {
+        if (idleTime > MAX_IDLE_TIME) {
             server.removeObject(networkID);
         }
 

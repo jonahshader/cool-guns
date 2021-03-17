@@ -54,7 +54,7 @@ public class GameServer {
         for (GameObject toUpdate : forceUpdateQueue) {
             toUpdate.addUpdatePacketToBuffer(forceUpdatePackets);
         }
-        serverNetwork.sendPacketsToAll(forceUpdatePackets);
+        serverNetwork.sendPacketsToAll(forceUpdatePackets, true);
         forceUpdatePackets.clear();
         forceUpdateQueue.clear();
         forceUpdateQueueLock.unlock();
@@ -70,7 +70,7 @@ public class GameServer {
     public synchronized void spawnAndSendGameObject(GameObject gameObject) {
         world.queueAddObject(gameObject);
         gameObject.addCreatePacketToBuffer(createPackets);
-        serverNetwork.sendPacketsToAll(createPackets);
+        serverNetwork.sendPacketsToAll(createPackets, true);
         createPackets.clear();
     }
 
@@ -91,7 +91,7 @@ public class GameServer {
     public void setAndSendSleepState(int networkID, boolean sleeping) {
         UpdateSleepState packet = new UpdateSleepState(networkID, sleeping);
         world.handleSetSleepStatePacket(packet);
-        serverNetwork.sendPacketToAll(packet);
+        serverNetwork.sendPacketToAll(packet, true);
     }
 
     /**
@@ -100,7 +100,7 @@ public class GameServer {
      */
     public void setAndSendSleepState(UpdateSleepState packet) {
         world.handleSetSleepStatePacket(packet);
-        serverNetwork.sendPacketToAll(packet);
+        serverNetwork.sendPacketToAll(packet, true);
     }
 
     /**
@@ -111,7 +111,7 @@ public class GameServer {
         RemoveObject packet = new RemoveObject(networkID);
         GameObject obj = world.getGameObjectFromID(packet.networkID);
         world.queueRemoveObject(obj);
-        serverNetwork.sendPacketToAll(packet);
+        serverNetwork.sendPacketToAll(packet, true);
     }
 
     /**

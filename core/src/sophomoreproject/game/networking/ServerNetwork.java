@@ -32,7 +32,7 @@ public class ServerNetwork {
             accounts = new Accounts();
         }
 
-        server = new Server(DEFAULT_WRITE_BUFFER_SIZE * 32, DEFAULT_OBJECT_BUUFER_SIZE * 32);
+        server = new Server(DEFAULT_WRITE_BUFFER_SIZE * 32 * 32, DEFAULT_OBJECT_BUUFER_SIZE * 32 * 32);
         server.start();
         RegisterPackets.registerPackets(server.getKryo());
         try {
@@ -42,16 +42,30 @@ public class ServerNetwork {
         }
     }
 
-    public void sendPacketToAll(Object packet) {
-        server.sendToAllTCP(packet);
+    public void sendPacketToAll(Object packet, boolean tcp) {
+        if (tcp) {
+            server.sendToAllTCP(packet);
+        } else {
+            server.sendToAllUDP(packet);
+        }
+
     }
 
-    public void sendPacketToAllExcept(Connection c, Object packet) {
-        server.sendToAllExceptTCP(c.getID(), packet);
+    public void sendPacketToAllExcept(Connection c, Object packet, boolean tcp) {
+        if (tcp) {
+            server.sendToAllExceptTCP(c.getID(), packet);
+        } else {
+            server.sendToAllExceptUDP(c.getID(), packet);
+        }
     }
 
-    public void sendPacketsToAll(ArrayList<Object> packets) {
-        for (Object o : packets) server.sendToAllTCP(o);
+    public void sendPacketsToAll(ArrayList<Object> packets, boolean tcp) {
+        if (tcp) {
+            for (Object o : packets) server.sendToAllTCP(o);
+        } else {
+            for (Object o : packets) server.sendToAllUDP(o);
+        }
+
     }
 
     public void addListener(Listener listener) {

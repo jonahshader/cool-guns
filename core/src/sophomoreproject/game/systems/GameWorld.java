@@ -108,7 +108,7 @@ public class GameWorld {
             }
         }
 
-        serverNetwork.sendPacketsToAll(serverSendUpdatePacketBuffer);
+        serverNetwork.sendPacketsToAll(serverSendUpdatePacketBuffer, false);
         serverSendUpdatePacketBuffer.clear();
 
 
