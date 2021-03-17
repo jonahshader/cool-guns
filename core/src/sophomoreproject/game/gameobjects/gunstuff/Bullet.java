@@ -31,7 +31,7 @@ public class Bullet extends PhysicsObject implements Renderable {
     private static TextureAtlas texAtl = null;
     private Sprite sprite = null;
     private float bulletSize;
-    private float damage;
+    private int damage;
     private int shieldDamage;
     private int armorDamage;
     private float critScalar;
@@ -68,7 +68,7 @@ public class Bullet extends PhysicsObject implements Renderable {
                 packet.u.xAccel, packet.u.yAccel, packet.u.netID);
         this.creatorNetId = packet.creatorNetId;
         this.bulletSize = packet.bulletSize;
-        this.damage = packet.damage;
+        this.damage = Math.round(packet.damage);
         this.shieldDamage = packet.shieldDamage;
         this.armorDamage = packet.armorDamage;
         this.critScalar = packet.critScalar;
@@ -110,14 +110,15 @@ public class Bullet extends PhysicsObject implements Renderable {
                             // correct collision.
                             // if collision kills target,
                             // TODO: should this be parameterized? penetration ability?
-                            int damageDealt = collisionReceiver.receiveAttack(new AttackInfo(Math.round(damage), shieldDamage, armorDamage, knockbackVec.x, knockbackVec.y), creatorNetId);
-                            if (damageDealt == Math.round(damage)) {
+                            int damageDealt = collisionReceiver.receiveAttack(new AttackInfo(damage, shieldDamage, armorDamage, knockbackVec.x, knockbackVec.y), creatorNetId);
+                            System.out.println("Bullet inflicted " + damageDealt + " damage.");
+                            if (damageDealt == damage) {
                                 // remove bullet
                                 server.removeObject(networkID);
                                 break;
                             } else {
                                 damage -= damageDealt;
-                                if (Math.round(damage) <= 0) {
+                                if (damage <= 0) {
                                     server.removeObject(networkID);
                                     break;
                                 }

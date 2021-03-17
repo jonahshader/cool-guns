@@ -61,6 +61,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     private boolean queueDead = false;
 
     private ArrayList<StatsBarRenderer.StatsBarInfo> bars;
+    private StatsBarRenderer.StatsBarInfo healthBar;
 
     // server constructor
     public Enemy(EnemyInfo info, Vector2 position, int networkID) {
@@ -81,10 +82,11 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
         updateFrequency = ServerUpdateFrequency.CONSTANT;
 
         bars = new ArrayList<>();
-        bars.add(new StatsBarRenderer.StatsBarInfo(5,7, StatsBarRenderer.HEALTH_BAR_COLOR));
-        bars.add(new StatsBarRenderer.StatsBarInfo(10,20, StatsBarRenderer.SHIELD_BAR_COLOR));
+        healthBar = new StatsBarRenderer.StatsBarInfo(health,info.health, StatsBarRenderer.HEALTH_BAR_COLOR);
+        bars.add(healthBar);
+//        bars.add(new StatsBarRenderer.StatsBarInfo(10,20, StatsBarRenderer.SHIELD_BAR_COLOR));
 //        bars.add(new StatsBarRenderer.StatsBarInfo(30,50, StatsBarRenderer.STAMINA_BAR_COLOR));
-        bars.add(new StatsBarRenderer.StatsBarInfo(6,15, StatsBarRenderer.ARMOR_BAR_COLOR));
+//        bars.add(new StatsBarRenderer.StatsBarInfo(6,15, StatsBarRenderer.ARMOR_BAR_COLOR));
     }
 
     @Override
@@ -93,9 +95,17 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     }
 
     @Override
+    public void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer) {
+        updatePacketBuffer.add(new UpdateEnemy(networkID, health));
+        super.addUpdatePacketToBuffer(updatePacketBuffer);
+    }
+
+    @Override
     public void receiveUpdate(Object updatePacket) {
         UpdateEnemy packet = (UpdateEnemy) updatePacket;
         health = packet.health;
+        if (healthBar != null)
+            healthBar.value = health;
     }
 
     @Override
@@ -256,7 +266,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
 
     @Override
     public float getRadius() {
-        return info.size * 16; // approximation since sprite isn't loaded on server for sprite.getWidth() to work
+        return info.size * 8; // approximation since sprite isn't loaded on server for sprite.getWidth() to work
     }
 
     @Override
@@ -275,13 +285,16 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
         if (!queueDead) {
             int healthLeftBeforeDamage = health;
             health -= Math.round(attack.damage);
+            velocity.add(attack.xKnockback / info.size, attack.yKnockback / info.size);
             if (health <= 0) {
                 health = 0;
                 queueDead = true;
                 // TODO: random chance to drop item
                 // also give attacker some points corresponding to difficulty
+                if (healthBar != null) healthBar.value = health;
                 return healthLeftBeforeDamage;
             } else {
+                if (healthBar != null) healthBar.value = health;
                 return Math.round(attack.damage);
             }
         }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.gameobjects.enemystuff.Enemy;
 import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.interfaces.Item;
@@ -62,6 +63,11 @@ public class GameWorld {
             } else if (o instanceof UpdatePlayer) {
                 UpdatePlayer packet = (UpdatePlayer) o;
                 Player toUpdate = (Player)getGameObjectFromID(packet.netID);
+                if (toUpdate != null)
+                    toUpdate.receiveUpdate(packet);
+            } else if (o instanceof UpdateEnemy) {
+                UpdateEnemy packet = (UpdateEnemy) o;
+                Enemy toUpdate = (Enemy)getGameObjectFromID(packet.netID);
                 if (toUpdate != null)
                     toUpdate.receiveUpdate(packet);
             }

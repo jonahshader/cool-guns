@@ -1,11 +1,11 @@
 package sophomoreproject.game.packets;
 
 public class UpdateEnemy {
-    public int netId;
+    public int netID;
     public int health;
 
-    public UpdateEnemy(int netId, int health) {
-        this.netId = netId;
+    public UpdateEnemy(int netID, int health) {
+        this.netID = netID;
         this.health = health;
     }
 

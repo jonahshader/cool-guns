@@ -30,6 +30,6 @@ public class EnemyInfo {
         size *= .5 + (cbrtDiff * 0.5);
         attackDamage *= 1 + cbrtDiff * 0.5;
         attackDelay /= 1 + cbrtDiff * 0.5;
-        health *= cbrtDiff;
+        health *= sqrtDiff;
     }
 }
