@@ -13,7 +13,7 @@ public class EnemyInfo {
     public float size = 1;
     public float attackDamage = 1;
     public float attackDelay = 1.5f;
-    public float health = 5;
+    public int health = 5;
 
     public EnemyInfo() {}
 

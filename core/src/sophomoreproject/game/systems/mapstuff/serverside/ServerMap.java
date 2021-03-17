@@ -3,6 +3,7 @@ package sophomoreproject.game.systems.mapstuff.serverside;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.systems.GameWorld;
 import sophomoreproject.game.systems.mapstuff.MapChunk;
@@ -75,6 +76,15 @@ public class ServerMap {
             return null;
         } else {
             return chunk.getContainedObjects();
+        }
+    }
+
+    public Collection<CollisionReceiver> getNearbyCollisionReceivers(Vector2 position) {
+        ServerMapChunk chunk = keyToChunk.get(MapChunk.worldPosToKey(position));
+        if (chunk == null) {
+            return null;
+        } else {
+            return chunk.getContainedCollisionReceivers();
         }
     }
 

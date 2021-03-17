@@ -87,11 +87,21 @@ public class RequestListener implements Listener {
                     Gun shotgun = new Gun(shotgunInfo, newPlayer.getNetworkID(), world.getNewNetID());
                     gameServer.spawnAndSendGameObject(shotgun);
 
+                    GunInfo sniperInfo = new GunInfo();
+                    sniperInfo.clipSize = 8;
+                    sniperInfo.bulletSpeed = 900;
+                    sniperInfo.spread = 0.001f;
+                    sniperInfo.bulletDamage = 40;
+                    sniperInfo.bulletDamageVariance = 0;
+                    Gun sniper = new Gun(sniperInfo, newPlayer.getNetworkID(), world.getNewNetID());
+                    gameServer.spawnAndSendGameObject(sniper);
+
                     // put gun in player inventory
                     newPlayer.getInventory().set(0, gun.getNetworkID()); // first slot
                     newPlayer.getInventory().set(1, autoGun.getNetworkID()); // second slot
                     newPlayer.getInventory().set(2, burstGun.getNetworkID()); // third slot
                     newPlayer.getInventory().set(3, shotgun.getNetworkID());
+                    newPlayer.getInventory().set(4, sniper.getNetworkID());
 
                     // register with world and distribute
                     gameServer.spawnAndSendGameObject(newPlayer);

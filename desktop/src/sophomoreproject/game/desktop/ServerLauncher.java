@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ServerLauncher {
-    private static final double LOOP_TIME = 1/30.0;
+    private static final double LOOP_TIME = 1/60.0;
     private static final double NANOS_TO_SECONDS = 1e-9;
 
     private static final long LOOP_TIME_NANOS = (long) (LOOP_TIME/NANOS_TO_SECONDS);
@@ -53,7 +53,8 @@ public class ServerLauncher {
                 do {
                     time = System.nanoTime();
                 } while ((time - lastTime) < LOOP_TIME_NANOS);
-                gameServer.run((float) Math.max(((time - lastTime) * NANOS_TO_SECONDS), LOOP_TIME * 0.5));
+//                System.out.println("Server framerate: " + ((time - lastTime) * NANOS_TO_SECONDS));
+                gameServer.run((float) Math.max(((time - lastTime) * NANOS_TO_SECONDS), LOOP_TIME * 0.00005));
                 lastTime = time;
             }
         }

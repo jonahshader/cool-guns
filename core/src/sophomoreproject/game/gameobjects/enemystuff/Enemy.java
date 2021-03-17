@@ -7,26 +7,29 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.gameobjects.gunstuff.AttackInfo;
+import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreateEnemy;
+import sophomoreproject.game.packets.UpdateEnemy;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.singletons.LocalRandom;
 import sophomoreproject.game.systems.GameServer;
+import sophomoreproject.game.utilites.MathUtilities;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import static sophomoreproject.game.utilites.CharacterUtilities.accelerateTowardsTargetVelocity;
 
-public class Enemy extends PhysicsObject implements Renderable {
+public class Enemy extends PhysicsObject implements Renderable, CollisionReceiver {
     private static float IDLE_WAIT_DELAY = 3f;
     private static float WALK_DELAY = 2f;
     private static float IDLE_WAIT_VARIANCE = 1;
     private static float WALK_VARIANCE = 1;
     private static float TARGET_UPDATE_DELAY = 1;
     private static float MAX_IDLE_TIME = 20; // 20 seconds
-
 
     public enum EnemyState {
         IDLE_WAIT,
@@ -35,6 +38,7 @@ public class Enemy extends PhysicsObject implements Renderable {
         ATTACKING_TARGET,
         RETURNING_TO_SPAWN
     }
+
     private EnemyInfo info;
 
     private static TextureAtlas texAtl = null;
@@ -48,14 +52,18 @@ public class Enemy extends PhysicsObject implements Renderable {
     private float idleWaitTimer = IDLE_WAIT_DELAY;
     private float walkTimer = WALK_DELAY;
     private float targetUpdateTimer = TARGET_UPDATE_DELAY;
-    private float age = 0;
     private float idleTime = 0;
+
+    private int health;
+
+    private boolean queueDead = false;
 
 
     // server constructor
     public Enemy(EnemyInfo info, Vector2 position, int networkID) {
         super(position, new Vector2(0, 0), new Vector2(0, 0), networkID);
         this.info = info;
+        health = info.health;
         updateFrequency = ServerUpdateFrequency.CONSTANT;
     }
 
@@ -65,8 +73,9 @@ public class Enemy extends PhysicsObject implements Renderable {
                 packet.u.xVel, packet.u.yVel,
                 packet.u.xAccel, packet.u.yAccel, packet.u.netID);
         this.info = packet.info;
-
+        health = info.health;
         loadTextures();
+        updateFrequency = ServerUpdateFrequency.CONSTANT;
     }
 
     @Override
@@ -76,7 +85,8 @@ public class Enemy extends PhysicsObject implements Renderable {
 
     @Override
     public void receiveUpdate(Object updatePacket) {
-
+        UpdateEnemy packet = (UpdateEnemy) updatePacket;
+        health = packet.health;
     }
 
     @Override
@@ -172,12 +182,11 @@ public class Enemy extends PhysicsObject implements Renderable {
                 break;
         }
 
-        if (idleTime > MAX_IDLE_TIME) {
+        if (idleTime > MAX_IDLE_TIME || queueDead) {
             server.removeObject(networkID);
         }
 
         accelerateTowardsTargetVelocity(targetVelocity, info.maxAcceleration, this, dt);
-        age += dt;
     }
 
     private void tryFindPlayer(GameServer server) {
@@ -226,5 +235,44 @@ public class Enemy extends PhysicsObject implements Renderable {
 
     public EnemyInfo getInfo() {
         return info;
+    }
+
+    @Override
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    @Override
+    public float getRadius() {
+        return info.size * 16; // approximation since sprite isn't loaded on server for sprite.getWidth() to work
+    }
+
+    @Override
+    public CollisionGroup getCollisionGroup() {
+        return CollisionGroup.ENEMY;
+    }
+
+    @Override
+    public boolean checkCollidingGroup(CollisionGroup otherCollisionGroup) {
+        return otherCollisionGroup == CollisionGroup.BULLET || otherCollisionGroup == CollisionGroup.PLAYER;
+    }
+
+    @Override
+    public int receiveAttack(AttackInfo attack, int attackerNetID) {
+        // if not already dead,
+        if (!queueDead) {
+            int healthLeftBeforeDamage = health;
+            health -= Math.round(attack.damage);
+            if (health <= 0) {
+                health = 0;
+                queueDead = true;
+                // TODO: random chance to drop item
+                // also give attacker some points corresponding to difficulty
+                return healthLeftBeforeDamage;
+            } else {
+                return Math.round(attack.damage);
+            }
+        }
+        return 0;
     }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.interfaces.Renderable;
@@ -23,6 +24,7 @@ public class GameWorld {
     private final Map<Integer, PhysicsObject> physicsObjects = new ConcurrentHashMap<>();
     private final Map<Integer, Player> players = new ConcurrentHashMap<>();
     private final Map<Integer, GameObject> gameObjects = new ConcurrentHashMap<>();
+    private final Map<Integer, CollisionReceiver> collisionReceiverObjects = new ConcurrentHashMap<>();
     private final Map<Integer, GameObject> sleepingGameObjects = new ConcurrentHashMap<>();
     private final List<Renderable> renderables = new ArrayList<>();
 
@@ -168,15 +170,17 @@ public class GameWorld {
         if (o instanceof PhysicsObject) physicsObjects.put(o.getNetworkID(), (PhysicsObject) o);
         if (o instanceof Renderable) renderables.add((Renderable) o);
         if (o instanceof Player) players.put(o.getNetworkID(), (Player)o);
+        if (o instanceof CollisionReceiver) collisionReceiverObjects.put(o.getNetworkID(), (CollisionReceiver) o);
         gameObjects.put(o.getNetworkID(), o);
     }
 
     private void removeObject(GameObject o) {
         if (o instanceof PhysicsObject) physicsObjects.remove(o.getNetworkID());
         if (o instanceof Renderable) renderables.remove(o);
+        if (o instanceof Player) players.remove(o.getNetworkID());
+        if (o instanceof CollisionReceiver) collisionReceiverObjects.remove(o.getNetworkID());
         gameObjects.remove(o.getNetworkID());
         sleepingGameObjects.remove(o.getNetworkID());
-        players.remove(o.getNetworkID());
     }
 
     public GameObject getGameObjectFromID(int networkID) {

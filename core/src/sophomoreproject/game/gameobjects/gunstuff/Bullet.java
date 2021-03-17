@@ -5,15 +5,19 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.gameobjects.PhysicsObject;
+import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreateBullet;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.singletons.LocalRandom;
 import sophomoreproject.game.systems.GameServer;
+import sophomoreproject.game.utilites.MathUtilities;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Bullet extends PhysicsObject implements Renderable {
     public enum BulletType {
@@ -33,9 +37,11 @@ public class Bullet extends PhysicsObject implements Renderable {
     private float critScalar;
     private float enemyKnockback;
     private Vector2 bulletSpawn;
-    private static final float MAX_RANGE = 400;
+    private static final float MAX_RANGE = 500; // world units
+    private static final float MAX_AGE = 10; // seconds
 
     private float spin;
+    private float age = 0;
 
     //Server side constructor
 //    public Bullet(Vector2 position, Vector2 velocity, Vector2 acceleration,
@@ -89,11 +95,44 @@ public class Bullet extends PhysicsObject implements Renderable {
 
     @Override
     public void run(float dt, GameServer server) {
-        float dist = position.dst(bulletSpawn);
-        if (dist >= MAX_RANGE) {
-            server.removeObject(networkID);
+        Collection<CollisionReceiver> receivers = server.getServerMap().getNearbyCollisionReceivers(position);
+        if (receivers != null) {
+            for (CollisionReceiver collisionReceiver : receivers) {
+//            if (collisionReceiver == null) {
+//                System.out.println("yikes this thing is null");
+//            }
+//            assert collisionReceiver != null;
+                if (collisionReceiver.checkCollidingGroup(CollisionReceiver.CollisionGroup.BULLET)) {
+                    if (collisionReceiver.getNetworkID() != creatorNetId) {
+                        float radius = Math.max(dt * velocity.len() * .5f, bulletSize);
+                        if (MathUtilities.circleCollisionDetection(position.x, position.y, radius, collisionReceiver.getPosition().x, collisionReceiver.getPosition().y, collisionReceiver.getRadius())) {
+                            Vector2 knockbackVec = new Vector2(velocity).nor().scl(enemyKnockback);
+                            // correct collision.
+                            // if collision kills target,
+                            // TODO: should this be parameterized? penetration ability?
+                            int damageDealt = collisionReceiver.receiveAttack(new AttackInfo(Math.round(damage), shieldDamage, armorDamage, knockbackVec.x, knockbackVec.y), creatorNetId);
+                            if (damageDealt == Math.round(damage)) {
+                                // remove bullet
+                                server.removeObject(networkID);
+                                break;
+                            } else {
+                                damage -= damageDealt;
+                                if (Math.round(damage) <= 0) {
+                                    server.removeObject(networkID);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
+        float dist = position.dst(bulletSpawn);
+        if (dist >= MAX_RANGE || age >= MAX_AGE) {
+            server.removeObject(networkID);
+        }
+        age += dt;
     }
 
     public int getCreatorNetId() {

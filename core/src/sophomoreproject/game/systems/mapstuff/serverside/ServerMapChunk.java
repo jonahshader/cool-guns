@@ -2,7 +2,7 @@ package sophomoreproject.game.systems.mapstuff.serverside;
 
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
-import sophomoreproject.game.interfaces.GameObject;
+import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.systems.mapstuff.MapChunk;
 import sophomoreproject.game.systems.mapstuff.MapGenerator;
@@ -16,6 +16,7 @@ public class ServerMapChunk {
     private final ArrayList<Spawner> spawners;
     private final HashMap<Integer, PhysicsObject> idToContainedObject; // map of objects that exist in this chunk
     private final HashMap<Integer, Player> idToContainedPlayer;
+    private final HashMap<Integer, CollisionReceiver> idToContainedCollisionReceiver;
     private final int x;
     private final int y;
 
@@ -26,6 +27,7 @@ public class ServerMapChunk {
 
         idToContainedObject = new HashMap<>();
         idToContainedPlayer = new HashMap<>();
+        idToContainedCollisionReceiver = new HashMap<>();
     }
 
     public void run(float dt, GameServer server) {
@@ -36,12 +38,16 @@ public class ServerMapChunk {
     public void resetContainedObjects() {
         idToContainedObject.clear();
         idToContainedPlayer.clear();
+        idToContainedCollisionReceiver.clear();
     }
 
     public void registerContainedObject(PhysicsObject obj) {
         idToContainedObject.put(obj.getNetworkID(), obj);
         if (obj instanceof Player) {
             idToContainedPlayer.put(obj.getNetworkID(), (Player)obj);
+        }
+        if (obj instanceof CollisionReceiver) {
+            idToContainedCollisionReceiver.put(obj.getNetworkID(), (CollisionReceiver) obj);
         }
     }
 
@@ -59,5 +65,9 @@ public class ServerMapChunk {
 
     public Collection<Player> getContainedPlayers() {
         return idToContainedPlayer.values();
+    }
+
+    public Collection<CollisionReceiver> getContainedCollisionReceivers() {
+        return idToContainedCollisionReceiver.values();
     }
 }
