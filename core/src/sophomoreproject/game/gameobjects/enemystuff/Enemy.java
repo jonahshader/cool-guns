@@ -12,6 +12,7 @@ import sophomoreproject.game.packets.CreateEnemy;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.singletons.LocalRandom;
+import sophomoreproject.game.singletons.StatsBarRenderer;
 import sophomoreproject.game.systems.GameServer;
 
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class Enemy extends PhysicsObject implements Renderable {
     private EnemyState state = EnemyState.IDLE_WALK;
     private Vector2 targetVelocity = new Vector2();
     private Vector2 playerMinusPos = new Vector2();
+    private Vector2 barPos = new Vector2();
     private Player targetPlayer;
 
     private float idleWaitTimer = IDLE_WAIT_DELAY;
@@ -51,6 +53,7 @@ public class Enemy extends PhysicsObject implements Renderable {
     private float age = 0;
     private float idleTime = 0;
 
+    private ArrayList<StatsBarRenderer.StatsBarInfo> bars;
 
     // server constructor
     public Enemy(EnemyInfo info, Vector2 position, int networkID) {
@@ -67,6 +70,12 @@ public class Enemy extends PhysicsObject implements Renderable {
         this.info = packet.info;
 
         loadTextures();
+
+        bars = new ArrayList<>();
+        bars.add(new StatsBarRenderer.StatsBarInfo(5,7, StatsBarRenderer.HEALTH_BAR_COLOR));
+        bars.add(new StatsBarRenderer.StatsBarInfo(10,20, StatsBarRenderer.SHIELD_BAR_COLOR));
+//        bars.add(new StatsBarRenderer.StatsBarInfo(30,50, StatsBarRenderer.STAMINA_BAR_COLOR));
+        bars.add(new StatsBarRenderer.StatsBarInfo(6,15, StatsBarRenderer.ARMOR_BAR_COLOR));
     }
 
     @Override
@@ -203,6 +212,9 @@ public class Enemy extends PhysicsObject implements Renderable {
     public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
         sprite.setOriginBasedPosition(position.x, position.y);
         sprite.draw(sb);
+        barPos.set(position);
+        barPos.y += (info.size / 2)* sprite.getHeight();
+        StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,barPos,bars);
     }
 
     @Override
