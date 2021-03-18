@@ -25,12 +25,12 @@ import java.util.Collection;
 import static sophomoreproject.game.utilites.CharacterUtilities.accelerateTowardsTargetVelocity;
 
 public class Enemy extends PhysicsObject implements Renderable, CollisionReceiver {
-    private static float IDLE_WAIT_DELAY = 3f;
-    private static float WALK_DELAY = 2f;
-    private static float IDLE_WAIT_VARIANCE = 1;
-    private static float WALK_VARIANCE = 1;
-    private static float TARGET_UPDATE_DELAY = 1;
-    private static float MAX_IDLE_TIME = 20; // 20 seconds
+    private static final float IDLE_WAIT_DELAY = 3f;
+    private static final float IDLE_WAIT_VARIANCE = 2f;
+    private static final float WALK_DELAY = 2f;
+    private static final float WALK_VARIANCE = 2f;
+    private static final float TARGET_UPDATE_DELAY = .75f;
+    private static final float MAX_IDLE_TIME = 20; // 20 seconds
 
     public enum EnemyState {
         IDLE_WAIT,
@@ -69,6 +69,11 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
         this.info = info;
         health = info.health;
         updateFrequency = ServerUpdateFrequency.CONSTANT;
+
+        // init walk velocity randomly
+        targetVelocity.set(1, 0);
+        targetVelocity.rotateRad((float)Math.PI * 2 * LocalRandom.RAND.nextFloat());
+        targetVelocity.scl(info.maxIdleVelocity);
     }
 
     // client constructor

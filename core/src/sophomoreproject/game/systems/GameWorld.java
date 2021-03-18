@@ -25,7 +25,6 @@ public class GameWorld {
     private final Map<Integer, PhysicsObject> physicsObjects = new ConcurrentHashMap<>();
     private final Map<Integer, Player> players = new ConcurrentHashMap<>();
     private final Map<Integer, GameObject> gameObjects = new ConcurrentHashMap<>();
-    private final Map<Integer, CollisionReceiver> collisionReceiverObjects = new ConcurrentHashMap<>();
     private final Map<Integer, GameObject> sleepingGameObjects = new ConcurrentHashMap<>();
     private final List<Renderable> renderables = new ArrayList<>();
 
@@ -87,7 +86,7 @@ public class GameWorld {
         sleepUpdateLock.lock();
         // move from sleeping object array to normal working arrays
         for (GameObject o : sleepingToWakeGameObjectQueue) {
-            sleepingGameObjects.remove(o);
+            sleepingGameObjects.remove(o.getNetworkID());
             addObject(o);
             System.out.println("Object with id " + o.getNetworkID() + " is awake now.");
         }
@@ -116,7 +115,7 @@ public class GameWorld {
             }
         }
 
-        serverNetwork.sendPacketsToAll(serverSendUpdatePacketBuffer, false);
+        serverNetwork.sendPacketsToAll(serverSendUpdatePacketBuffer, true);
         serverSendUpdatePacketBuffer.clear();
 
 
@@ -126,9 +125,9 @@ public class GameWorld {
         sleepUpdateLock.lock();
         if (packet.sleeping) {
             GameObject obj = getGameObjectFromID(packet.networkID);
-            if (obj == null) {
-                obj = getSleepingGameObjectFromID(packet.networkID);
-            }
+//            if (obj == null) {
+//                obj = getSleepingGameObjectFromID(packet.networkID);
+//            }
             if (obj != null) {
                 wakeToSleepingGameObjectQueue.add(obj);
             } else {
@@ -136,9 +135,9 @@ public class GameWorld {
             }
         } else {
             GameObject obj = getSleepingGameObjectFromID(packet.networkID);
-            if (obj == null) {
-                obj = getGameObjectFromID(packet.networkID);
-            }
+//            if (obj == null) {
+//                obj = getGameObjectFromID(packet.networkID);
+//            }
             if (obj != null) {
                 sleepingToWakeGameObjectQueue.add(obj);
             } else {
@@ -176,7 +175,6 @@ public class GameWorld {
         if (o instanceof PhysicsObject) physicsObjects.put(o.getNetworkID(), (PhysicsObject) o);
         if (o instanceof Renderable) renderables.add((Renderable) o);
         if (o instanceof Player) players.put(o.getNetworkID(), (Player)o);
-        if (o instanceof CollisionReceiver) collisionReceiverObjects.put(o.getNetworkID(), (CollisionReceiver) o);
         gameObjects.put(o.getNetworkID(), o);
     }
 
@@ -184,9 +182,8 @@ public class GameWorld {
         if (o instanceof PhysicsObject) physicsObjects.remove(o.getNetworkID());
         if (o instanceof Renderable) renderables.remove(o);
         if (o instanceof Player) players.remove(o.getNetworkID());
-        if (o instanceof CollisionReceiver) collisionReceiverObjects.remove(o.getNetworkID());
         gameObjects.remove(o.getNetworkID());
-        sleepingGameObjects.remove(o.getNetworkID());
+//        sleepingGameObjects.remove(o.getNetworkID());
     }
 
     public GameObject getGameObjectFromID(int networkID) {
@@ -252,11 +249,16 @@ public class GameWorld {
     }
 
     public int getSleepingPlayerNetIDFromAccountID(int accountID) {
+        System.out.println("Looking for sleeping player with account id " + accountID);
         for (GameObject o : sleepingGameObjects.values()) {
             if (o instanceof Player) {
+                System.out.println("Found a player");
                 Player p = (Player) o;
                 if (p.getAccountId() == accountID) {
+                    System.out.println("Player matches account id " + accountID);
                     return p.getNetworkID();
+                } else {
+                    System.out.println("Player does not match account id (looking for " + accountID + " but found " + p.getAccountId() + ")");
                 }
             }
         }

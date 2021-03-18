@@ -156,6 +156,7 @@ public class Gun extends Item implements Renderable {
         baseVelocity.scl(info.bulletSpeed);
 
         Vector2 accumulatedKnockback = new Vector2();
+        Vector2 inheritedVelocity = new Vector2(player.velocity).scl(.5f);
 
         for (int b = 0; b < info.bulletsPerShot; b++) {
             if (currentClip > 0) {
@@ -166,7 +167,8 @@ public class Gun extends Item implements Renderable {
                 Vector2 uniqueKnockback = new Vector2(uniqueVel).nor().scl(-info.playerKnockback);
                 accumulatedKnockback.add(uniqueKnockback);
 
-                uniqueVel.add(player.velocity); // inherit velocity from player
+
+                uniqueVel.add(inheritedVelocity); // inherit velocity from player
 
                 float uniqueDam = info.bulletDamage + genTriangleDist()*info.bulletDamageVariance;
 

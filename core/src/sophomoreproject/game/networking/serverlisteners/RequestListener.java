@@ -29,13 +29,13 @@ import java.util.HashMap;
 public class RequestListener implements Listener {
     private GameServer gameServer;
     private GameWorld world;
-    private HashMap<Connection, Integer> connectionToAccountID;
+    private HashMap<Integer, Integer> connectionToAccountID;
     private HashMap<Integer, ConnectedAccount> usersLoggedIn;
 
     public RequestListener(GameServer gameServer, GameWorld world, ServerNetwork serverNetwork) {
         this.gameServer = gameServer;
         this.world = world;
-        this.connectionToAccountID = serverNetwork.getConnectionToAccountID();
+        this.connectionToAccountID = serverNetwork.getConnectionIdToAccountID();
         this.usersLoggedIn = serverNetwork.getUsersLoggedIn();
     }
 
@@ -44,8 +44,8 @@ public class RequestListener implements Listener {
         if (o instanceof RequestGameData) {
             gameServer.sendAllWorldDataToClient(c);
 
-            if (connectionToAccountID.containsKey(c)) {
-                int playerAccountID = connectionToAccountID.get(c);
+            if (connectionToAccountID.containsKey(c.getID())) {
+                int playerAccountID = connectionToAccountID.get(c.getID());
                 int playerNetID = world.getSleepingPlayerNetIDFromAccountID(playerAccountID);
                 if (playerNetID >= 0) {
                     gameServer.setAndSendSleepState(playerNetID, false);
@@ -88,10 +88,12 @@ public class RequestListener implements Listener {
                     gameServer.spawnAndSendGameObject(shotgun);
 
                     GunInfo sniperInfo = new GunInfo();
-                    sniperInfo.clipSize = 8;
+                    sniperInfo.clipSize = 1;
+                    sniperInfo.reloadDelay = 0.001f;
+                    sniperInfo.fireDelay = 0.001f;
                     sniperInfo.bulletSpeed = 900;
                     sniperInfo.spread = 0.001f;
-                    sniperInfo.bulletDamage = 40;
+                    sniperInfo.bulletDamage = 40000;
                     sniperInfo.bulletDamageVariance = 0;
                     Gun sniper = new Gun(sniperInfo, newPlayer.getNetworkID(), world.getNewNetID());
                     gameServer.spawnAndSendGameObject(sniper);
