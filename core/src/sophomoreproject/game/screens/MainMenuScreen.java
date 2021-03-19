@@ -15,6 +15,7 @@ import sophomoreproject.game.menu.Menu;
 import sophomoreproject.game.menu.MenuAction;
 import sophomoreproject.game.menu.MenuItem;
 import sophomoreproject.game.menu.menuactions.ExitGameAction;
+import sophomoreproject.game.menu.menuactions.OptionsAction;
 import sophomoreproject.game.menu.menuactions.PlayGameAction;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.systems.GameClient;
@@ -40,7 +41,7 @@ public class MainMenuScreen implements Screen {
 
         mainMenu.addMenuItem("Play Game", new PlayGameAction(game, accountID));
         //mainMenu.addMenuItem("Edit Character", new EditAction());
-        //mainMenu.addMenuItem("Options", new OptionsAction());
+        mainMenu.addMenuItem("Options", new OptionsAction(game, accountID));
        //mainMenu.addMenuItem("Credits", new CreditsAction());
         mainMenu.addMenuItem("Exit", new ExitGameAction());
 

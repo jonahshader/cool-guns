@@ -23,7 +23,7 @@ public class ConnectServerScreen implements Screen {
 
 
     private Stage stage;
-    private Skin skin = new Skin(Gdx.files.internal("uiskin.json"));;
+    private Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
 
 
@@ -121,7 +121,7 @@ public class ConnectServerScreen implements Screen {
     @Override
     public void render(float delta) {
         // set clear color
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0.5f, 0.5f, 1);
         // apply clear color to screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.draw();
