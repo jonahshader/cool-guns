@@ -17,28 +17,28 @@ import java.util.HashMap;
 public class AccountListener implements Listener {
     private Accounts accounts;
     private HashMap<Integer, ConnectedAccount> usersLoggedIn;
-    private HashMap<Connection, Integer> connectionToAccountID;
+    private HashMap<Integer, Integer> connectionIdToAccountID;
     private GameWorld world;
     private GameServer gameServer;
 
     public AccountListener(Accounts accounts,
                            HashMap<Integer, ConnectedAccount> usersLoggedIn,
-                           HashMap<Connection, Integer> connectionToAccountID,
+                           HashMap<Integer, Integer> connectionIdToAccountID,
                            GameServer gameServer) {
         this.accounts = accounts;
         this.usersLoggedIn = usersLoggedIn;
-        this.connectionToAccountID = connectionToAccountID;
+        this.connectionIdToAccountID = connectionIdToAccountID;
         this.world = gameServer.getGameWorld();
         this.gameServer = gameServer;
     }
 
     @Override
     public void disconnected(Connection connection) {
-        if (connectionToAccountID.containsKey(connection)) {
-            int disconnectedAccountID = connectionToAccountID.get(connection);
+        if (connectionIdToAccountID.containsKey(connection.getID())) {
+            int disconnectedAccountID = connectionIdToAccountID.get(connection.getID());
             usersLoggedIn.remove(disconnectedAccountID);
-            connectionToAccountID.remove(connection);
-
+            System.out.println("Removed connection " + connection.getID() + " with accountID " + connectionIdToAccountID.get(connection.getID()) + " pair from connectionIdToAccountID.");
+            connectionIdToAccountID.remove(connection.getID());
 
 
             // make player go to sleep
@@ -91,7 +91,8 @@ public class AccountListener implements Listener {
 
                 // add account to collection of logged in users
                 usersLoggedIn.put(accountID, new ConnectedAccount(c, accounts.getAccountByUsername(packet.username)));
-                connectionToAccountID.put(c, accountID);
+                connectionIdToAccountID.put(c.getID(), accountID);
+                System.out.println("Put connection " + c.getID() + " with accountID " + accountID + " pair into connectionIdToAccountID.");
             }
             // reply with event
             c.sendTCP(rae);

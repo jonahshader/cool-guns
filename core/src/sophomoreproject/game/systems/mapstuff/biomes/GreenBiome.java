@@ -2,10 +2,8 @@ package sophomoreproject.game.systems.mapstuff.biomes;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
-import sophomoreproject.game.gameobjects.TestObject;
 import sophomoreproject.game.gameobjects.enemystuff.Enemy;
 import sophomoreproject.game.gameobjects.enemystuff.EnemyInfo;
-import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.systems.mapstuff.*;
 
 import java.util.Random;
@@ -22,11 +20,12 @@ public class GreenBiome implements Biome{
     private OctaveSet redFlowerSelect;
     private OctaveSet denseGrassSelect;
     private OctaveSet enemySpawnSelect;
+    private OctaveSet enemySpawnHighFreqSelect;
 
     private SpawnAction spawnAction = (server, x, y) -> {
-        double diff = Math.sqrt(x * x + y * y) / MapChunk.CHUNK_SIZE_TILES;
+
         // spawn an enemy at x y with correct diff
-        server.spawnAndSendGameObject(new Enemy(new EnemyInfo((float)diff), new Vector2((x * TILE_SIZE) + TILE_SIZE/2, (y * TILE_SIZE) + TILE_SIZE/2), server.getGameWorld().getNewNetID()));
+        server.spawnAndSendGameObject(new Enemy(new EnemyInfo(getDiffFromWorldPos(x, y)), new Vector2(x, y), server.getGameWorld().getNewNetID()));
 //            server.spawnAndSendGameObject(new TestObject(new Vector2((x * TILE_SIZE) + TILE_SIZE/2, (y * TILE_SIZE) + TILE_SIZE/2), server.getGameWorld().getNewNetID()));
     };
 
@@ -51,7 +50,10 @@ public class GreenBiome implements Biome{
         denseGrassSelect.addOctaveFractal(0.05, 1.0, 2.0, 0.5, 2);
 
         enemySpawnSelect = new OctaveSet(random);
-        enemySpawnSelect.addOctaveFractal(0.033, 1.0, 2.0, 0.5, 4);
+        enemySpawnSelect.addOctaveFractal(0.04, 1.0, 2.0, 0.5, 3);
+
+        enemySpawnHighFreqSelect = new OctaveSet(random);
+        enemySpawnHighFreqSelect.addOctave(19.92519, 1.0);
     }
 
     @Override
@@ -91,14 +93,21 @@ public class GreenBiome implements Biome{
 
     @Override
     public boolean isEnemySpawn(int x, int y) {
-        return (terrain.getValue(x, y) >= -0.25) && (enemySpawnSelect.getValue(x, y) > 0.8);
+        return (terrain.getValue(x, y) >= -0.25) && (enemySpawnSelect.getValue(x, y) > 0.5) && (enemySpawnHighFreqSelect.getValue(x, y) > 0.8);
     }
 
     @Override
     public Spawner makeSpawner(int x, int y) {
         if (isEnemySpawn(x, y)) {
-            return new Spawner(x, y, 5, 5, 3f, 20f, spawnAction);
+            float xWorld = x * TILE_SIZE + (TILE_SIZE / 2);
+            float yWorld = y * TILE_SIZE + (TILE_SIZE / 2);
+            float diff = getDiffFromWorldPos(xWorld, yWorld);
+            return new Spawner(new Vector2(xWorld, yWorld), 3, (int) (5 * diff), 5 / (1 + diff * 0.01f), 10f + diff * 0.05f, spawnAction);
         }
         return null;
+    }
+
+    private float getDiffFromWorldPos(float x, float y) {
+        return (float)Math.sqrt(x * x + y * y) / MapChunk.CHUNK_SIZE_TILES;
     }
 }

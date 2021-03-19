@@ -3,7 +3,6 @@ package sophomoreproject.game.desktop;
 import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.networking.serverlisteners.AccountListener;
 import sophomoreproject.game.networking.serverlisteners.RelaySendOnlyPacketsListener;
-import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.systems.GameServer;
 
 import java.io.BufferedReader;
@@ -41,7 +40,7 @@ public class ServerLauncher {
             // add some listeners here (that can't be added elsewhere)
             server.addListener(new AccountListener(server.getAccounts(),
                     server.getUsersLoggedIn(),
-                    server.getConnectionToAccountID(),
+                    server.getConnectionIdToAccountID(),
                     gameServer));
 
             server.addListener(new RelaySendOnlyPacketsListener(server,
@@ -53,7 +52,8 @@ public class ServerLauncher {
                 do {
                     time = System.nanoTime();
                 } while ((time - lastTime) < LOOP_TIME_NANOS);
-                gameServer.run((float) Math.max(((time - lastTime) * NANOS_TO_SECONDS), LOOP_TIME * 0.5));
+//                System.out.println("Server framerate: " + ((time - lastTime) * NANOS_TO_SECONDS));
+                gameServer.run((float) Math.max(((time - lastTime) * NANOS_TO_SECONDS), LOOP_TIME * 0.00005));
                 lastTime = time;
             }
         }

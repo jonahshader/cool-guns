@@ -20,7 +20,7 @@ public class GunInfo {
     public float bulletDamageVariance = 1.5f;
     public float critScalar = 1.5f;
     public float playerKnockback = 25f;
-    public float enemyKnockback = 15f;
+    public float enemyKnockback = 50f;
     public Gun.GunType gunType = Gun.GunType.PISTOL;
     public float gunHoldRadius = 18f;
     public int shieldDamage = 0;

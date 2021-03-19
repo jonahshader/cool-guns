@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.gameobjects.enemystuff.Enemy;
+import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.interfaces.Renderable;
@@ -62,6 +64,11 @@ public class GameWorld {
                 Player toUpdate = (Player)getGameObjectFromID(packet.netID);
                 if (toUpdate != null)
                     toUpdate.receiveUpdate(packet);
+            } else if (o instanceof UpdateEnemy) {
+                UpdateEnemy packet = (UpdateEnemy) o;
+                Enemy toUpdate = (Enemy)getGameObjectFromID(packet.netID);
+                if (toUpdate != null)
+                    toUpdate.receiveUpdate(packet);
             }
         }
         receiveUpdatePacketBuffer.clear();
@@ -79,7 +86,7 @@ public class GameWorld {
         sleepUpdateLock.lock();
         // move from sleeping object array to normal working arrays
         for (GameObject o : sleepingToWakeGameObjectQueue) {
-            sleepingGameObjects.remove(o);
+            sleepingGameObjects.remove(o.getNetworkID());
             addObject(o);
             System.out.println("Object with id " + o.getNetworkID() + " is awake now.");
         }
@@ -108,7 +115,7 @@ public class GameWorld {
             }
         }
 
-        serverNetwork.sendPacketsToAll(serverSendUpdatePacketBuffer, false);
+        serverNetwork.sendPacketsToAll(serverSendUpdatePacketBuffer, true);
         serverSendUpdatePacketBuffer.clear();
 
 
@@ -118,9 +125,9 @@ public class GameWorld {
         sleepUpdateLock.lock();
         if (packet.sleeping) {
             GameObject obj = getGameObjectFromID(packet.networkID);
-            if (obj == null) {
-                obj = getSleepingGameObjectFromID(packet.networkID);
-            }
+//            if (obj == null) {
+//                obj = getSleepingGameObjectFromID(packet.networkID);
+//            }
             if (obj != null) {
                 wakeToSleepingGameObjectQueue.add(obj);
             } else {
@@ -128,9 +135,9 @@ public class GameWorld {
             }
         } else {
             GameObject obj = getSleepingGameObjectFromID(packet.networkID);
-            if (obj == null) {
-                obj = getGameObjectFromID(packet.networkID);
-            }
+//            if (obj == null) {
+//                obj = getGameObjectFromID(packet.networkID);
+//            }
             if (obj != null) {
                 sleepingToWakeGameObjectQueue.add(obj);
             } else {
@@ -174,9 +181,9 @@ public class GameWorld {
     private void removeObject(GameObject o) {
         if (o instanceof PhysicsObject) physicsObjects.remove(o.getNetworkID());
         if (o instanceof Renderable) renderables.remove(o);
+        if (o instanceof Player) players.remove(o.getNetworkID());
         gameObjects.remove(o.getNetworkID());
-        sleepingGameObjects.remove(o.getNetworkID());
-        players.remove(o.getNetworkID());
+//        sleepingGameObjects.remove(o.getNetworkID());
     }
 
     public GameObject getGameObjectFromID(int networkID) {
@@ -242,11 +249,16 @@ public class GameWorld {
     }
 
     public int getSleepingPlayerNetIDFromAccountID(int accountID) {
+        System.out.println("Looking for sleeping player with account id " + accountID);
         for (GameObject o : sleepingGameObjects.values()) {
             if (o instanceof Player) {
+                System.out.println("Found a player");
                 Player p = (Player) o;
                 if (p.getAccountId() == accountID) {
+                    System.out.println("Player matches account id " + accountID);
                     return p.getNetworkID();
+                } else {
+                    System.out.println("Player does not match account id (looking for " + accountID + " but found " + p.getAccountId() + ")");
                 }
             }
         }
