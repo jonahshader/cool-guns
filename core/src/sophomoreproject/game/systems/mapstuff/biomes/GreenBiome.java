@@ -93,7 +93,7 @@ public class GreenBiome implements Biome{
 
     @Override
     public boolean isEnemySpawn(int x, int y) {
-        return (terrain.getValue(x, y) >= -0.25) && (enemySpawnSelect.getValue(x, y) > 0.5) && (enemySpawnHighFreqSelect.getValue(x, y) > 0.8);
+        return (terrain.getValue(x, y) >= -0.25) && (enemySpawnSelect.getValue(x, y) > 0.8) && (enemySpawnHighFreqSelect.getValue(x, y) > 0.5);
     }
 
     @Override

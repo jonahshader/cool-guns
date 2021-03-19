@@ -6,8 +6,10 @@ import sophomoreproject.game.systems.GameServer;
 
 import java.util.Collection;
 
+import static sophomoreproject.game.screens.GameScreen.GAME_HEIGHT;
+
 public class Spawner {
-    private static final float SPAWN_RADIUS = 300f;
+    private static final float SPAWN_RADIUS = GAME_HEIGHT * .4f;
     private static final float IS_SPAWNING_UPDATE_DELAY = 1;
     private Vector2 position;
     private int spawnsBuffered;

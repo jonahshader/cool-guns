@@ -20,6 +20,8 @@ import sophomoreproject.game.systems.mapstuff.Map;
 import static sophomoreproject.game.systems.GameServer.GAME_SEED;
 
 public class GameScreen implements Screen {
+    public static final int GAME_WIDTH = 960;
+    public static final int GAME_HEIGHT = 540;
     private OrthographicCamera worldCamera;
     private Camera hudCamera;
     private Viewport worldViewport;
@@ -37,7 +39,7 @@ public class GameScreen implements Screen {
         this.accountID = accountID;
 
         worldCamera = new OrthographicCamera();
-        worldViewport = new ExtendViewport(640, 360, worldCamera);
+        worldViewport = new ExtendViewport(GAME_WIDTH, GAME_HEIGHT, worldCamera);
 
         hudCamera = new OrthographicCamera();
         hudViewport = new ExtendViewport(640, 360, hudCamera);
