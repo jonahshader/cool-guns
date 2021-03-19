@@ -11,6 +11,7 @@ import sophomoreproject.game.packets.CreatePlayer;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.packets.UpdatePlayer;
 import sophomoreproject.game.singletons.CustomAssetManager;
+import sophomoreproject.game.singletons.StatsBarRenderer;
 import sophomoreproject.game.singletons.TextDisplay;
 import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.utilites.RendingUtilities;
@@ -27,10 +28,20 @@ public class Player extends PhysicsObject implements Renderable{
     private final String username;
 
     private Vector2 lookDirection = new Vector2();
+    private Vector2 barPos = new Vector2();
     private ArrayList<Integer> inventory = new ArrayList<>();
     private int inventorySize = 8;
 
     private int accountId;
+
+    private int health = 10;
+    private int maxHealth = 20;
+
+    private ArrayList<StatsBarRenderer.StatsBarInfo> bars;
+    private StatsBarRenderer.StatsBarInfo healthBar;
+    private StatsBarRenderer.StatsBarInfo shieldBar;
+    private StatsBarRenderer.StatsBarInfo staminaBar;
+    private StatsBarRenderer.StatsBarInfo armorBar;
 
     //Server side constructor
     public Player(Vector2 position, int accountId, int networkID, String username) {
@@ -58,6 +69,17 @@ public class Player extends PhysicsObject implements Renderable{
 
         loadTextures();
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
+
+        bars = new ArrayList<>();
+        healthBar = new StatsBarRenderer.StatsBarInfo(health,maxHealth,StatsBarRenderer.HEALTH_BAR_COLOR);
+        shieldBar = new StatsBarRenderer.StatsBarInfo(10,20, StatsBarRenderer.SHIELD_BAR_COLOR);
+        staminaBar = new StatsBarRenderer.StatsBarInfo(30,50, StatsBarRenderer.STAMINA_BAR_COLOR);
+        armorBar = new StatsBarRenderer.StatsBarInfo(6,15, StatsBarRenderer.ARMOR_BAR_COLOR);
+        bars.add(healthBar);
+        bars.add(shieldBar);
+        bars.add(staminaBar);
+        bars.add(armorBar);
+
     }
 
     @Override
@@ -91,7 +113,10 @@ public class Player extends PhysicsObject implements Renderable{
     @Override
     public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
         RendingUtilities.renderCharacter(position, lookDirection, PLAYER_SIZE, sb, textures);
-        TextDisplay.getInstance().drawTextInWorld(sb, username, position.x, position.y + 24, .25f, new Color(1f, 1f, 1f, 1f));
+        TextDisplay.getInstance().drawTextInWorld(sb, username, position.x, position.y - 24, .25f, new Color(1f, 1f, 1f, 1f));
+        barPos.set(position);
+        barPos.y += (PLAYER_SIZE.y / 2)* textures[6].getRegionHeight();
+        StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,barPos,bars);
     }
 
     public void updateLookDirection(Vector2 lookDirection) {

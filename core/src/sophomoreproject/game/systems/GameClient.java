@@ -10,6 +10,7 @@ import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.networking.ClientNetwork;
 import sophomoreproject.game.networking.clientlisteners.*;
 import sophomoreproject.game.packets.RequestGameData;
+import sophomoreproject.game.singletons.HUD;
 
 import java.util.ArrayList;
 
@@ -42,6 +43,7 @@ public class GameClient {
 
     public void setClientControlledPlayer(Player player) {
         PlayerController.getInstance().setPlayer(player);
+        HUD.getInstance().setPlayer(player);
     }
 
     public int getAccountID() {

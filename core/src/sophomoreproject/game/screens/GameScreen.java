@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.singletons.HUD;
 import sophomoreproject.game.singletons.TextDisplay;
 import sophomoreproject.game.systems.GameClient;
 import sophomoreproject.game.systems.PlayerController;
@@ -46,6 +47,7 @@ public class GameScreen implements Screen {
         gameClient = new GameClient(accountID);
         Gdx.input.setInputProcessor(PlayerController.getInstance());
         PlayerController.getInstance().setCam(worldCamera);
+
 
         map = new Map(game, GAME_SEED);
     }
@@ -85,6 +87,9 @@ public class GameScreen implements Screen {
         TextDisplay.getInstance().draw(game.batch, hudViewport);
         game.batch.end();
 
+        HUD.getInstance().draw(game.batch);
+
+
 
         if (Gdx.input.justTouched()) {
             System.out.println("Just clicked in world coords: " + worldCamera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0f)).toString());
@@ -96,6 +101,7 @@ public class GameScreen implements Screen {
         // update viewport and projection matrix
         worldViewport.update(width, height);
         hudViewport.update(width, height);
+        HUD.getInstance().resize(width, height);
     }
 
     @Override

@@ -15,10 +15,10 @@ public class StatsBarRenderer {
 
     public static class StatsBarInfo{
 
-        public float value, maxValue;
+        public int value, maxValue;
         public Color color;
 
-        public StatsBarInfo(float value, float maxValue, Color color) {
+        public StatsBarInfo(int value, int maxValue, Color color) {
             this.value = value;
             this.maxValue = maxValue;
             this.color = color;
@@ -27,9 +27,9 @@ public class StatsBarRenderer {
 
     private static StatsBarRenderer instance;
 
-    private static final float WIDTH = 30f;
-    private static final float HEIGHT= 2f;
-    private static final float BAR_INTERVAL = 3f;
+    public static final float WIDTH = 30f;
+    public static final float HEIGHT= 2f;
+    public static final float BAR_INTERVAL = 3f;
 
     public static final Color HEALTH_BAR_COLOR = new Color(1,0,0,1);
     public static final Color SHIELD_BAR_COLOR = new Color(0,0,1,1);
@@ -62,18 +62,16 @@ public class StatsBarRenderer {
     public void drawStatsBarsInWorld(SpriteBatch sb, Vector2 pos, ArrayList<StatsBarInfo> bars){
         Vector2 posCopy = new Vector2(pos);
         for (StatsBarInfo bar: bars){
-            drawBar(sb,posCopy,bar, 1);
-            posCopy.y += BAR_INTERVAL;
-
+            if (bar.maxValue != 0) {
+                drawBar(sb, posCopy, bar, 1);
+                posCopy.y += BAR_INTERVAL;
+            }
+             
             //bar_interval * scale
             // create hud scale
 
         }
-//       for (int i = 0; i < bars.size(); i++) {
-//           posCopy.y = pos.y + i * BAR_INTERVAL;
-//           drawBar(sb,posCopy, bars.get(i));
-//
-//       }
+
     }
 
     public static StatsBarRenderer getInstance() {

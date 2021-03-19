@@ -39,6 +39,7 @@ public final class PlayerController implements InputProcessor {
     private int equippedItemIndex;
     private float serverUpdateDelayTimer = 0;
 
+
     private TextDisplay.TextEntry accountIDString;
     private TextDisplay.TextEntry playerNetIDString;
     private TextDisplay.TextEntry fpsString;
