@@ -19,7 +19,7 @@ public class TempBypassScreen implements Screen {
     private int accountID = -1;
     boolean loggedIn = false;
 
-    public TempBypassScreen(CoolGuns game, boolean useLocalHost) {
+    public TempBypassScreen(CoolGuns game, boolean useLocalHost, int localPort) {
         this.game = game;
 
         Scanner scanner = new Scanner(System.in);
@@ -28,7 +28,7 @@ public class TempBypassScreen implements Screen {
         if (useLocalHost) {
             while (!connected) {
                 String ip = "localhost";
-                int port = 1234;
+                int port = localPort;
                 if (ClientNetwork.getInstance().tryConnect(ip, port)) {
                     connected = true;
                 } else {

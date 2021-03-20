@@ -52,7 +52,7 @@ public class StatsBarRenderer {
         pixel.setOriginBasedPosition(bottomCenter.x, bottomCenter.y);
         pixel.draw(sb);
         pixel.setColor(bar.color);
-        pixel.setScale(WIDTH*(bar.value/bar.maxValue), HEIGHT);
+        pixel.setScale(WIDTH*(bar.value/(float)bar.maxValue), HEIGHT);
         pixel.setOriginBasedPosition(bottomCenter.x, bottomCenter.y);
         pixel.draw(sb);
 //        TextDisplay.getInstance().drawTextInWorld(sb, ((int)bar.value) + "/" + ((int)bar.maxValue), bottomCenter.x, bottomCenter.y, .15f, Color.WHITE );

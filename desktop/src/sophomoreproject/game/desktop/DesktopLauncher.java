@@ -7,12 +7,12 @@ import sophomoreproject.game.CoolGuns;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
         LwjglApplicationConfiguration config = makeConfig();
-		new LwjglApplication(new CoolGuns(false), config);
+		new LwjglApplication(new CoolGuns(false, 0), config);
     }
 
-    public static void mainLocalHost() {
+    public static void mainLocalHost(int localPort) {
 	    LwjglApplicationConfiguration config = makeConfig();
-        new LwjglApplication(new CoolGuns(true), config);
+        new LwjglApplication(new CoolGuns(true, localPort), config);
     }
 
     private static LwjglApplicationConfiguration makeConfig() {
