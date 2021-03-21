@@ -15,8 +15,8 @@ import sophomoreproject.game.singletons.CustomAssetManager;
 public class CoolGuns extends Game {
 	public SpriteBatch batch;
 	public ShapeRenderer shapeRenderer;
-	private boolean useLocalHost;
-	private int localPort;
+	private final boolean useLocalHost;
+	private final int localPort;
 
     public CoolGuns(boolean useLocalHost, int localPort) {
         this.useLocalHost = useLocalHost;

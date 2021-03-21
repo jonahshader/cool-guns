@@ -36,7 +36,7 @@ public class StatsBarRenderer {
     public static final Color STAMINA_BAR_COLOR = new Color(1,1,.2f,1);
     public static final Color ARMOR_BAR_COLOR = new Color(1,.5f,0,1);
 
-    private Sprite pixel;
+    private final Sprite pixel;
 
     private StatsBarRenderer() {
         TextureAtlas atlas = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);

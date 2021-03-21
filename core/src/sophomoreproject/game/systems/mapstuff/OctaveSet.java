@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class OctaveSet {
-    private ArrayList<Octave> octaves;
+    private final ArrayList<Octave> octaves;
     private double totalMagnitude = 0.0;
     protected Random ran;
 

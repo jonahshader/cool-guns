@@ -15,8 +15,8 @@ import sophomoreproject.game.singletons.HUD;
 import java.util.ArrayList;
 
 public class GameClient {
-    private GameWorld world;
-    private int accountID;
+    private final GameWorld world;
+    private final int accountID;
 
 
     public GameClient(int accountID) {

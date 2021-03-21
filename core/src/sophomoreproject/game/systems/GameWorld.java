@@ -43,7 +43,7 @@ public class GameWorld {
 
     /**
      * this method should be called by both client and server. just does physics for now.
-     * @param dt
+     * @param dt delta time
      */
     public void update(float dt) {
         // handle update packets
@@ -117,17 +117,12 @@ public class GameWorld {
 
         serverNetwork.sendPacketsToAll(serverSendUpdatePacketBuffer, true);
         serverSendUpdatePacketBuffer.clear();
-
-
     }
 
     public void handleSetSleepStatePacket(UpdateSleepState packet) {
         sleepUpdateLock.lock();
         if (packet.sleeping) {
             GameObject obj = getGameObjectFromID(packet.networkID);
-//            if (obj == null) {
-//                obj = getSleepingGameObjectFromID(packet.networkID);
-//            }
             if (obj != null) {
                 wakeToSleepingGameObjectQueue.add(obj);
             } else {
@@ -135,9 +130,6 @@ public class GameWorld {
             }
         } else {
             GameObject obj = getSleepingGameObjectFromID(packet.networkID);
-//            if (obj == null) {
-//                obj = getGameObjectFromID(packet.networkID);
-//            }
             if (obj != null) {
                 sleepingToWakeGameObjectQueue.add(obj);
             } else {
@@ -183,27 +175,18 @@ public class GameWorld {
         if (o instanceof Renderable) renderables.remove(o);
         if (o instanceof Player) players.remove(o.getNetworkID());
         gameObjects.remove(o.getNetworkID());
-//        sleepingGameObjects.remove(o.getNetworkID());
     }
 
     public GameObject getGameObjectFromID(int networkID) {
         return gameObjects.get(networkID);
-//        for (GameObject g : gameObjects.values()) if (g.getNetworkID() == networkID) {
-//            return g;
-//        }
-//        return null;
     }
 
     public GameObject getSleepingGameObjectFromID(int networkID) {
         return sleepingGameObjects.get(networkID);
-//        for (GameObject g : sleepingGameObjects) if (g.getNetworkID() == networkID) return g;
-//        return null;
     }
 
     public PhysicsObject getPhysicsObjectFromID(int networkID) {
         return physicsObjects.get(networkID);
-//        for (PhysicsObject p : physicsObjects) if (p.getNetworkID() == networkID) return p;
-//        return null;
     }
 
     public ArrayList<Object> createWorldCopy() {
@@ -225,15 +208,7 @@ public class GameWorld {
     }
 
     public synchronized int getNewNetID() {
-//        if (gameObjectAddQueue.size() == 0) {
-//            if (gameObjects.size() == 0) return 0;
-//            else return gameObjects.get(gameObjects.size() - 1).getNetworkID() + 1;
-//        } else {
-//            return gameObjectAddQueue.get(gameObjectAddQueue.size() - 1).getNetworkID() + 1;
-//        }
-
         return ++currentMaxNetID;
-
     }
 
     public int getPlayerNetIDFromAccountID(int accountID) {

@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class TwistedOctaveSet extends OctaveSet {
-    private ArrayList<Octave> octaveXShift = new ArrayList<>();
-    private ArrayList<Octave> octaveYShift = new ArrayList<>();
+    private final ArrayList<Octave> octaveXShift = new ArrayList<>();
+    private final ArrayList<Octave> octaveYShift = new ArrayList<>();
     private float twistMagnitude = 0f;
     private final float twistAmount;
 

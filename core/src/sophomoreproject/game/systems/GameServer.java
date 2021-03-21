@@ -59,7 +59,7 @@ public class GameServer {
         forceUpdateQueue.clear();
         forceUpdateQueueLock.unlock();
 
-        serverMap.update(); // TODO: maybe don't call update as frequently as run. might be costly and unnecessary
+        serverMap.update();
         serverMap.run(dt);
     }
 

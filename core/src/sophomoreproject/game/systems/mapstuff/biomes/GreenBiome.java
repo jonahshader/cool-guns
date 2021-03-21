@@ -32,7 +32,7 @@ public class GreenBiome implements Biome{
     public GreenBiome(Map map, Random random) {
         this.map = map;
         selection = new OctaveSet(random);
-        selection.addOctaveFractal(0.002, 1.0, 2.0, 0.5, 2);
+        selection.addOctaveFractal(0.001, 1.0, 2.0, 0.5, 2);
 
         terrain = new TwistedOctaveSet(random, 20);
         terrain.addOctaveFractal(0.007, 1.0, 2.0, 0.5, 5);

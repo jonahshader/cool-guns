@@ -31,7 +31,6 @@ public class ServerLauncher {
             }
         }
 
-//        int port = 1234;
         if (port != -1) {
             // create server
             ServerNetwork server = new ServerNetwork(port);
@@ -47,12 +46,11 @@ public class ServerLauncher {
                     gameServer));
 
             long lastTime = System.nanoTime();
-            long time = lastTime;
+            long time;
             while(true) {
                 do {
                     time = System.nanoTime();
                 } while ((time - lastTime) < LOOP_TIME_NANOS);
-//                System.out.println("Server framerate: " + ((time - lastTime) * NANOS_TO_SECONDS));
                 gameServer.run((float) Math.max(((time - lastTime) * NANOS_TO_SECONDS), LOOP_TIME * 0.00005));
                 lastTime = time;
             }
