@@ -63,6 +63,7 @@ public class RequestListener implements Listener {
 
                     // make more guns
                     GunInfo autoGunInfo = new GunInfo();
+                    autoGunInfo.gunType = Gun.GunType.SMG;
                     autoGunInfo.firingMode = Gun.FiringMode.AUTO;
                     autoGunInfo.fireDelay = 7/60f;
                     autoGunInfo.bulletsPerShot = 7;
@@ -79,6 +80,7 @@ public class RequestListener implements Listener {
                     gameServer.spawnAndSendGameObject(burstGun);
 
                     GunInfo shotgunInfo = new GunInfo();
+                    shotgunInfo.gunType = Gun.GunType.SHOTGUN;
                     shotgunInfo.bulletsPerShot = 12;
                     shotgunInfo.clipSize = 24;
                     shotgunInfo.bulletSpeed = 225;
@@ -88,6 +90,7 @@ public class RequestListener implements Listener {
                     gameServer.spawnAndSendGameObject(shotgun);
 
                     GunInfo sniperInfo = new GunInfo();
+                    sniperInfo.gunType = Gun.GunType.RIFLE;
                     sniperInfo.clipSize = 1;
                     sniperInfo.reloadDelay = 0.001f;
                     sniperInfo.fireDelay = 0.001f;
