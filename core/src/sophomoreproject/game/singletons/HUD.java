@@ -1,6 +1,7 @@
 package sophomoreproject.game.singletons;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -11,6 +12,19 @@ import sophomoreproject.game.gameobjects.Player;
 import java.util.ArrayList;
 
 public final class HUD {
+    private static HUD instance;
+    private Player player;
+    private Vector2 hudPos = new Vector2();
+    private static final float HUD_PADDING = 4;
+    private Viewport viewport;
+    private Camera cam;
+    private boolean connectionError = false;
+
+    private final ArrayList<StatsBarRenderer.StatsBarInfo> bars;
+    private final StatsBarRenderer.StatsBarInfo healthBar;
+    private final StatsBarRenderer.StatsBarInfo shieldBar;
+    private final StatsBarRenderer.StatsBarInfo staminaBar;
+    private final StatsBarRenderer.StatsBarInfo armorBar;
 
     private HUD(){
         cam = new OrthographicCamera();
@@ -27,18 +41,6 @@ public final class HUD {
         bars.add(staminaBar);
         bars.add(armorBar);
     }
-    private static HUD instance;
-    private Player player;
-    private Vector2 hudPos = new Vector2();
-    private static final float HUD_PADDING = 4;
-    private Viewport viewport;
-    private Camera cam;
-
-    private final ArrayList<StatsBarRenderer.StatsBarInfo> bars;
-    private final StatsBarRenderer.StatsBarInfo healthBar;
-    private final StatsBarRenderer.StatsBarInfo shieldBar;
-    private final StatsBarRenderer.StatsBarInfo staminaBar;
-    private final StatsBarRenderer.StatsBarInfo armorBar;
 
     public static HUD getInstance() {
         if (instance == null){
@@ -50,20 +52,28 @@ public final class HUD {
 
     public void setPlayer(Player player) {
         this.player = player;
-
-
     }
 
     public void draw(SpriteBatch sb){
+        viewport.apply(true);
+        sb.setProjectionMatrix(cam.combined);
+        sb.begin();
         if (player != null){
-            viewport.apply(true);
-            sb.setProjectionMatrix(cam.combined);
-            sb.begin();
             hudPos.set(HUD_PADDING + StatsBarRenderer.WIDTH/2, HUD_PADDING);
             StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,hudPos,bars);
-            sb.end();
         }
+
+        if (connectionError) {
+            TextDisplay.getInstance().drawTextInWorld(sb, "Connection Error!\n\n Please Restart", viewport.getWorldWidth() / 2, viewport.getWorldHeight() / 2, .2f, new Color(1, .8f, .8f, 1));
+        }
+
+        sb.end();
     }
+
+    public void setConnectionError(boolean connectionError) {
+        this.connectionError = connectionError;
+    }
+
     public void resize(int width, int height){
         viewport.update(width, height);
     }

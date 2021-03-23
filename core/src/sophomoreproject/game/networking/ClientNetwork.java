@@ -22,7 +22,7 @@ public final class ClientNetwork {
         RegisterPackets.registerPackets(client.getKryo());
         client.start();
 
-//        addListener(new ReconnectListener());
+        addListener(new ReconnectListener());
     }
 
     /**
