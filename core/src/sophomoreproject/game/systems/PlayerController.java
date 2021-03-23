@@ -211,7 +211,6 @@ public final class PlayerController implements InputProcessor {
         System.out.println("Item index " + equippedItemIndex + " equipped.");
     }
 
-
     // Later we will have adjustable controls.
     @Override
     public boolean keyDown(int keycode) {
@@ -268,6 +267,11 @@ public final class PlayerController implements InputProcessor {
                 break;
             case Keys.NUM_8:
                 changeEquippedItem(7);
+                keyProc = true;
+                break;
+            case Keys.R:
+                Item gun = (Item) world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
+                gun.manualReload();
                 keyProc = true;
                 break;
         }

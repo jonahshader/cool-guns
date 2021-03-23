@@ -195,6 +195,18 @@ public class Gun extends Item implements Renderable {
         bulletPackets.clear();
     }
 
+    @Override
+    public void manualReload() {
+        if (reloadTimer <= 0) {
+            reloadTimer += info.reloadDelay;
+            currentClip = info.clipSize;
+            bursting = false;
+            burstShotsFired = 0;
+        }
+    }
+
+
+
     private void loadTextures () {
         if (texAtl == null) {
             texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
