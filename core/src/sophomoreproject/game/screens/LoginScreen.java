@@ -52,6 +52,10 @@ public class LoginScreen implements Screen {
 
     public LoginScreen(CoolGuns game) {
         this.game = game;
+        password.setPasswordCharacter('*');
+        password.setPasswordMode(true);
+
+
     }
 
     Scanner scanner = new Scanner(System.in);
