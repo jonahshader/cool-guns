@@ -31,9 +31,8 @@ public class GameScreen implements Screen {
     private GameClient gameClient;
     private Map map;
 
-
-
     private int accountID;
+    private boolean connectionError = false;
 
     public GameScreen(CoolGuns game, int accountID) {
         this.game = game;

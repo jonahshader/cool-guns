@@ -195,12 +195,40 @@ public class Gun extends Item implements Renderable {
         bulletPackets.clear();
     }
 
+    @Override
+    public void manualReload() {
+        if (reloadTimer <= 0) {
+            reloadTimer += info.reloadDelay;
+            currentClip = info.clipSize;
+            bursting = false;
+            burstShotsFired = 0;
+        }
+    }
+
+
+
     private void loadTextures () {
         if (texAtl == null) {
             texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
         }
+        String gunTextureName = "default_gun";
         if (gunSprite == null) {
-            gunSprite = new Sprite(texAtl.findRegion("default_gun"));
+            switch (info.gunType) {
+                case PISTOL:
+                    break;
+                case RIFLE:
+                case SHOTGUN:
+                case LMG:
+                    gunTextureName = "91";
+                    break;
+                case SMG:
+                    gunTextureName = "smg";
+                    break;
+                default:
+                    gunTextureName = "default_gun";
+                    break;
+            }
+            gunSprite = new Sprite(texAtl.findRegion(gunTextureName));
             gunSprite.setOriginCenter();
         }
     }

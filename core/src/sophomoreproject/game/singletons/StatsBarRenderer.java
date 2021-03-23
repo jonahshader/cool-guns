@@ -36,7 +36,7 @@ public class StatsBarRenderer {
     public static final Color STAMINA_BAR_COLOR = new Color(1,1,.2f,1);
     public static final Color ARMOR_BAR_COLOR = new Color(1,.5f,0,1);
 
-    private Sprite pixel;
+    private final Sprite pixel;
 
     private StatsBarRenderer() {
         TextureAtlas atlas = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
@@ -52,7 +52,7 @@ public class StatsBarRenderer {
         pixel.setOriginBasedPosition(bottomCenter.x, bottomCenter.y);
         pixel.draw(sb);
         pixel.setColor(bar.color);
-        pixel.setScale(WIDTH*(bar.value/bar.maxValue), HEIGHT);
+        pixel.setScale(WIDTH*(bar.value/(float)bar.maxValue), HEIGHT);
         pixel.setOriginBasedPosition(bottomCenter.x, bottomCenter.y);
         pixel.draw(sb);
 //        TextDisplay.getInstance().drawTextInWorld(sb, ((int)bar.value) + "/" + ((int)bar.maxValue), bottomCenter.x, bottomCenter.y, .15f, Color.WHITE );

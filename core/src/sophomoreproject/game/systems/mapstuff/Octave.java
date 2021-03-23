@@ -13,7 +13,7 @@ public class Octave {
         this.magnitudeScalar = magnitudeScalar;
     }
 
-    public double getValue(int x, int y) {
+    public double getValue(float x, float y) {
         return noise.noise2(x * spacialScalar, y * spacialScalar) * magnitudeScalar;
     }
 }

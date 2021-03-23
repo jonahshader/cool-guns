@@ -16,6 +16,7 @@ public abstract class Item extends GameObject implements Renderable{
     public void setEquipped(boolean equipped) { this.equipped = equipped; }
     public abstract void renderIcon(SpriteBatch sb, float size, float x, float y);
     public abstract void updateItem(float dt, boolean usedOnce, boolean using, Vector2 angle, Player player);
+    public abstract void manualReload();
 
     @Override
     public void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer) {

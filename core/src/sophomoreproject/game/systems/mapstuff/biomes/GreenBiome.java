@@ -13,12 +13,12 @@ import static sophomoreproject.game.systems.mapstuff.MapChunk.TILE_SIZE;
 public class GreenBiome implements Biome{
     private final Map map;
     private OctaveSet selection;
-    private OctaveSet terrain;
+    private TwistedOctaveSet terrain;
 
     private OctaveSet yellowFlowerSelect;
     private OctaveSet yellowFlowerBigSelect;
     private OctaveSet redFlowerSelect;
-    private OctaveSet denseGrassSelect;
+    private TwistedOctaveSet denseGrassSelect;
     private OctaveSet enemySpawnSelect;
     private OctaveSet enemySpawnHighFreqSelect;
 
@@ -32,10 +32,11 @@ public class GreenBiome implements Biome{
     public GreenBiome(Map map, Random random) {
         this.map = map;
         selection = new OctaveSet(random);
-        selection.addOctaveFractal(0.002, 1.0, 2.0, 0.5, 2);
+        selection.addOctaveFractal(0.001, 1.0, 2.0, 0.5, 2);
 
-        terrain = new OctaveSet(random);
-        terrain.addOctaveFractal(0.005, 1.0, 2.0, 0.5, 5);
+        terrain = new TwistedOctaveSet(random, 20);
+        terrain.addOctaveFractal(0.007, 1.0, 2.0, 0.5, 5);
+        terrain.addTwisterOctaveFractal(0.005, 1.0, 2.0, 0.5, 2);
 
         yellowFlowerSelect = new OctaveSet(random);
         yellowFlowerSelect.addOctave(13.59153, 1.0);
@@ -46,8 +47,9 @@ public class GreenBiome implements Biome{
         redFlowerSelect = new OctaveSet(random);
         redFlowerSelect.addOctave(13.5937, 1.0);
 
-        denseGrassSelect = new OctaveSet(random);
+        denseGrassSelect = new TwistedOctaveSet(random, 15);
         denseGrassSelect.addOctaveFractal(0.05, 1.0, 2.0, 0.5, 2);
+        denseGrassSelect.addTwisterOctaveFractal(0.01, 1.0, 2.0, 0.5, 2);
 
         enemySpawnSelect = new OctaveSet(random);
         enemySpawnSelect.addOctaveFractal(0.04, 1.0, 2.0, 0.5, 3);
@@ -61,7 +63,7 @@ public class GreenBiome implements Biome{
         double val = terrain.getValue(x, y);
         if (val < -0.25) {
             return map.waterCell;
-        } else if (val < -0.175) {
+        } else if (val < -0.135) {
             return map.sandCell;
         } else if (denseGrassSelect.getValue(x, y) > .5) {
             return map.grassDenseCell;
