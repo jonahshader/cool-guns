@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.menu.Menu;
 import sophomoreproject.game.menu.menuactions.GoBackAction;
+import sophomoreproject.game.menu.menuactions.PreferencesAction;
 import sophomoreproject.game.singletons.CustomAssetManager;
 
 import static sophomoreproject.game.singletons.CustomAssetManager.MENU_FONT;
@@ -31,6 +32,7 @@ public class ControlsMenuScreen implements Screen {
 
         controlsMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), controlsMenuCamera);
 
+        controlsMenu.addMenuItem("Preferences", new PreferencesAction(game, accountID));
         controlsMenu.addMenuItem("Main Menu", new GoBackAction(game, accountID));
 
 
