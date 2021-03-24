@@ -3,6 +3,7 @@ package sophomoreproject.game.gameobjects.gunstuff;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.gameobjects.Player;
@@ -37,11 +38,12 @@ public class Gun extends Item implements Renderable {
         SHOTGUN
     }
 
-    private GunInfo info;
+    private final GunInfo info;
 
     private static TextureAtlas texAtl = null;
     private final ArrayList<Object> bulletPackets = new ArrayList<>();
     private Sprite gunSprite = null;
+    private TextureRegion gunIcon = null;
     private float firingTimer;
     private float burstDelayTimer = 0;
     private float reloadTimer = 0;
@@ -228,7 +230,8 @@ public class Gun extends Item implements Renderable {
                     gunTextureName = "default_gun";
                     break;
             }
-            gunSprite = new Sprite(texAtl.findRegion(gunTextureName));
+            gunIcon = texAtl.findRegion(gunTextureName);
+            gunSprite = new Sprite(gunIcon);
             gunSprite.setOriginCenter();
         }
     }
@@ -239,7 +242,7 @@ public class Gun extends Item implements Renderable {
 
     @Override
     public void renderIcon(SpriteBatch sb, float size, float x, float y) {
-
+        sb.draw(gunIcon, x, y, size, size);
     }
 
     public int getOwnerNetId() {

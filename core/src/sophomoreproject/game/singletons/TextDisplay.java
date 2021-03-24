@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import static sophomoreproject.game.singletons.CustomAssetManager.MENU_FONT;
 
-public class TextDisplay {
+public final class TextDisplay {
     public static class TextEntry {
         public String entry;
 

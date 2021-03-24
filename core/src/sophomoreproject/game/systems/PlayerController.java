@@ -36,6 +36,7 @@ public final class PlayerController implements InputProcessor {
     public boolean isMouse1Down, isMouse2Down;
     public boolean isDragged;
     public Vector2 mouseLocation = new Vector2();
+
     private int equippedItemIndex;
     private float serverUpdateDelayTimer = 0;
 
@@ -356,6 +357,22 @@ public final class PlayerController implements InputProcessor {
     @Override
     public boolean keyTyped(char character) {
         return false;
+    }
+
+    public int getInventorySize() {
+        return player.getInventorySize();
+    }
+
+    public boolean playerIsNull() {
+        return player == null;
+    }
+
+    public int getEquippedItemIndex() {
+        return equippedItemIndex;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }
 
