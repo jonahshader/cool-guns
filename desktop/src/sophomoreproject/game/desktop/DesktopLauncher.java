@@ -6,8 +6,14 @@ import sophomoreproject.game.CoolGuns;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-        LwjglApplicationConfiguration config = makeConfig();
-		new LwjglApplication(new CoolGuns(false, 0), config);
+	    if (arg.length == 1) {
+	        // launch server
+            ServerLauncher.main(arg);
+        } else {
+            LwjglApplicationConfiguration config = makeConfig();
+            new LwjglApplication(new CoolGuns(false, 0), config);
+        }
+
     }
 
     public static void mainLocalHost(int localPort) {
