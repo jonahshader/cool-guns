@@ -37,7 +37,7 @@ public class MainMenuScreen implements Screen {
         mainMenuCamera = new OrthographicCamera();
         mainMenuViewport = new FitViewport(1000, 600, mainMenuCamera);
 
-        mainMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), mainMenuCamera);
+        mainMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), mainMenuCamera, 50);
 
         mainMenu.addMenuItem("Play Game", new PlayGameAction(game, accountID));
         //mainMenu.addMenuItem("Edit Character", new EditAction());

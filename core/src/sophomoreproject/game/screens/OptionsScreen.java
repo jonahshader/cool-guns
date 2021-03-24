@@ -29,8 +29,9 @@ public class OptionsScreen implements Screen {
         optionsCamera = new OrthographicCamera();
         optionsViewport = new FitViewport(1000, 600, optionsCamera);
 
-        optionsMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), optionsCamera);
+        optionsMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), optionsCamera, 150f);
 
+        optionsMenu.addMenuItem("Back", new MainMenuAction(game, accountID));
         optionsMenu.addMenuItem("Audio", new AudioMenuAction(game, accountID));
         optionsMenu.addMenuItem("Screen", new ScreenMenuAction(game, accountID));
         optionsMenu.addMenuItem("Controls", new ControlsMenuAction(game, accountID));
