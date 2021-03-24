@@ -12,7 +12,8 @@ import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.menu.Menu;
 import sophomoreproject.game.menu.menuactions.FrameRateAction;
 import sophomoreproject.game.menu.menuactions.FullScreenAction;
-import sophomoreproject.game.menu.menuactions.GoBackAction;
+import sophomoreproject.game.menu.menuactions.OptionsAction;
+import sophomoreproject.game.menu.menuactions.WindowedAction;
 import sophomoreproject.game.singletons.CustomAssetManager;
 
 import static sophomoreproject.game.singletons.CustomAssetManager.MENU_FONT;
@@ -30,14 +31,12 @@ public class ScreenMenuScreen implements Screen {
         screenMenuCamera = new OrthographicCamera();
         screenMenuViewport = new FitViewport(1000, 600, screenMenuCamera);
 
-        screenMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), screenMenuCamera);
+        screenMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), screenMenuCamera, 50);
 
+        screenMenu.addMenuItem("Back", new OptionsAction(game, accountID));
         screenMenu.addMenuItem("FullScreen", new FullScreenAction());
-        screenMenu.addMenuItem("FrameRate", new FrameRateAction(game, accountID));
-        screenMenu.addMenuItem("Main Menu", new GoBackAction(game, accountID));
-
-
-
+        screenMenu.addMenuItem("Windowed", new WindowedAction());
+//        screenMenu.addMenuItem("FrameRate", new FrameRateAction(game, accountID));
     }
 
 
