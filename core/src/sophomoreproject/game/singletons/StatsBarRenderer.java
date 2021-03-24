@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import static sophomoreproject.game.singletons.CustomAssetManager.SPRITE_PACK;
 
-public class StatsBarRenderer {
+public final class StatsBarRenderer {
 
     public static class StatsBarInfo{
 
