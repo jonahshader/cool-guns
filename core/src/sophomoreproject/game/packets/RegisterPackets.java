@@ -1,6 +1,7 @@
 package sophomoreproject.game.packets;
 
 import com.esotericsoftware.kryo.Kryo;
+import sophomoreproject.game.gameobjects.enemystuff.EnemyInfo;
 import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
@@ -13,6 +14,7 @@ public class RegisterPackets {
     public static void registerPackets(Kryo kryo) {
 
         kryo.register(CreateBullet.class);
+        kryo.register(CreateEnemy.class);
         kryo.register(CreateInventoryGun.class);
         kryo.register(CreatePlayer.class);
         kryo.register(CreateSleeping.class);
@@ -24,6 +26,7 @@ public class RegisterPackets {
         kryo.register(RequestGameData.class);
         kryo.register(RequestLogin.class);
         kryo.register(RequestNewAccount.class);
+        kryo.register(UpdateEnemy.class);
         kryo.register(UpdateItem.class);
         kryo.register(UpdatePhysicsObject.class);
         kryo.register(UpdatePlayer.class);
@@ -33,6 +36,8 @@ public class RegisterPackets {
         kryo.register(Gun.FiringMode.class);
         kryo.register(Gun.GunType.class);
         kryo.register(Bullet.BulletType.class);
+
+        kryo.register(EnemyInfo.class);
 
         kryo.register(ArrayList.class);
     }

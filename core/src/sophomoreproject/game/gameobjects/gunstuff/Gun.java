@@ -3,6 +3,7 @@ package sophomoreproject.game.gameobjects.gunstuff;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.gameobjects.Player;
@@ -37,11 +38,12 @@ public class Gun extends Item implements Renderable {
         SHOTGUN
     }
 
-    private GunInfo info;
+    private final GunInfo info;
 
     private static TextureAtlas texAtl = null;
     private final ArrayList<Object> bulletPackets = new ArrayList<>();
     private Sprite gunSprite = null;
+    private TextureRegion gunIcon = null;
     private float firingTimer;
     private float burstDelayTimer = 0;
     private float reloadTimer = 0;
@@ -156,6 +158,7 @@ public class Gun extends Item implements Renderable {
         baseVelocity.scl(info.bulletSpeed);
 
         Vector2 accumulatedKnockback = new Vector2();
+        Vector2 inheritedVelocity = new Vector2(player.velocity).scl(.5f);
 
         for (int b = 0; b < info.bulletsPerShot; b++) {
             if (currentClip > 0) {
@@ -166,7 +169,8 @@ public class Gun extends Item implements Renderable {
                 Vector2 uniqueKnockback = new Vector2(uniqueVel).nor().scl(-info.playerKnockback);
                 accumulatedKnockback.add(uniqueKnockback);
 
-                uniqueVel.add(player.velocity); // inherit velocity from player
+
+                uniqueVel.add(inheritedVelocity); // inherit velocity from player
 
                 float uniqueDam = info.bulletDamage + genTriangleDist()*info.bulletDamageVariance;
 
@@ -193,12 +197,41 @@ public class Gun extends Item implements Renderable {
         bulletPackets.clear();
     }
 
+    @Override
+    public void manualReload() {
+        if (reloadTimer <= 0) {
+            reloadTimer += info.reloadDelay;
+            currentClip = info.clipSize;
+            bursting = false;
+            burstShotsFired = 0;
+        }
+    }
+
+
+
     private void loadTextures () {
         if (texAtl == null) {
             texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
         }
+        String gunTextureName = "default_gun";
         if (gunSprite == null) {
-            gunSprite = new Sprite(texAtl.findRegion("default_gun"));
+            switch (info.gunType) {
+                case PISTOL:
+                    break;
+                case RIFLE:
+                case SHOTGUN:
+                case LMG:
+                    gunTextureName = "91";
+                    break;
+                case SMG:
+                    gunTextureName = "smg";
+                    break;
+                default:
+                    gunTextureName = "default_gun";
+                    break;
+            }
+            gunIcon = texAtl.findRegion(gunTextureName);
+            gunSprite = new Sprite(gunIcon);
             gunSprite.setOriginCenter();
         }
     }
@@ -209,7 +242,7 @@ public class Gun extends Item implements Renderable {
 
     @Override
     public void renderIcon(SpriteBatch sb, float size, float x, float y) {
-
+        sb.draw(gunIcon, x, y, size, size);
     }
 
     public int getOwnerNetId() {

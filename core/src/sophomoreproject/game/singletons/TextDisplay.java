@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import static sophomoreproject.game.singletons.CustomAssetManager.MENU_FONT;
 
-public class TextDisplay {
+public final class TextDisplay {
     public static class TextEntry {
         public String entry;
 
@@ -29,6 +29,7 @@ public class TextDisplay {
     private static final float UNDERTEXT_OFFSET = 3f;
     private static final float TEXT_OFFSET_PERCENT = 1.5f; // percentage of height
     private static final float TEXT_PADDING = 3f;
+    public static final Color WHITE = new Color(1,1,1,1);
     private final BitmapFont font;
 
     private final ArrayList<TextEntry> topLeftText;

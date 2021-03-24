@@ -10,18 +10,20 @@ import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.networking.ClientNetwork;
 import sophomoreproject.game.networking.clientlisteners.*;
 import sophomoreproject.game.packets.RequestGameData;
+import sophomoreproject.game.singletons.HUD;
 
 import java.util.ArrayList;
 
 public class GameClient {
-    private GameWorld world;
-    private int accountID;
+    private final GameWorld world;
+    private final int accountID;
 
 
     public GameClient(int accountID) {
         this.accountID = accountID;
         world = new GameWorld();
         PlayerController.getInstance().setGameWorld(world);
+        HUD.getInstance().setGameWorld(world);
         ClientNetwork client = ClientNetwork.getInstance();
         client.addListener(new ObjectCreationListener(world, this));
         client.addListener(new ObjectRemoveListener(world));
@@ -42,6 +44,7 @@ public class GameClient {
 
     public void setClientControlledPlayer(Player player) {
         PlayerController.getInstance().setPlayer(player);
+        HUD.getInstance().setPlayer(player);
     }
 
     public int getAccountID() {

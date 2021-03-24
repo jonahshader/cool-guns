@@ -12,12 +12,17 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.singletons.HUD;
 import sophomoreproject.game.singletons.TextDisplay;
 import sophomoreproject.game.systems.GameClient;
 import sophomoreproject.game.systems.PlayerController;
 import sophomoreproject.game.systems.mapstuff.Map;
 
+import static sophomoreproject.game.systems.GameServer.GAME_SEED;
+
 public class GameScreen implements Screen {
+    public static final int GAME_WIDTH = 960;
+    public static final int GAME_HEIGHT = 540;
     private OrthographicCamera worldCamera;
     private Camera hudCamera;
     private Viewport worldViewport;
@@ -26,16 +31,15 @@ public class GameScreen implements Screen {
     private GameClient gameClient;
     private Map map;
 
-
-
     private int accountID;
+    private boolean connectionError = false;
 
     public GameScreen(CoolGuns game, int accountID) {
         this.game = game;
         this.accountID = accountID;
 
         worldCamera = new OrthographicCamera();
-        worldViewport = new ExtendViewport(640, 360, worldCamera);
+        worldViewport = new ExtendViewport(GAME_WIDTH, GAME_HEIGHT, worldCamera);
 
         hudCamera = new OrthographicCamera();
         hudViewport = new ExtendViewport(640, 360, hudCamera);
@@ -43,7 +47,8 @@ public class GameScreen implements Screen {
         Gdx.input.setInputProcessor(PlayerController.getInstance());
         PlayerController.getInstance().setCam(worldCamera);
 
-        map = new Map(game, 81528512);
+
+        map = new Map(game, GAME_SEED);
     }
 
     @Override
@@ -81,6 +86,9 @@ public class GameScreen implements Screen {
         TextDisplay.getInstance().draw(game.batch, hudViewport);
         game.batch.end();
 
+        HUD.getInstance().draw(game.batch);
+
+
 
         if (Gdx.input.justTouched()) {
             System.out.println("Just clicked in world coords: " + worldCamera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0f)).toString());
@@ -92,6 +100,7 @@ public class GameScreen implements Screen {
         // update viewport and projection matrix
         worldViewport.update(width, height);
         hudViewport.update(width, height);
+        HUD.getInstance().resize(width, height);
     }
 
     @Override

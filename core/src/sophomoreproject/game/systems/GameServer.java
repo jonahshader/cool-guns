@@ -8,12 +8,17 @@ import sophomoreproject.game.packets.RemoveObject;
 import sophomoreproject.game.packets.UpdateSleepState;
 import sophomoreproject.game.systems.gameplaysystems.GameSystem;
 import sophomoreproject.game.systems.gameplaysystems.spawners.TestObjectSpawner;
+import sophomoreproject.game.systems.mapstuff.MapGenerator;
+import sophomoreproject.game.systems.mapstuff.serverside.ServerMap;
 
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class GameServer {
+    public static final long GAME_SEED = 81528512;
+
     private GameWorld world;
+    private ServerMap serverMap;
     private ServerNetwork serverNetwork;
 
     private ArrayList<Object> createPackets = new ArrayList<>();
@@ -23,12 +28,15 @@ public class GameServer {
 
     private ReentrantLock forceUpdateQueueLock = new ReentrantLock();
 
+
+
     public GameServer(ServerNetwork serverNetwork) {
         world = new GameWorld();
         this.serverNetwork = serverNetwork;
+        serverMap = new ServerMap(new MapGenerator(null, GAME_SEED), this);
 
         // add game systems
-        gameSystems.add(new TestObjectSpawner(this, world));
+//        gameSystems.add(new TestObjectSpawner(this, world));
 
         // add listeners
         serverNetwork.addListener(new RequestListener(this, world, serverNetwork));
@@ -46,10 +54,13 @@ public class GameServer {
         for (GameObject toUpdate : forceUpdateQueue) {
             toUpdate.addUpdatePacketToBuffer(forceUpdatePackets);
         }
-        serverNetwork.sendPacketsToAll(forceUpdatePackets);
+        serverNetwork.sendPacketsToAll(forceUpdatePackets, true);
         forceUpdatePackets.clear();
         forceUpdateQueue.clear();
         forceUpdateQueueLock.unlock();
+
+        serverMap.update();
+        serverMap.run(dt);
     }
 
     /**
@@ -59,7 +70,7 @@ public class GameServer {
     public synchronized void spawnAndSendGameObject(GameObject gameObject) {
         world.queueAddObject(gameObject);
         gameObject.addCreatePacketToBuffer(createPackets);
-        serverNetwork.sendPacketsToAll(createPackets);
+        serverNetwork.sendPacketsToAll(createPackets, true);
         createPackets.clear();
     }
 
@@ -80,7 +91,7 @@ public class GameServer {
     public void setAndSendSleepState(int networkID, boolean sleeping) {
         UpdateSleepState packet = new UpdateSleepState(networkID, sleeping);
         world.handleSetSleepStatePacket(packet);
-        serverNetwork.sendPacketToAll(packet);
+        serverNetwork.sendPacketToAll(packet, true);
     }
 
     /**
@@ -89,7 +100,7 @@ public class GameServer {
      */
     public void setAndSendSleepState(UpdateSleepState packet) {
         world.handleSetSleepStatePacket(packet);
-        serverNetwork.sendPacketToAll(packet);
+        serverNetwork.sendPacketToAll(packet, true);
     }
 
     /**
@@ -100,7 +111,7 @@ public class GameServer {
         RemoveObject packet = new RemoveObject(networkID);
         GameObject obj = world.getGameObjectFromID(packet.networkID);
         world.queueRemoveObject(obj);
-        serverNetwork.sendPacketToAll(packet);
+        serverNetwork.sendPacketToAll(packet, true);
     }
 
     /**
@@ -114,5 +125,9 @@ public class GameServer {
             forceUpdateQueue.add(toUpdate);
             forceUpdateQueueLock.unlock();
         }
+    }
+
+    public ServerMap getServerMap() {
+        return serverMap;
     }
 }

@@ -3,6 +3,7 @@ package sophomoreproject.game.gameobjects;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
+import sophomoreproject.game.systems.mapstuff.MapChunk;
 
 import java.util.ArrayList;
 
@@ -46,5 +47,13 @@ public abstract class PhysicsObject extends GameObject {
 
 //        System.out.println("vel update: " + velocity);
 //        System.out.println("accel update: " + acceleration);
+    }
+
+    public int getChunkX() {
+        return (int)Math.floor(position.x / MapChunk.CHUNK_SIZE_PIXELS);
+    }
+
+    public int getChunkY() {
+        return (int)Math.floor(position.y / MapChunk.CHUNK_SIZE_PIXELS);
     }
 }

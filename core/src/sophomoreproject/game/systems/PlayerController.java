@@ -21,10 +21,13 @@ import sophomoreproject.game.utilites.MathUtilities;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import static sophomoreproject.game.utilites.CharacterUtilities.accelerateTowardsTargetVelocity;
+
 // TODO: https://www.gamedevelopment.blog/full-libgdx-game-tutorial-input-controller/
 // This class will have all of the controls for the player and the gun
 
 public final class PlayerController implements InputProcessor {
+    private static final float SERVER_UPDATE_DELAY = 1/30f;
     private static PlayerController instance;
     private Player player = null;
     private GameWorld world = null;
@@ -33,7 +36,10 @@ public final class PlayerController implements InputProcessor {
     public boolean isMouse1Down, isMouse2Down;
     public boolean isDragged;
     public Vector2 mouseLocation = new Vector2();
+
     private int equippedItemIndex;
+    private float serverUpdateDelayTimer = 0;
+
 
     private TextDisplay.TextEntry accountIDString;
     private TextDisplay.TextEntry playerNetIDString;
@@ -111,37 +117,31 @@ public final class PlayerController implements InputProcessor {
                 desiredSpeed.nor().scl(PLAYER_SPRINT_SPEED);
             }
 
+            accelerateTowardsTargetVelocity(desiredSpeed, PLAYER_ACCELERATION, player, dt);
 
-            Vector2 speedDifference = new Vector2(desiredSpeed);
-            Vector2 tempVel = new Vector2(player.velocity);
-
-            speedDifference.sub(player.velocity);
-            speedDifference.nor().scl(PLAYER_ACCELERATION);
-
-            if (!playerMoving && speedDifference.len()*dt > player.velocity.len()) {
-                player.acceleration.set(0,0);
-                player.velocity.set(0,0);
-            } else {
-                player.acceleration.set(speedDifference);
-            }
+//            Vector2 speedDifference = new Vector2(desiredSpeed);
+//
+//            speedDifference.sub(player.velocity);
+//            speedDifference.nor().scl(PLAYER_ACCELERATION);
+//
+//            if (!playerMoving && speedDifference.len()*dt > player.velocity.len()) {
+//                player.acceleration.set(0,0);
+//                player.velocity.set(0,0);
+//            } else {
+//                player.acceleration.set(speedDifference);
+//            }
 
             cam.position.x = player.position.x;
             cam.position.y = player.position.y;
 
 
-            sendUpdatePacketToServer();
-/*
-            if (Gdx.input.justTouched()) {
-                Vector3 mouseWorldCoords = cam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0f));
-                Vector2 mouseWorldCoords2D = new Vector2(mouseWorldCoords.x, mouseWorldCoords.y);
-                Vector2 playerToMouse = mouseWorldCoords2D.sub(player.position);
-                playerToMouse.nor();
-                playerToMouse.scl(500);
-                CreateBullet b = new CreateBullet(new UpdatePhysicsObject(-1, player.position.x, player.position.y, playerToMouse.x, playerToMouse.y,
-                        0f, 0f), player.getNetworkID(), 3f);
-                ClientNetwork.getInstance().sendPacket(b);
+            // update server periodically
+            if (serverUpdateDelayTimer > 0) serverUpdateDelayTimer -= dt;
+            if (serverUpdateDelayTimer <= 0) {
+                sendUpdatePacketToServer();
+                serverUpdateDelayTimer += SERVER_UPDATE_DELAY;
             }
-*/
+
 
             Vector3 mouseWorldCoords = cam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0f));
             Vector2 mouseWorldCoords2D = new Vector2(mouseWorldCoords.x, mouseWorldCoords.y);
@@ -212,7 +212,6 @@ public final class PlayerController implements InputProcessor {
         System.out.println("Item index " + equippedItemIndex + " equipped.");
     }
 
-
     // Later we will have adjustable controls.
     @Override
     public boolean keyDown(int keycode) {
@@ -269,6 +268,11 @@ public final class PlayerController implements InputProcessor {
                 break;
             case Keys.NUM_8:
                 changeEquippedItem(7);
+                keyProc = true;
+                break;
+            case Keys.R:
+                Item gun = (Item) world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
+                gun.manualReload();
                 keyProc = true;
                 break;
         }
@@ -353,6 +357,22 @@ public final class PlayerController implements InputProcessor {
     @Override
     public boolean keyTyped(char character) {
         return false;
+    }
+
+    public int getInventorySize() {
+        return player.getInventorySize();
+    }
+
+    public boolean playerIsNull() {
+        return player == null;
+    }
+
+    public int getEquippedItemIndex() {
+        return equippedItemIndex;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }
 

@@ -1,37 +1,42 @@
 package sophomoreproject.game.systems.mapstuff.biomes;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import sophomoreproject.game.systems.GameServer;
+import com.badlogic.gdx.math.Vector2;
+import sophomoreproject.game.gameobjects.enemystuff.Enemy;
+import sophomoreproject.game.gameobjects.enemystuff.EnemyInfo;
 import sophomoreproject.game.systems.mapstuff.*;
 
 import java.util.Random;
 
+import static sophomoreproject.game.systems.mapstuff.MapChunk.TILE_SIZE;
+
 public class GreenBiome implements Biome{
-    private Map map;
+    private final Map map;
     private OctaveSet selection;
-    private OctaveSet terrain;
+    private TwistedOctaveSet terrain;
 
     private OctaveSet yellowFlowerSelect;
     private OctaveSet yellowFlowerBigSelect;
     private OctaveSet redFlowerSelect;
-    private OctaveSet denseGrassSelect;
+    private TwistedOctaveSet denseGrassSelect;
     private OctaveSet enemySpawnSelect;
+    private OctaveSet enemySpawnHighFreqSelect;
 
-    private SpawnAction spawnAction = new SpawnAction() {
-        @Override
-        public void spawn(GameServer server, int x, int y) {
-            double diff = Math.sqrt(x * x + y * y);
-            // spawn an enemy at x y with correct diff
-        }
+    private SpawnAction spawnAction = (server, x, y) -> {
+
+        // spawn an enemy at x y with correct diff
+        server.spawnAndSendGameObject(new Enemy(new EnemyInfo(getDiffFromWorldPos(x, y)), new Vector2(x, y), server.getGameWorld().getNewNetID()));
+//            server.spawnAndSendGameObject(new TestObject(new Vector2((x * TILE_SIZE) + TILE_SIZE/2, (y * TILE_SIZE) + TILE_SIZE/2), server.getGameWorld().getNewNetID()));
     };
 
     public GreenBiome(Map map, Random random) {
         this.map = map;
         selection = new OctaveSet(random);
-        selection.addOctaveFractal(0.002, 1.0, 2.0, 0.5, 2);
+        selection.addOctaveFractal(0.001, 1.0, 2.0, 0.5, 2);
 
-        terrain = new OctaveSet(random);
-        terrain.addOctaveFractal(0.005, 1.0, 2.0, 0.5, 5);
+        terrain = new TwistedOctaveSet(random, 20);
+        terrain.addOctaveFractal(0.007, 1.0, 2.0, 0.5, 5);
+        terrain.addTwisterOctaveFractal(0.005, 1.0, 2.0, 0.5, 2);
 
         yellowFlowerSelect = new OctaveSet(random);
         yellowFlowerSelect.addOctave(13.59153, 1.0);
@@ -42,11 +47,15 @@ public class GreenBiome implements Biome{
         redFlowerSelect = new OctaveSet(random);
         redFlowerSelect.addOctave(13.5937, 1.0);
 
-        denseGrassSelect = new OctaveSet(random);
+        denseGrassSelect = new TwistedOctaveSet(random, 15);
         denseGrassSelect.addOctaveFractal(0.05, 1.0, 2.0, 0.5, 2);
+        denseGrassSelect.addTwisterOctaveFractal(0.01, 1.0, 2.0, 0.5, 2);
 
         enemySpawnSelect = new OctaveSet(random);
-        enemySpawnSelect.addOctaveFractal(0.033, 1.0, 2.0, 0.5, 4);
+        enemySpawnSelect.addOctaveFractal(0.04, 1.0, 2.0, 0.5, 3);
+
+        enemySpawnHighFreqSelect = new OctaveSet(random);
+        enemySpawnHighFreqSelect.addOctave(19.92519, 1.0);
     }
 
     @Override
@@ -54,7 +63,7 @@ public class GreenBiome implements Biome{
         double val = terrain.getValue(x, y);
         if (val < -0.25) {
             return map.waterCell;
-        } else if (val < -0.175) {
+        } else if (val < -0.135) {
             return map.sandCell;
         } else if (denseGrassSelect.getValue(x, y) > .5) {
             return map.grassDenseCell;
@@ -86,14 +95,21 @@ public class GreenBiome implements Biome{
 
     @Override
     public boolean isEnemySpawn(int x, int y) {
-        return (terrain.getValue(x, y) >= -0.25) && (enemySpawnSelect.getValue(x, y) > 0.8);
+        return (terrain.getValue(x, y) >= -0.25) && (enemySpawnSelect.getValue(x, y) > 0.8) && (enemySpawnHighFreqSelect.getValue(x, y) > 0.5);
     }
 
     @Override
     public Spawner makeSpawner(int x, int y) {
         if (isEnemySpawn(x, y)) {
-            return new Spawner(x, y, 5, 5, 3f, 20f, spawnAction);
+            float xWorld = x * TILE_SIZE + (TILE_SIZE / 2);
+            float yWorld = y * TILE_SIZE + (TILE_SIZE / 2);
+            float diff = getDiffFromWorldPos(xWorld, yWorld);
+            return new Spawner(new Vector2(xWorld, yWorld), 3, (int) (5 * diff), 5 / (1 + diff * 0.01f), 10f + diff * 0.05f, spawnAction);
         }
         return null;
+    }
+
+    private float getDiffFromWorldPos(float x, float y) {
+        return (float)Math.sqrt(x * x + y * y) / MapChunk.CHUNK_SIZE_TILES;
     }
 }

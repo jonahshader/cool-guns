@@ -15,10 +15,12 @@ import sophomoreproject.game.singletons.CustomAssetManager;
 public class CoolGuns extends Game {
 	public SpriteBatch batch;
 	public ShapeRenderer shapeRenderer;
-	private boolean useLocalHost;
+	private final boolean useLocalHost;
+	private final int localPort;
 
-    public CoolGuns(boolean useLocalHost) {
+    public CoolGuns(boolean useLocalHost, int localPort) {
         this.useLocalHost = useLocalHost;
+        this.localPort = localPort;
     }
 
     @Override
@@ -29,8 +31,12 @@ public class CoolGuns extends Game {
 		CustomAssetManager.getInstance().loadFonts();
 		CustomAssetManager.getInstance().loadSounds();
 		CustomAssetManager.getInstance().manager.finishLoading();
-        // change screen to a new instance of LoginScreen
-        setScreen(new ConnectServerScreen(this));
+        // change screen
+        if (useLocalHost) {
+            setScreen(new TempBypassScreen(this, true, localPort));
+        } else {
+            setScreen(new ConnectServerScreen(this));
+        }
 //		setScreen(new MainMenuScreen(this, 0));
 	}
 
