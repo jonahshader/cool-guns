@@ -42,7 +42,7 @@ public class LoginScreen implements Screen {
     ;
 
 
-    Label loginLabel = new Label("username:", skin);
+    Label loginLabel = new Label("Username:", skin);
     TextField username = new TextField("", skin);
     Label passwordLabel = new Label("Password:", skin);
     TextField password = new TextField("", skin);
@@ -52,6 +52,10 @@ public class LoginScreen implements Screen {
 
     public LoginScreen(CoolGuns game) {
         this.game = game;
+        password.setPasswordCharacter('*');
+        password.setPasswordMode(true);
+
+
     }
 
     Scanner scanner = new Scanner(System.in);

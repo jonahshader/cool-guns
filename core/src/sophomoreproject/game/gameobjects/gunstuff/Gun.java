@@ -218,9 +218,11 @@ public class Gun extends Item implements Renderable {
             switch (info.gunType) {
                 case PISTOL:
                     break;
-                case RIFLE:
                 case SHOTGUN:
+                    gunTextureName = "shotgun";
+                    break;
                 case LMG:
+                case RIFLE:
                     gunTextureName = "91";
                     break;
                 case SMG:

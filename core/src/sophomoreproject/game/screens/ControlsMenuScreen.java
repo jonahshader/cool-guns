@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.menu.Menu;
-import sophomoreproject.game.menu.menuactions.GoBackAction;
+import sophomoreproject.game.menu.menuactions.OptionsAction;
 import sophomoreproject.game.menu.menuactions.PreferencesAction;
 import sophomoreproject.game.singletons.CustomAssetManager;
 
@@ -30,12 +30,10 @@ public class ControlsMenuScreen implements Screen {
         controlsMenuCamera = new OrthographicCamera();
         controlsMenuViewport = new FitViewport(1000, 600, controlsMenuCamera);
 
-        controlsMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), controlsMenuCamera);
+        controlsMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), controlsMenuCamera, 50);
 
+        controlsMenu.addMenuItem("Back", new OptionsAction(game, accountID));
         controlsMenu.addMenuItem("Preferences", new PreferencesAction(game, accountID));
-        controlsMenu.addMenuItem("Main Menu", new GoBackAction(game, accountID));
-
-
 
     }
 
