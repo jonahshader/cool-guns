@@ -206,6 +206,9 @@ public final class PlayerController implements InputProcessor {
             if (gameObj != null) {
                 Item gameItem = (Item) gameObj;
                 gameItem.setEquipped(true);
+                if (gameItem instanceof Gun) {
+                    System.out.println("Equipped gun score: " + ((Gun) gameItem).getInfo().getGeneralScore());
+                }
             }
         }
 

@@ -47,12 +47,6 @@ public class GunInfo {
         gunHoldRadius *= expGaussian(2f, randomness);
         shieldDamage *= expGaussian(2f, randomness);
         armorDamage *= expGaussian(2f, randomness);
-
-        // TODO: select random bullet type, gun type, firing mode
-        // they can be determined by the variables
-        bulletType = Bullet.BulletType.STANDARD;
-        gunType = Gun.GunType.PISTOL;
-        firingMode = Gun.FiringMode.SEMI_AUTO;
     }
 
     // Could compare the sum of squares for combined parameters to the default sum of squares for some gun presets (rifle, pistol, etc.)
@@ -80,5 +74,106 @@ public class GunInfo {
         sumOfSquares += Math.pow(this.armorDamage - otherGun.armorDamage, 2);
 
         return (float) Math.sqrt(sumOfSquares);
+    }
+
+    public float getMagnitude() {
+        float sumOfSquares = 0;
+        sumOfSquares += Math.pow(this.fireDelay, 2);
+        sumOfSquares += Math.pow(this.burstDelay, 2);
+        sumOfSquares += Math.pow(this.reloadDelay, 2);
+        sumOfSquares += Math.pow(this.spread, 2);
+        sumOfSquares += Math.pow(this.clipSize, 2);
+        sumOfSquares += Math.pow(this.bulletSpeed, 2);
+        sumOfSquares += Math.pow(this.bulletSpeedVariation, 2);
+        sumOfSquares += Math.pow(this.bulletsPerShot, 2);
+        sumOfSquares += Math.pow(this.shotsPerBurst, 2);
+        sumOfSquares += Math.pow(this.bulletSize, 2);
+        sumOfSquares += Math.pow(this.bulletDamage, 2);
+        sumOfSquares += Math.pow(this.bulletDamageVariance, 2);
+        sumOfSquares += Math.pow(this.critScalar, 2);
+        sumOfSquares += Math.pow(this.playerKnockback, 2);
+        sumOfSquares += Math.pow(this.enemyKnockback, 2);
+        sumOfSquares += Math.pow(this.gunHoldRadius, 2);
+        sumOfSquares += Math.pow(this.shieldDamage, 2);
+        sumOfSquares += Math.pow(this.armorDamage, 2);
+
+        return (float) Math.sqrt(sumOfSquares);
+    }
+
+    private int getFiresPerClip() {
+        return (int)Math.ceil(clipSize / (double)bulletsPerShot);
+    }
+
+    private float getEmptyClipTime() {
+        if (firingMode == Gun.FiringMode.BURST) {
+            int bursts = (int)Math.ceil(clipSize / ((double)shotsPerBurst * bulletsPerShot));
+            return (getFiresPerClip() * fireDelay) + reloadDelay + bursts * burstDelay;
+        } else {
+            return (getFiresPerClip() * fireDelay) + reloadDelay;
+        }
+    }
+
+    private float getPlayerKnockbackAcceleration() {
+        return clipSize * playerKnockback / getEmptyClipTime();
+    }
+
+    private float getPlayerKnockbackScoreMultiplier() {
+        return 1 / (0.8f + getPlayerKnockbackAcceleration() * 0.1f);
+    }
+
+    private float getEnemyKnockbackAcceleration() {
+        return clipSize * enemyKnockback / getEmptyClipTime();
+    }
+
+    private float getEnemyKnockbackScoreMultiplier() {
+        return (float)Math.sqrt(1 + getEnemyKnockbackAcceleration() * 0.1f);
+    }
+
+    public float getDps() {
+        return clipSize * bulletDamage / getEmptyClipTime();
+    }
+
+    public float getSpreadScoreMultiplier() {
+        return (float) Math.pow(2, -spread);
+    }
+
+    public float getBulletSizeScoreMultiplier() {
+        return (float) (1 + Math.sqrt(bulletSize));
+    }
+
+    public float getBulletSpeedScoreMultiplier() {
+        return (float) Math.sqrt(bulletSpeed);
+    }
+
+    public float getGeneralScore() {
+        float score = getDps();
+        score *= getSpreadScoreMultiplier();
+        score *= getBulletSizeScoreMultiplier();
+        score *= getBulletSpeedScoreMultiplier();
+        score *= getPlayerKnockbackScoreMultiplier();
+        score *= getEnemyKnockbackScoreMultiplier();
+        return score * 0.01f;
+    }
+
+    public void normalize() {
+        float inverseMag = 1/getMagnitude();
+        fireDelay *= inverseMag;
+        burstDelay *= inverseMag;
+        reloadDelay *= inverseMag;
+        spread *= inverseMag;
+        clipSize *= inverseMag;
+        bulletSpeed *= inverseMag;
+        bulletSpeedVariation *= inverseMag;
+        bulletsPerShot *= inverseMag;
+        shotsPerBurst *= inverseMag;
+        bulletSize *= inverseMag;
+        bulletDamage *= inverseMag;
+        bulletDamageVariance *= inverseMag;
+        critScalar *= inverseMag;
+        playerKnockback *= inverseMag;
+        enemyKnockback *= inverseMag;
+        gunHoldRadius *= inverseMag;
+        shieldDamage *= inverseMag;
+        armorDamage *= inverseMag;
     }
 }
