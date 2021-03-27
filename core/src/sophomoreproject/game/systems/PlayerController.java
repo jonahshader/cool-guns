@@ -287,12 +287,12 @@ public final class PlayerController implements InputProcessor {
                 int emptySlots = 0;
                 for (int i = 0; i < player.getInventory().size(); ++i) emptySlots += player.getInventory().get(i) == null ? 1 : 0;
                 for (GroundItem g : world.getGroundItems()) {
-                    if (g.collidingWithRectangle(player.getHitbox())) {
+                    if (pickupAttempts > emptySlots)
+                        break;
+                    if (MathUtilities.circleCollisionDetection(player.position.x, player.position.y, 8f, g.position.x, g.position.y, 8f)) {
                         ClientNetwork.getInstance().sendPacket(new RequestPickupGroundItem(player.getNetworkID(), g.getNetworkID()));
                         ++pickupAttempts;
                     }
-                    if (pickupAttempts < emptySlots)
-                        break;
                 }
                 break;
         }
