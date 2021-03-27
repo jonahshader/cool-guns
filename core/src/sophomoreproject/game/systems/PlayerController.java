@@ -8,12 +8,14 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.networking.ClientNetwork;
 import sophomoreproject.game.packets.CreateBullet;
+import sophomoreproject.game.packets.RequestPickupGroundItem;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.TextDisplay;
 import sophomoreproject.game.utilites.MathUtilities;
@@ -275,8 +277,23 @@ public final class PlayerController implements InputProcessor {
                 break;
             case Keys.R:
                 Item gun = (Item) world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
-                gun.manualReload();
+                if (gun != null)
+                    gun.manualReload();
                 keyProc = true;
+                break;
+            case Keys.F:
+                // try pickup
+                int pickupAttempts = 0;
+                int emptySlots = 0;
+                for (int i = 0; i < player.getInventory().size(); ++i) emptySlots += player.getInventory().get(i) == null ? 1 : 0;
+                for (GroundItem g : world.getGroundItems()) {
+                    if (g.collidingWithRectangle(player.getHitbox())) {
+                        ClientNetwork.getInstance().sendPacket(new RequestPickupGroundItem(player.getNetworkID(), g.getNetworkID()));
+                        ++pickupAttempts;
+                    }
+                    if (pickupAttempts < emptySlots)
+                        break;
+                }
                 break;
         }
         return keyProc;

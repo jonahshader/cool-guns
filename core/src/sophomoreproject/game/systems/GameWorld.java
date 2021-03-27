@@ -2,6 +2,7 @@ package sophomoreproject.game.systems;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.gameobjects.enemystuff.Enemy;
@@ -12,10 +13,7 @@ import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.packets.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -24,6 +22,7 @@ public class GameWorld {
     // one object should only exist in one array at a time, even though objects can be both PhysicsObject and GameObject
     private final Map<Integer, PhysicsObject> physicsObjects = new ConcurrentHashMap<>();
     private final Map<Integer, Player> players = new ConcurrentHashMap<>();
+    private final Map<Integer, GroundItem> groundItems = new ConcurrentHashMap<>();
     private final Map<Integer, GameObject> gameObjects = new ConcurrentHashMap<>();
     private final Map<Integer, GameObject> sleepingGameObjects = new ConcurrentHashMap<>();
     private final List<Renderable> renderables = new ArrayList<>();
@@ -34,6 +33,7 @@ public class GameWorld {
     private final ArrayList<GameObject> gameObjectRemoveQueue = new ArrayList<>();
     private final ArrayList<GameObject> wakeToSleepingGameObjectQueue = new ArrayList<>();
     private final ArrayList<GameObject> sleepingToWakeGameObjectQueue = new ArrayList<>();
+    private final List<InventoryChange> inventoryChangeQueue = Collections.synchronizedList(new ArrayList<>());
 
     private final ReentrantLock updatePacketsLock = new ReentrantLock();
     private final ReentrantLock gameObjectQueueLock = new ReentrantLock();
@@ -100,11 +100,36 @@ public class GameWorld {
         wakeToSleepingGameObjectQueue.clear();
         sleepUpdateLock.unlock();
 
+        // handle inventory changes
+        synchronized(inventoryChangeQueue) {
+            for (InventoryChange ic : inventoryChangeQueue) {
+                GameObject inventory = getGameObjectFromID(ic.inventoryNetID);
+                if (ic.adding) {
+                    if (inventory instanceof Player) {
+                        ((Player) inventory).addToInventory(ic.itemNetID, ic.itemIndex);
+                    }
+                } else {
+                    if (inventory instanceof Player) {
+                        ((Player) inventory).removeFromInventory(ic.itemNetID);
+                    }
+                }
+            }
+
+            inventoryChangeQueue.clear();
+        }
+
         for (PhysicsObject p : physicsObjects.values()) { p.updatePhysics(dt); }
     }
 
     public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
-        for (Renderable r : renderables) r.draw(dt, sb, sr);
+        // render ground items first
+        for (GroundItem g : groundItems.values()) {
+            g.draw(sb);
+        }
+        // render everything else after
+        for (Renderable r : renderables) {
+            r.draw(dt, sb, sr);
+        }
     }
 
     public void serverOnly(float dt, ServerNetwork serverNetwork, GameServer server) {
@@ -167,6 +192,7 @@ public class GameWorld {
         if (o instanceof PhysicsObject) physicsObjects.put(o.getNetworkID(), (PhysicsObject) o);
         if (o instanceof Renderable) renderables.add((Renderable) o);
         if (o instanceof Player) players.put(o.getNetworkID(), (Player)o);
+        if (o instanceof GroundItem) groundItems.put(o.getNetworkID(), (GroundItem)o);
         gameObjects.put(o.getNetworkID(), o);
     }
 
@@ -174,6 +200,7 @@ public class GameWorld {
         if (o instanceof PhysicsObject) physicsObjects.remove(o.getNetworkID());
         if (o instanceof Renderable) renderables.remove(o);
         if (o instanceof Player) players.remove(o.getNetworkID());
+        if (o instanceof GroundItem) groundItems.remove(o.getNetworkID());
         gameObjects.remove(o.getNetworkID());
     }
 
@@ -246,5 +273,15 @@ public class GameWorld {
 
     public Collection<Player> getPlayers() {
         return players.values();
+    }
+
+    public Collection<GroundItem> getGroundItems() {
+        return groundItems.values();
+    }
+
+    public void handleInventoryChangePacket(InventoryChange ic) {
+        synchronized (inventoryChangeQueue) {
+            inventoryChangeQueue.add(ic);
+        }
     }
 }

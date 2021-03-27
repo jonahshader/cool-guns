@@ -3,6 +3,7 @@ package sophomoreproject.game.networking.serverlisteners;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
@@ -11,6 +12,7 @@ import sophomoreproject.game.networking.ConnectedAccount;
 import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.packets.CreateBullet;
 import sophomoreproject.game.packets.RequestGameData;
+import sophomoreproject.game.packets.RequestPickupGroundItem;
 import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.systems.GameWorld;
 
@@ -137,6 +139,12 @@ public class RequestListener implements Listener {
             ((CreateBullet) o).u.netID = world.getNewNetID();
             Bullet b = new Bullet((CreateBullet) o, false);
             gameServer.spawnAndSendGameObject(b);
+        } else if (o instanceof RequestPickupGroundItem) {
+            RequestPickupGroundItem packet = (RequestPickupGroundItem) o;
+            GroundItem groundItem = (GroundItem)world.getGameObjectFromID(packet.groundItemId);
+            if (groundItem != null) {
+                groundItem.tryPickup(gameServer, packet.playerId);
+            }
         }
     }
 }

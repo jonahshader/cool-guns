@@ -1,16 +1,20 @@
 package sophomoreproject.game.gameobjects.enemystuff;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.gameobjects.gunstuff.AttackInfo;
+import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
 import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreateEnemy;
+import sophomoreproject.game.packets.CreateInventoryGun;
 import sophomoreproject.game.packets.UpdateEnemy;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.CustomAssetManager;
@@ -31,6 +35,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     private static final float WALK_VARIANCE = 2f;
     private static final float TARGET_UPDATE_DELAY = .75f;
     private static final float MAX_IDLE_TIME = 20; // 20 seconds
+    private static final float ITEM_DROP_CHANCE = 0.1f;
 
     public enum EnemyState {
         IDLE_WAIT,
@@ -206,7 +211,17 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                 break;
         }
 
-        if (idleTime > MAX_IDLE_TIME || queueDead) {
+        if (idleTime > MAX_IDLE_TIME) {
+            server.removeObject(networkID);
+        } else if (queueDead) {
+            // drop items
+            if (LocalRandom.RAND.nextFloat() < ITEM_DROP_CHANCE) {
+                // for now just make a pistol lol
+                System.out.println("Enemy dropped a gun!");
+                server.spawnAndSendGameObject(new GroundItem(new Vector2(position), server.getGameWorld().getNewNetID(),
+                        "shotgun", new Color(LocalRandom.RAND.nextFloat(), LocalRandom.RAND.nextFloat(), LocalRandom.RAND.nextFloat(), 1), 1f,
+                        new CreateInventoryGun(new GunInfo(), -1, server.getGameWorld().getNewNetID())));
+            }
             server.removeObject(networkID);
         }
 
@@ -294,8 +309,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
             if (health <= 0) {
                 health = 0;
                 queueDead = true;
-                // TODO: random chance to drop item
-                // also give attacker some points corresponding to difficulty
+
                 if (healthBar != null) healthBar.value = health;
                 return healthLeftBeforeDamage;
             } else {

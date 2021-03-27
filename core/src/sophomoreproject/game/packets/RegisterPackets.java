@@ -15,17 +15,19 @@ public class RegisterPackets {
 
         kryo.register(CreateBullet.class);
         kryo.register(CreateEnemy.class);
+        kryo.register(CreateGroundItem.class);
         kryo.register(CreateInventoryGun.class);
         kryo.register(CreatePlayer.class);
         kryo.register(CreateSleeping.class);
         kryo.register(CreateTestObject.class);
-        kryo.register(CreateWorldGun.class);
+        kryo.register(InventoryChange.class);
         kryo.register(RemoveObject.class);
         kryo.register(ReplyAccountEvent.AccountEvent.class);
         kryo.register(ReplyAccountEvent.class);
         kryo.register(RequestGameData.class);
         kryo.register(RequestLogin.class);
         kryo.register(RequestNewAccount.class);
+        kryo.register(RequestPickupGroundItem.class);
         kryo.register(UpdateEnemy.class);
         kryo.register(UpdateItem.class);
         kryo.register(UpdatePhysicsObject.class);

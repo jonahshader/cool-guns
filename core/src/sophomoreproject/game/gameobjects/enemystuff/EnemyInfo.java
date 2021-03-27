@@ -3,6 +3,7 @@ package sophomoreproject.game.gameobjects.enemystuff;
 import sophomoreproject.game.singletons.LocalRandom;
 
 public class EnemyInfo {
+    public float difficulty;
     public float approachAngle = 0;
     public float maxIdleVelocity = 5;
     public float maxAcceleration = 100;
@@ -18,6 +19,7 @@ public class EnemyInfo {
     public EnemyInfo() {}
 
     public EnemyInfo(float difficulty) {
+        this.difficulty = difficulty;
         difficulty *= LocalRandom.expGaussian(2, 0.13f);
         float sqrtDiff = (float) Math.sqrt(difficulty);
         float cbrtDiff = (float) Math.cbrt(difficulty);

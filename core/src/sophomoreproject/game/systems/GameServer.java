@@ -4,6 +4,7 @@ import com.esotericsoftware.kryonet.Connection;
 import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.networking.serverlisteners.RequestListener;
+import sophomoreproject.game.packets.InventoryChange;
 import sophomoreproject.game.packets.RemoveObject;
 import sophomoreproject.game.packets.UpdateSleepState;
 import sophomoreproject.game.systems.gameplaysystems.GameSystem;
@@ -129,5 +130,10 @@ public class GameServer {
 
     public ServerMap getServerMap() {
         return serverMap;
+    }
+
+    public void processAndSendInventoryUpdate(InventoryChange ic) {
+        world.handleInventoryChangePacket(ic);
+        serverNetwork.sendPacketToAll(ic, true);
     }
 }
