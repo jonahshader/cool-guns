@@ -79,11 +79,14 @@ public class GroundItem extends PhysicsObject {
             }
 
             if (realizedObject != null) {
+                pickedUp = true;
                 gameServer.spawnAndSendGameObject(realizedObject);
                 // inventory update
                 InventoryChange ic = new InventoryChange(retrievingNetId, -1, realizedObject.getNetworkID(), true);
                 // transmit
                 gameServer.processAndSendInventoryUpdate(ic);
+                // remove
+                gameServer.removeObject(networkID);
             }
         }
     }
@@ -109,7 +112,7 @@ public class GroundItem extends PhysicsObject {
         }
     }
 
-    // deliberately not implemeting Renderable here so that it doesn't get rendered with everything else
+    // deliberately not implementing Renderable here so that it doesn't get rendered with everything else
     // GroundItems should be rendered first so that they are behind everything
     public void draw(SpriteBatch sb) {
         sprite.setOriginBasedPosition(position.x, position.y);

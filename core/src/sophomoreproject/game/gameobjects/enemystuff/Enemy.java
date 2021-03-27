@@ -10,6 +10,7 @@ import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.gameobjects.gunstuff.AttackInfo;
+import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
 import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.interfaces.Renderable;
@@ -215,13 +216,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
             server.removeObject(networkID);
         } else if (queueDead) {
             // drop items
-            if (LocalRandom.RAND.nextFloat() < ITEM_DROP_CHANCE) {
-                // for now just make a pistol lol
-                System.out.println("Enemy dropped a gun!");
-                server.spawnAndSendGameObject(new GroundItem(new Vector2(position), server.getGameWorld().getNewNetID(),
-                        "shotgun", new Color(LocalRandom.RAND.nextFloat(), LocalRandom.RAND.nextFloat(), LocalRandom.RAND.nextFloat(), 1), 1f,
-                        new CreateInventoryGun(new GunInfo(), -1, server.getGameWorld().getNewNetID())));
-            }
+            dropItem(server);
             server.removeObject(networkID);
         }
 
@@ -318,5 +313,21 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
             }
         }
         return 0;
+    }
+
+    private void dropItem(GameServer server) {
+        if (LocalRandom.RAND.nextFloat() < ITEM_DROP_CHANCE) {
+            GunInfo gunInfo = new GunInfo();
+            gunInfo.r = (float) Math.sqrt(LocalRandom.RAND.nextFloat());
+            gunInfo.g = (float) Math.sqrt(LocalRandom.RAND.nextFloat());
+            gunInfo.b = (float) Math.sqrt(LocalRandom.RAND.nextFloat());
+            gunInfo.loadGunTypeDefaults(Gun.GunType.values()[LocalRandom.RAND.nextInt(Gun.GunType.values().length)], true);
+            gunInfo.randomize(.5f);
+            gunInfo.scaleScore((float)Math.sqrt(info.difficulty * .2));
+            System.out.println("Enemy dropped a gun!");
+            server.spawnAndSendGameObject(new GroundItem(new Vector2(position), server.getGameWorld().getNewNetID(),
+                    gunInfo.getTextureName(), new Color(gunInfo.r, gunInfo.g, gunInfo.b, 1), 1f,
+                    new CreateInventoryGun(gunInfo, -1, server.getGameWorld().getNewNetID())));
+        }
     }
 }

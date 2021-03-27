@@ -43,7 +43,7 @@ public class Gun extends Item implements Renderable {
     private static TextureAtlas texAtl = null;
     private final ArrayList<Object> bulletPackets = new ArrayList<>();
     private Sprite gunSprite = null;
-    private TextureRegion gunIcon = null;
+    private Sprite gunIcon = null;
     private float firingTimer;
     private float burstDelayTimer = 0;
     private float reloadTimer = 0;
@@ -213,26 +213,8 @@ public class Gun extends Item implements Renderable {
         if (texAtl == null) {
             texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
         }
-        String gunTextureName = "default_gun";
         if (gunSprite == null) {
-            switch (info.gunType) {
-                case PISTOL:
-                    break;
-                case SHOTGUN:
-                    gunTextureName = "shotgun";
-                    break;
-                case LMG:
-                case RIFLE:
-                    gunTextureName = "91";
-                    break;
-                case SMG:
-                    gunTextureName = "smg";
-                    break;
-                default:
-                    gunTextureName = "default_gun";
-                    break;
-            }
-            gunIcon = texAtl.findRegion(gunTextureName);
+            gunIcon = new Sprite(texAtl.findRegion(info.getTextureName()));
             gunSprite = new Sprite(gunIcon);
             gunSprite.setOriginCenter();
         }
@@ -244,7 +226,11 @@ public class Gun extends Item implements Renderable {
 
     @Override
     public void renderIcon(SpriteBatch sb, float size, float x, float y) {
-        sb.draw(gunIcon, x, y, size, size);
+        float widthToHeight = gunIcon.getRegionHeight() / (float)gunIcon.getRegionWidth();
+        gunIcon.setSize(size, size * widthToHeight);
+        gunIcon.setPosition(x, y);
+        gunIcon.setColor(info.r, info.g, info.b, 1);
+        gunIcon.draw(sb);
     }
 
     public int getOwnerNetId() {

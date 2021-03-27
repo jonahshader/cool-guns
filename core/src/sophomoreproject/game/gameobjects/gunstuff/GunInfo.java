@@ -1,5 +1,7 @@
 package sophomoreproject.game.gameobjects.gunstuff;
 
+import sophomoreproject.game.singletons.LocalRandom;
+
 import static sophomoreproject.game.singletons.LocalRandom.expGaussian;
 
 
@@ -16,7 +18,7 @@ public class GunInfo {
     public int shotsPerBurst = 3;
     public float bulletSize = 1.25f;
     public Bullet.BulletType bulletType = Bullet.BulletType.STANDARD;
-    public float bulletDamage = 2f;
+    public float bulletDamage = 2.25f;
     public float bulletDamageVariance = 1.5f;
     public float critScalar = 1.5f;
     public float playerKnockback = 25f;
@@ -25,8 +27,56 @@ public class GunInfo {
     public float gunHoldRadius = 18f;
     public int shieldDamage = 0;
     public int armorDamage = 0;
+    public float r = 1;
+    public float g = 1;
+    public float b = 1;
 
     public GunInfo() {}
+
+    public void loadGunTypeDefaults(Gun.GunType type, boolean randomizeFiringMode) {
+        gunType = type;
+        switch (type) {
+            case RIFLE:
+                firingMode = Gun.FiringMode.SEMI_AUTO;
+                clipSize = 5;
+                fireDelay = .85f;
+                reloadDelay = 2f;
+                bulletSpeed = 300;
+                spread = 0.02f;
+                bulletDamage = 15;
+                critScalar = 3;
+                break;
+            case SMG:
+                firingMode = (randomizeFiringMode && LocalRandom.RAND.nextFloat() < (1/3f)) ? Gun.FiringMode.BURST : Gun.FiringMode.AUTO;
+                bulletDamage = 1.25f;
+                bulletSpeed = 85;
+                fireDelay = 5f/60;
+                clipSize = 20;
+                bulletSize = 1f;
+                reloadDelay = 1.5f;
+                break;
+            case LMG:
+                firingMode = Gun.FiringMode.AUTO;
+                bulletDamage = 1f;
+                bulletDamageVariance = 0;
+                bulletSpeed = 90;
+                spread = .125f;
+                fireDelay = 2f/60;
+                clipSize = 40;
+                reloadDelay = 3;
+                break;
+            case SHOTGUN:
+                firingMode = Gun.FiringMode.SEMI_AUTO;
+                bulletDamage = 1.2f;
+                bulletsPerShot = 12;
+                clipSize = 36;
+                bulletSize = .8f;
+                fireDelay = .2f;
+                break;
+            default:
+                break;
+        }
+    }
 
     public void randomize(float randomness) {
         fireDelay *= expGaussian(2f, randomness);
@@ -44,9 +94,38 @@ public class GunInfo {
         critScalar *= expGaussian(2f, randomness);
         playerKnockback *= expGaussian(2f, randomness);
         enemyKnockback *= expGaussian(2f, randomness);
-        gunHoldRadius *= expGaussian(2f, randomness);
+//        gunHoldRadius *= expGaussian(2f, randomness);
         shieldDamage *= expGaussian(2f, randomness);
         armorDamage *= expGaussian(2f, randomness);
+
+        clipSize = Math.max(1, clipSize);
+        bulletsPerShot = Math.max(1, bulletsPerShot);
+        shotsPerBurst = Math.max(1, shotsPerBurst);
+    }
+
+    public void scaleScore(float scalar) {
+        float invScalar = 1/scalar;
+        fireDelay *= Math.sqrt(invScalar);
+        burstDelay *= Math.sqrt(invScalar);
+        reloadDelay *= Math.sqrt(invScalar);
+        spread *= Math.cbrt(invScalar);
+        clipSize *= Math.sqrt(scalar);
+        bulletSpeed *= Math.cbrt(scalar);
+//        bulletSpeedVariation *= Math.sqrt(invScalar);
+        bulletsPerShot *= Math.sqrt(scalar);
+        shotsPerBurst *= Math.sqrt(scalar);
+        bulletSize *= Math.cbrt(scalar);
+        bulletDamage *= Math.cbrt(scalar);
+        bulletDamageVariance *= Math.cbrt(invScalar);
+        critScalar *= Math.cbrt(scalar);
+        playerKnockback *= Math.cbrt(invScalar);
+        enemyKnockback *= Math.sqrt(scalar);
+        shieldDamage *= Math.sqrt(scalar);
+        armorDamage *= Math.sqrt(scalar);
+
+        clipSize = Math.max(1, clipSize);
+        bulletsPerShot = Math.max(1, bulletsPerShot);
+        shotsPerBurst = Math.max(1, shotsPerBurst);
     }
 
     // Could compare the sum of squares for combined parameters to the default sum of squares for some gun presets (rifle, pistol, etc.)
@@ -175,5 +254,19 @@ public class GunInfo {
         gunHoldRadius *= inverseMag;
         shieldDamage *= inverseMag;
         armorDamage *= inverseMag;
+    }
+
+    public String getTextureName() {
+        switch (gunType) {
+            case SHOTGUN:
+                return "shotgun";
+            case RIFLE:
+                return "91";
+            case LMG:
+            case SMG:
+                return "smg";
+            default:
+                return "default_gun";
+        }
     }
 }

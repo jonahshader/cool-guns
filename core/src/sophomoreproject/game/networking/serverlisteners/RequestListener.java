@@ -64,68 +64,43 @@ public class RequestListener implements Listener {
                     gameServer.spawnAndSendGameObject(gun);
 
                     // make more guns
-                    GunInfo autoGunInfo = new GunInfo();
-                    autoGunInfo.gunType = Gun.GunType.SMG;
-                    autoGunInfo.firingMode = Gun.FiringMode.AUTO;
-                    autoGunInfo.fireDelay = 7/60f;
-                    autoGunInfo.bulletsPerShot = 7;
-                    autoGunInfo.clipSize = 63;
-//                    autoGunInfo.playerKnockback = 1f;
-                    Gun autoGun = new Gun(autoGunInfo, newPlayer.getNetworkID(), world.getNewNetID());
-                    gameServer.spawnAndSendGameObject(autoGun);
+//                    GunInfo smgGunInfo = new GunInfo();
+//                    smgGunInfo.loadGunTypeDefaults(Gun.GunType.SMG, false);
+//                    Gun smgGun = new Gun(smgGunInfo, newPlayer.getNetworkID(), world.getNewNetID());
+//                    gameServer.spawnAndSendGameObject(smgGun);
+//
+//                    GunInfo shotgunInfo = new GunInfo();
+//                    shotgunInfo.loadGunTypeDefaults(Gun.GunType.SHOTGUN, false);
+//                    Gun shotgun = new Gun(shotgunInfo, newPlayer.getNetworkID(), world.getNewNetID());
+//                    gameServer.spawnAndSendGameObject(shotgun);
+//
+//                    GunInfo sniperInfo = new GunInfo();
+//                    sniperInfo.loadGunTypeDefaults(Gun.GunType.RIFLE, false);
+//                    Gun sniper = new Gun(sniperInfo, newPlayer.getNetworkID(), world.getNewNetID());
+//                    gameServer.spawnAndSendGameObject(sniper);
 
-                    GunInfo burstGunInfo = new GunInfo();
-                    burstGunInfo.firingMode = Gun.FiringMode.BURST;
-                    burstGunInfo.fireDelay = 0.05f;
-                    burstGunInfo.clipSize = 13;
-                    Gun burstGun = new Gun(burstGunInfo, newPlayer.getNetworkID(), world.getNewNetID());
-                    gameServer.spawnAndSendGameObject(burstGun);
-
-                    GunInfo shotgunInfo = new GunInfo();
-                    shotgunInfo.gunType = Gun.GunType.SHOTGUN;
-                    shotgunInfo.bulletsPerShot = 12;
-                    shotgunInfo.clipSize = 24;
-                    shotgunInfo.bulletSpeed = 225;
-                    shotgunInfo.bulletSize = .8f;
-                    shotgunInfo.fireDelay = 0.1f;
-                    Gun shotgun = new Gun(shotgunInfo, newPlayer.getNetworkID(), world.getNewNetID());
-                    gameServer.spawnAndSendGameObject(shotgun);
-
-                    GunInfo sniperInfo = new GunInfo();
-                    sniperInfo.gunType = Gun.GunType.RIFLE;
-                    sniperInfo.clipSize = 1;
-                    sniperInfo.reloadDelay = 0.001f;
-                    sniperInfo.fireDelay = 0.001f;
-                    sniperInfo.bulletSpeed = 900;
-                    sniperInfo.spread = 0.001f;
-                    sniperInfo.bulletDamage = 40000;
-                    sniperInfo.bulletDamageVariance = 0;
-                    Gun sniper = new Gun(sniperInfo, newPlayer.getNetworkID(), world.getNewNetID());
-                    gameServer.spawnAndSendGameObject(sniper);
-
-                    GunInfo superNovaInfo = new GunInfo();
-                    superNovaInfo.gunType = Gun.GunType.PISTOL;
-                    superNovaInfo.clipSize = 2048;
-                    superNovaInfo.bulletsPerShot = 2048;
-                    superNovaInfo.playerKnockback = 1;
-                    superNovaInfo.enemyKnockback = 75;
-                    superNovaInfo.reloadDelay = 20;
-                    superNovaInfo.bulletSpeedVariation = 0;
-                    superNovaInfo.bulletSpeed = 80;
-                    superNovaInfo.spread = 20f;
-                    superNovaInfo.bulletDamage = 2;
-                    superNovaInfo.bulletDamageVariance = 0;
-                    superNovaInfo.bulletSize = 3;
-                    Gun superNova = new Gun(superNovaInfo, newPlayer.getNetworkID(), world.getNewNetID());
-                    gameServer.spawnAndSendGameObject(superNova);
+//                    GunInfo superNovaInfo = new GunInfo();
+//                    superNovaInfo.gunType = Gun.GunType.PISTOL;
+//                    superNovaInfo.clipSize = 2048;
+//                    superNovaInfo.bulletsPerShot = 2048;
+//                    superNovaInfo.playerKnockback = 1;
+//                    superNovaInfo.enemyKnockback = 75;
+//                    superNovaInfo.reloadDelay = 20;
+//                    superNovaInfo.bulletSpeedVariation = 0;
+//                    superNovaInfo.bulletSpeed = 80;
+//                    superNovaInfo.spread = 20f;
+//                    superNovaInfo.bulletDamage = 2;
+//                    superNovaInfo.bulletDamageVariance = 0;
+//                    superNovaInfo.bulletSize = 3;
+//                    Gun superNova = new Gun(superNovaInfo, newPlayer.getNetworkID(), world.getNewNetID());
+//                    gameServer.spawnAndSendGameObject(superNova);
 
                     // put gun in player inventory
                     newPlayer.getInventory().set(0, gun.getNetworkID()); // first slot
-                    newPlayer.getInventory().set(1, autoGun.getNetworkID()); // second slot
-                    newPlayer.getInventory().set(2, burstGun.getNetworkID()); // third slot
-                    newPlayer.getInventory().set(3, shotgun.getNetworkID());
-                    newPlayer.getInventory().set(4, sniper.getNetworkID());
-                    newPlayer.getInventory().set(5, superNova.getNetworkID());
+//                    newPlayer.getInventory().set(1, smgGun.getNetworkID()); // second slot
+//                    newPlayer.getInventory().set(2, shotgun.getNetworkID());
+//                    newPlayer.getInventory().set(3, sniper.getNetworkID());
+//                    newPlayer.getInventory().set(4, superNova.getNetworkID());
 
                     // register with world and distribute
                     gameServer.spawnAndSendGameObject(newPlayer);

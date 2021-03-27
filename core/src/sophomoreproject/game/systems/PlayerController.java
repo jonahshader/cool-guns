@@ -370,7 +370,7 @@ public final class PlayerController implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        changeEquippedItem(-Math.round(amountY) + equippedItemIndex);
+        changeEquippedItem(Math.round(amountY) + equippedItemIndex);
         return true;
     }
 

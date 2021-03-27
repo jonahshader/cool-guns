@@ -71,7 +71,7 @@ public class Player extends PhysicsObject implements Renderable{
         inventory.addAll(packet.inventoryItems);
 
         loadTextures();
-        hitbox = new Rectangle(position.x - PLAYER_SIZE.x * textures[6].getRegionWidth() * .5f, position.y - PLAYER_SIZE.y * textures[6].getRegionHeight() * .5f, PLAYER_SIZE.x * textures[6].getRegionWidth(), PLAYER_SIZE.y * textures[6].getRegionHeight());
+        hitbox = new Rectangle(position.x - PLAYER_SIZE.x * 8, position.y - PLAYER_SIZE.y * 8, PLAYER_SIZE.x * 16, PLAYER_SIZE.y * 16);
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
 
         bars = new ArrayList<>();
@@ -83,7 +83,6 @@ public class Player extends PhysicsObject implements Renderable{
         bars.add(shieldBar);
         bars.add(staminaBar);
         bars.add(armorBar);
-
     }
 
     @Override
