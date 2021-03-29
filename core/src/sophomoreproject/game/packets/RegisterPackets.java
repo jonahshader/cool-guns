@@ -1,6 +1,7 @@
 package sophomoreproject.game.packets;
 
 import com.esotericsoftware.kryo.Kryo;
+import sophomoreproject.game.gameobjects.bootstuff.BootsInfo;
 import sophomoreproject.game.gameobjects.enemystuff.EnemyInfo;
 import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
@@ -13,6 +14,8 @@ public class RegisterPackets {
     // aware of the possible packets that can be sent
     public static void registerPackets(Kryo kryo) {
 
+        kryo.register(BootsInfo.class);
+        kryo.register(CreateBoots.class);
         kryo.register(CreateBullet.class);
         kryo.register(CreateEnemy.class);
         kryo.register(CreateGroundItem.class);
