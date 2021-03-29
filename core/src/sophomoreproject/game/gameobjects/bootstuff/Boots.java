@@ -70,9 +70,7 @@ public class Boots extends Item  {
     }
 
     @Override
-    public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
-
-    }
+    public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) { }
 
     public BootsInfo getInfo() {
         return info;

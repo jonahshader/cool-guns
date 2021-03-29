@@ -21,5 +21,5 @@ public class CreateBoots {
         this.netId = netId;
     }
 
-    public CreateBoots() { }
+    public CreateBoots() {}
 }

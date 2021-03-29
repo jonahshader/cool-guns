@@ -3,6 +3,7 @@ package sophomoreproject.game.networking.clientlisteners;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import sophomoreproject.game.gameobjects.GroundItem;
+import sophomoreproject.game.gameobjects.bootstuff.Boots;
 import sophomoreproject.game.gameobjects.enemystuff.Enemy;
 import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.Player;
@@ -51,6 +52,8 @@ public class ObjectCreationListener implements Listener {
             toQueue = new Enemy((CreateEnemy) o);
         } else if (o instanceof CreateGroundItem) {
             toQueue = new GroundItem((CreateGroundItem) o);
+        } else if (o instanceof CreateBoots) {
+            toQueue = new Boots((CreateBoots) o);
         }
 
 
