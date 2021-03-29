@@ -24,6 +24,7 @@ import sophomoreproject.game.singletons.LocalRandom;
 import sophomoreproject.game.singletons.SoundSystem;
 import sophomoreproject.game.singletons.StatsBarRenderer;
 import sophomoreproject.game.systems.GameServer;
+import sophomoreproject.game.systems.dropper.StandardDropper;
 import sophomoreproject.game.utilites.MathUtilities;
 
 import java.util.ArrayList;
@@ -50,10 +51,14 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     }
 
     private EnemyInfo info;
+    private static StandardDropper dropper = new StandardDropper();
 
     private static TextureAtlas texAtl = null;
     private Sprite sprite;
+
     private static Sound itemDropSound, deathSound, bulletImpactSound;
+    private boolean queueIdleSound = false;
+    private boolean queueItemDropSound = false;
 
     private EnemyState state = EnemyState.IDLE_WALK;
     private Vector2 targetVelocity = new Vector2();
@@ -69,8 +74,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     private int health;
 
     private boolean queueDead = false;
-    private boolean queueImpactSound = false;
-    private boolean queueIdleSound = false;
+
 
     private ArrayList<StatsBarRenderer.StatsBarInfo> bars;
     private StatsBarRenderer.StatsBarInfo healthBar;
@@ -113,8 +117,9 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
 
     @Override
     public void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer) {
-        updatePacketBuffer.add(new UpdateEnemy(networkID, health, queueIdleSound));
+        updatePacketBuffer.add(new UpdateEnemy(networkID, health, queueIdleSound, queueItemDropSound));
         queueIdleSound = false;
+        queueItemDropSound = false;
         super.addUpdatePacketToBuffer(updatePacketBuffer);
     }
 
@@ -123,12 +128,17 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
         UpdateEnemy packet = (UpdateEnemy) updatePacket;
         if (health != packet.health) {
             health = packet.health;
-            queueImpactSound = true;
+            SoundSystem.getInstance().playSoundInWorld(bulletImpactSound, position, .8f, 1f);
         }
 
         if (packet.playIdleSound) {
             // play sound effect
             SoundSystem.getInstance().playSoundGroup(SoundSystem.SoundGroup.ENEMY_BLOB, position, .7f, 1f);
+        }
+
+        if (packet.playDropSound) {
+            // play sound effect
+            SoundSystem.getInstance().playSoundInWorld(itemDropSound, position, .85f, 1f);
         }
 
         if (healthBar != null)
@@ -174,7 +184,6 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                         state = EnemyState.IDLE_WAIT;
                         targetVelocity.set(0, 0);
                     }
-
                 }
                 break;
             case APPROACHING_TARGET:
@@ -266,11 +275,6 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
         barPos.set(position);
         barPos.y += (info.size / 2)* sprite.getHeight();
         StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,barPos,bars);
-
-        if (queueImpactSound) {
-            SoundSystem.getInstance().playSoundInWorld(bulletImpactSound, position, .8f, 1f);
-            queueImpactSound = false;
-        }
     }
 
     @Override
@@ -341,21 +345,9 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     }
 
     private void dropItem(GameServer server) {
-        if (LocalRandom.RAND.nextFloat() < ITEM_DROP_CHANCE) {
-            GunInfo gunInfo = new GunInfo();
-            gunInfo.r = (float) Math.sqrt(LocalRandom.RAND.nextFloat());
-            gunInfo.g = (float) Math.sqrt(LocalRandom.RAND.nextFloat());
-            gunInfo.b = (float) Math.sqrt(LocalRandom.RAND.nextFloat());
-            gunInfo.loadGunTypeDefaults(Gun.GunType.values()[LocalRandom.RAND.nextInt(Gun.GunType.values().length)], true);
-            gunInfo.randomize(.5f);
-            gunInfo.scaleScore((float)Math.sqrt(info.difficulty * .2));
-            System.out.println("Enemy dropped a gun!");
-            server.spawnAndSendGameObject(new GroundItem(new Vector2(position), server.getGameWorld().getNewNetID(),
-                    gunInfo.getTextureName(), new Color(gunInfo.r, gunInfo.g, gunInfo.b, 1), 1f,
-                    new CreateInventoryGun(gunInfo, -1, server.getGameWorld().getNewNetID())));
-
-            // play item drop sound
-            SoundSystem.getInstance().playSoundInWorld(itemDropSound, position, .85f, 1f);
+        if (dropper.tryDropItem(server, position, info.difficulty)) {
+            // queue item drop sound
+            queueItemDropSound = true;
         }
     }
 }
