@@ -18,7 +18,7 @@ public class GunInfo {
     public int shotsPerBurst = 3;
     public float bulletSize = 1.25f;
     public Bullet.BulletType bulletType = Bullet.BulletType.STANDARD;
-    public float bulletDamage = 2.25f;
+    public float bulletDamage = 5.25f;
     public float bulletDamageVariance = 1.5f;
     public float critScalar = 1.5f;
     public float playerKnockback = 25f;
@@ -36,18 +36,25 @@ public class GunInfo {
     public void loadGunTypeDefaults(Gun.GunType type, boolean randomizeFiringMode) {
         gunType = type;
         switch (type) {
+            case PISTOL:
+                firingMode = (randomizeFiringMode && LocalRandom.RAND.nextFloat() < (1/2f)) ? Gun.FiringMode.BURST : Gun.FiringMode.SEMI_AUTO;
+                if (firingMode == Gun.FiringMode.SEMI_AUTO) {
+                    fireDelay = .1f;
+                }
+                break;
             case RIFLE:
                 firingMode = Gun.FiringMode.SEMI_AUTO;
                 clipSize = 5;
-                fireDelay = .85f;
-                reloadDelay = 2f;
-                bulletSpeed = 300;
+                fireDelay = 1.0f;
+                reloadDelay = 3f;
+                bulletSpeed = 400;
                 spread = 0.02f;
-                bulletDamage = 15;
+                bulletDamage = 20;
                 critScalar = 3;
                 break;
             case SMG:
-                firingMode = (randomizeFiringMode && LocalRandom.RAND.nextFloat() < (1/3f)) ? Gun.FiringMode.BURST : Gun.FiringMode.AUTO;
+//                firingMode = (randomizeFiringMode && LocalRandom.RAND.nextFloat() < (1/3f)) ? Gun.FiringMode.BURST : Gun.FiringMode.AUTO;
+                firingMode = Gun.FiringMode.AUTO;
                 bulletDamage = 1.25f;
                 bulletSpeed = 85;
                 fireDelay = 5f/60;

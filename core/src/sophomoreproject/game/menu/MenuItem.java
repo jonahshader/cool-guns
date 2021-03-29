@@ -1,12 +1,15 @@
 package sophomoreproject.game.menu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import sophomoreproject.game.singletons.CustomAssetManager;
+import sophomoreproject.game.singletons.SoundSystem;
 
 import java.util.ArrayList;
 
@@ -18,6 +21,10 @@ public class MenuItem {
     private String label;
     private BitmapFont font;
     private Camera camera;
+    private static Sound mouseOverSound;
+    private static Sound clickSound;
+
+    private boolean mouseOver = false;
 
     // constructor for first menu item
     public MenuItem(MenuAction action, float x, float y, float width, float height, String label, BitmapFont font, Camera camera) {
@@ -29,6 +36,8 @@ public class MenuItem {
         this.label = label;
         this.font = font;
         this.camera = camera;
+
+        loadSounds();
     }
 
     // constructor for other items.
@@ -42,6 +51,8 @@ public class MenuItem {
         this.y = previousMenuItem.y - (previousMenuItem.height + MENU_PADDING);
         this.width = previousMenuItem.width;
         this.height = previousMenuItem.height;
+
+        loadSounds();
     }
 
     public void run(float dt) {
@@ -49,11 +60,19 @@ public class MenuItem {
         if (m.x >= x && m.y >= y && m.x <= x + width
                 && m.y <= y + height) {
             if (Gdx.input.justTouched()) {
+                SoundSystem.getInstance().playSoundStandalone(clickSound, .8f, 0f);
                 action.execute();
             }
+
+            if (!mouseOver) {
+                mouseOver = true;
+                // play mouseOver sound
+                SoundSystem.getInstance().playSoundStandalone(mouseOverSound, .8f, 0f);
+            }
+        } else {
+            mouseOver = false;
         }
     }
-
 
     public void drawShape(ShapeRenderer sr) {
         Vector2 m = getMouseWorld();
@@ -80,5 +99,12 @@ public class MenuItem {
     private Vector2 getMouseWorld() {
         Vector3 mouseWorld = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         return new Vector2(mouseWorld.x, mouseWorld.y);
+    }
+
+    private void loadSounds() {
+        if (mouseOverSound == null) {
+            mouseOverSound = CustomAssetManager.getInstance().manager.get(CustomAssetManager.MENU_SOUND, Sound.class);
+            clickSound = CustomAssetManager.getInstance().manager.get(CustomAssetManager.OPEN_SOUND, Sound.class);
+        }
     }
 }

@@ -20,6 +20,7 @@ import sophomoreproject.game.packets.UpdateEnemy;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.singletons.LocalRandom;
+import sophomoreproject.game.singletons.SoundSystem;
 import sophomoreproject.game.singletons.StatsBarRenderer;
 import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.utilites.MathUtilities;
@@ -139,6 +140,8 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                         targetVelocity.set(1, 0);
                         targetVelocity.rotateRad((float)Math.PI * 2 * LocalRandom.RAND.nextFloat());
                         targetVelocity.scl(info.maxIdleVelocity);
+                        // play sound effect
+                        SoundSystem.getInstance().playSoundGroup(SoundSystem.SoundGroup.ENEMY_BLOB, position, .75f, 1f);
                     }
                 }
                 break;

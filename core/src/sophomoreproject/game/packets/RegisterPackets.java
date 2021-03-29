@@ -24,6 +24,7 @@ public class RegisterPackets {
         kryo.register(RemoveObject.class);
         kryo.register(ReplyAccountEvent.AccountEvent.class);
         kryo.register(ReplyAccountEvent.class);
+        kryo.register(RequestDropInventoryItem.class);
         kryo.register(RequestGameData.class);
         kryo.register(RequestLogin.class);
         kryo.register(RequestNewAccount.class);

@@ -8,11 +8,10 @@ import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
+import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.networking.ConnectedAccount;
 import sophomoreproject.game.networking.ServerNetwork;
-import sophomoreproject.game.packets.CreateBullet;
-import sophomoreproject.game.packets.RequestGameData;
-import sophomoreproject.game.packets.RequestPickupGroundItem;
+import sophomoreproject.game.packets.*;
 import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.systems.GameWorld;
 
@@ -119,6 +118,14 @@ public class RequestListener implements Listener {
             GroundItem groundItem = (GroundItem)world.getGameObjectFromID(packet.groundItemId);
             if (groundItem != null) {
                 groundItem.tryPickup(gameServer, packet.playerId);
+            }
+        } else if (o instanceof RequestDropInventoryItem) {
+            RequestDropInventoryItem packet = (RequestDropInventoryItem) o;
+            Item toDrop = (Item) world.getGameObjectFromID(packet.inventoryItemId);
+            if (toDrop != null) {
+                gameServer.spawnAndSendGameObject(toDrop.toGroundItem(gameServer));
+                gameServer.processAndSendInventoryUpdate(new InventoryChange(packet.playerId, -1, toDrop.getNetworkID(), false));
+                gameServer.removeObject(toDrop.getNetworkID());
             }
         }
     }

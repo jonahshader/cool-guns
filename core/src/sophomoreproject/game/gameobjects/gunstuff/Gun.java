@@ -1,11 +1,13 @@
 package sophomoreproject.game.gameobjects.gunstuff;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.interfaces.Renderable;
@@ -207,6 +209,12 @@ public class Gun extends Item implements Renderable {
         }
     }
 
+    @Override
+    public GroundItem toGroundItem(GameServer server) {
+        return new GroundItem(new Vector2(position), server.getGameWorld().getNewNetID(), info.getTextureName(),
+                new Color(info.r, info.g, info.b, 1), 1f,
+                new CreateInventoryGun(info, -1, server.getGameWorld().getNewNetID()));
+    }
 
 
     private void loadTextures () {
@@ -215,6 +223,7 @@ public class Gun extends Item implements Renderable {
         }
         if (gunSprite == null) {
             gunIcon = new Sprite(texAtl.findRegion(info.getTextureName()));
+            gunIcon.setColor(info.r, info.g, info.b, 1f);
             gunSprite = new Sprite(gunIcon);
             gunSprite.setOriginCenter();
         }

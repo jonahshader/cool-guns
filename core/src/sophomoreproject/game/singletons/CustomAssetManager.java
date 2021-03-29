@@ -5,7 +5,8 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
-
+import java.util.ArrayList;
+import java.util.List;
 
 
 public final class CustomAssetManager {
@@ -27,10 +28,32 @@ public final class CustomAssetManager {
     public static final String CLOSE_SOUND = "audio/sounds/close.ogg";
     public static final String MENU_SOUND = "audio/sounds/menu_mouseover.ogg";
 
+
+    // sound lists
+    public static final String LIST_ENEMY_BLOB = "audio/sounds/enemy_blob/enemy_blob_";
+    public static final int LIST_ENEMY_BLOB_COUNT = 13;
+    public static final String LIST_ENEMY_BLOB_FORMAT = ".ogg";
+
     public void loadSounds() {
         manager.load(OPEN_SOUND, Sound.class);
         manager.load(CLOSE_SOUND, Sound.class);
         manager.load(MENU_SOUND, Sound.class);
+
+        loadSoundList(LIST_ENEMY_BLOB, LIST_ENEMY_BLOB_COUNT, LIST_ENEMY_BLOB_FORMAT);
+    }
+
+    public List<Sound> getSoundList(String path, int count, String format) {
+        List<Sound> soundList= new ArrayList<>(count);
+        for (int i = 1; i <= count; ++i) {
+            soundList.add(manager.get(path + i + format, Sound.class));
+        }
+        return soundList;
+    }
+
+    private void loadSoundList(String path, int count, String format) {
+        for (int i = 1; i <= count; ++i) {
+            manager.load(path + i + format, Sound.class);
+        }
     }
 
     //fonts

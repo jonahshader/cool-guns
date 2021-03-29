@@ -2,8 +2,10 @@ package sophomoreproject.game.interfaces;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.packets.UpdateItem;
+import sophomoreproject.game.systems.GameServer;
 
 import java.util.ArrayList;
 
@@ -17,6 +19,7 @@ public abstract class Item extends GameObject implements Renderable{
     public abstract void renderIcon(SpriteBatch sb, float size, float x, float y);
     public abstract void updateItem(float dt, boolean usedOnce, boolean using, Vector2 angle, Player player);
     public abstract void manualReload();
+    public abstract GroundItem toGroundItem(GameServer server);
 
     @Override
     public void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer) {

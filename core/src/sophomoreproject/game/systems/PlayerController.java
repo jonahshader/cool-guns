@@ -15,6 +15,7 @@ import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.networking.ClientNetwork;
 import sophomoreproject.game.packets.CreateBullet;
+import sophomoreproject.game.packets.RequestDropInventoryItem;
 import sophomoreproject.game.packets.RequestPickupGroundItem;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.TextDisplay;
@@ -287,12 +288,18 @@ public final class PlayerController implements InputProcessor {
                 int emptySlots = 0;
                 for (int i = 0; i < player.getInventory().size(); ++i) emptySlots += player.getInventory().get(i) == null ? 1 : 0;
                 for (GroundItem g : world.getGroundItems()) {
-                    if (pickupAttempts > emptySlots)
+                    if (pickupAttempts >= emptySlots)
                         break;
                     if (MathUtilities.circleCollisionDetection(player.position.x, player.position.y, 8f, g.position.x, g.position.y, 8f)) {
                         ClientNetwork.getInstance().sendPacket(new RequestPickupGroundItem(player.getNetworkID(), g.getNetworkID()));
                         ++pickupAttempts;
                     }
+                }
+                break;
+            case Keys.G:
+                // try drop
+                if (player.getInventory().get(equippedItemIndex) != null) {
+                    ClientNetwork.getInstance().sendPacket(new RequestDropInventoryItem(player.getNetworkID(), player.getInventory().get(equippedItemIndex)));
                 }
                 break;
         }
