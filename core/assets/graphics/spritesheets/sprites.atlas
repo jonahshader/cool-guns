@@ -1,117 +1,124 @@
 
 sprites.png
-size: 256,32
+size: 256, 32
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Nearest, Nearest
 repeat: none
 91
   rotate: false
-  xy: 54, 11
+  xy: 55, 10
   size: 20, 20
   orig: 20, 20
   offset: 0, 0
   index: -1
 bullet
   rotate: false
-  xy: 68, 5
+  xy: 227, 16
   size: 4, 4
   orig: 4, 4
   offset: 0, 0
   index: -1
 default_gun
   rotate: false
-  xy: 54, 1
+  xy: 227, 22
   size: 12, 8
   orig: 12, 8
   offset: 0, 0
   index: -1
 enemy
   rotate: false
-  xy: 94, 15
+  xy: 113, 14
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 player_back
   rotate: false
-  xy: 126, 13
+  xy: 145, 12
   size: 12, 18
   orig: 12, 18
   offset: 0, 0
   index: -1
 player_bottom_left
   rotate: false
-  xy: 164, 13
+  xy: 183, 12
   size: 10, 18
   orig: 10, 18
   offset: 0, 0
   index: -1
 player_bottom_right
   rotate: false
-  xy: 140, 13
+  xy: 159, 12
   size: 10, 18
   orig: 10, 18
   offset: 0, 0
   index: -1
 player_front
   rotate: false
-  xy: 112, 13
+  xy: 131, 12
   size: 12, 18
   orig: 12, 18
   offset: 0, 0
   index: -1
 player_left
   rotate: false
-  xy: 188, 13
+  xy: 207, 12
   size: 8, 18
   orig: 8, 18
   offset: 0, 0
   index: -1
 player_right
   rotate: false
-  xy: 198, 13
+  xy: 217, 12
   size: 8, 18
   orig: 8, 18
   offset: 0, 0
   index: -1
 player_top_left
   rotate: false
-  xy: 152, 13
+  xy: 171, 12
   size: 10, 18
   orig: 10, 18
   offset: 0, 0
   index: -1
 player_top_right
   rotate: false
-  xy: 176, 13
+  xy: 195, 12
   size: 10, 18
   orig: 10, 18
   offset: 0, 0
   index: -1
 shotgun
   rotate: false
-  xy: 1, 6
+  xy: 2, 5
   size: 25, 25
   orig: 25, 25
   offset: 0, 0
   index: -1
 smg
   rotate: false
-  xy: 76, 15
+  xy: 77, 14
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 smoke
   rotate: false
-  xy: 28, 8
+  xy: 29, 7
   size: 24, 23
   orig: 24, 23
   offset: 0, 0
   index: -1
+speed_shoes
+  rotate: false
+  xy: 95, 14
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 white_pixel
   rotate: false
-  xy: 76, 12
+  xy: 2, 2
   size: 1, 1
   orig: 1, 1
   offset: 0, 0

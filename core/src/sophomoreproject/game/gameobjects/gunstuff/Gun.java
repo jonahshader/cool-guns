@@ -24,7 +24,7 @@ import static sophomoreproject.game.singletons.LocalRandom.*;
 
 //This is owned by a player or it is in an inventory (like a shop).
 
-public class Gun extends Item implements Renderable {
+public class Gun extends Item {
     public enum FiringMode {
         AUTO,
         SEMI_AUTO,
