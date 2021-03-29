@@ -298,6 +298,7 @@ public final class PlayerController implements InputProcessor {
                         ++pickupAttempts;
                     }
                 }
+                System.out.println("Tried picking up " + pickupAttempts + " items.");
                 break;
             case Keys.G:
                 // try drop

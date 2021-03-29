@@ -8,9 +8,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import sophomoreproject.game.gameobjects.bootstuff.Boots;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.interfaces.Renderable;
+import sophomoreproject.game.packets.CreateBoots;
 import sophomoreproject.game.packets.CreateGroundItem;
 import sophomoreproject.game.packets.CreateInventoryGun;
 import sophomoreproject.game.packets.InventoryChange;
@@ -75,6 +77,9 @@ public class GroundItem extends PhysicsObject {
             GameObject realizedObject = null;
             if (createRealizedObjectPacket instanceof CreateInventoryGun) {
                 realizedObject = new Gun(((CreateInventoryGun) createRealizedObjectPacket).info,
+                        retrievingNetId, gameServer.getGameWorld().getNewNetID());
+            } else if(createRealizedObjectPacket instanceof CreateBoots) {
+                realizedObject = new Boots(((CreateBoots) createRealizedObjectPacket).info,
                         retrievingNetId, gameServer.getGameWorld().getNewNetID());
             }
 

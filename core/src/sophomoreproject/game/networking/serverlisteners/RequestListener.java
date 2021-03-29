@@ -118,6 +118,9 @@ public class RequestListener implements Listener {
             GroundItem groundItem = (GroundItem)world.getGameObjectFromID(packet.groundItemId);
             if (groundItem != null) {
                 groundItem.tryPickup(gameServer, packet.playerId);
+                System.out.println("Server: Try pickup");
+            } else {
+                System.out.println("Server: Tried picking up null item!");
             }
         } else if (o instanceof RequestDropInventoryItem) {
             RequestDropInventoryItem packet = (RequestDropInventoryItem) o;
