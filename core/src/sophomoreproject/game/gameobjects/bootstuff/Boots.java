@@ -96,5 +96,7 @@ public class Boots extends Item  {
     public void manualReload() { }
 
     @Override
-    public void updateItem(float dt, boolean usedOnce, boolean using, Vector2 angle, Player player) { }
+    public void updateItem(float dt, boolean usedOnce, boolean using, Vector2 angle, Player player) {
+
+    }
 }

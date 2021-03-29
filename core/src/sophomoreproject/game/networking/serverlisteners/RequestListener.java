@@ -129,6 +129,8 @@ public class RequestListener implements Listener {
                 gameServer.spawnAndSendGameObject(toDrop.toGroundItem(gameServer));
                 gameServer.processAndSendInventoryUpdate(new InventoryChange(packet.playerId, -1, toDrop.getNetworkID(), false));
                 gameServer.removeObject(toDrop.getNetworkID());
+            } else {
+                System.out.println("Server: Tried dropping null item!");
             }
         }
     }
