@@ -29,8 +29,7 @@ import sophomoreproject.game.utilites.MathUtilities;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static sophomoreproject.game.singletons.CustomAssetManager.ITEM_DROP;
-import static sophomoreproject.game.singletons.CustomAssetManager.SPRITE_PACK;
+import static sophomoreproject.game.singletons.CustomAssetManager.*;
 import static sophomoreproject.game.utilites.CharacterUtilities.accelerateTowardsTargetVelocity;
 
 public class Enemy extends PhysicsObject implements Renderable, CollisionReceiver {
@@ -54,7 +53,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
 
     private static TextureAtlas texAtl = null;
     private Sprite sprite;
-    private static Sound itemDropSound, deathSound;
+    private static Sound itemDropSound, deathSound, bulletImpactSound;
 
     private EnemyState state = EnemyState.IDLE_WALK;
     private Vector2 targetVelocity = new Vector2();
@@ -70,6 +69,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     private int health;
 
     private boolean queueDead = false;
+    private boolean queueImpactSound = false;
 
     private ArrayList<StatsBarRenderer.StatsBarInfo> bars;
     private StatsBarRenderer.StatsBarInfo healthBar;
@@ -119,7 +119,11 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     @Override
     public void receiveUpdate(Object updatePacket) {
         UpdateEnemy packet = (UpdateEnemy) updatePacket;
-        health = packet.health;
+        if (health != packet.health) {
+            health = packet.health;
+            queueImpactSound = true;
+        }
+
         if (healthBar != null)
             healthBar.value = health;
     }
@@ -256,6 +260,11 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
         barPos.set(position);
         barPos.y += (info.size / 2)* sprite.getHeight();
         StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,barPos,bars);
+
+        if (queueImpactSound) {
+            SoundSystem.getInstance().playSoundInWorld(bulletImpactSound, position, .8f, 1f);
+            queueImpactSound = false;
+        }
     }
 
     @Override
@@ -271,6 +280,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
             texAtl = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
 
             itemDropSound = CustomAssetManager.getInstance().manager.get(ITEM_DROP);
+            bulletImpactSound = CustomAssetManager.getInstance().manager.get(BULLET_IMPACT);
         }
         if (sprite == null) {
             sprite = new Sprite(texAtl.findRegion("enemy"));

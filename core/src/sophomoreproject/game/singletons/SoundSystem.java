@@ -8,6 +8,7 @@ import sophomoreproject.game.gameobjects.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+import static sophomoreproject.game.screens.GameScreen.GAME_WIDTH;
 import static sophomoreproject.game.singletons.CustomAssetManager.*;
 
 public final class SoundSystem {
@@ -53,7 +54,7 @@ public final class SoundSystem {
      */
     public void playSoundInWorld(Sound s, Vector2 soundPosition, float volume, float pitch) {
         if (player == null) return;
-        float pan = (soundPosition.x - player.position.x) / 320;
+        float pan = (soundPosition.x - player.position.x) / (GAME_WIDTH * .6f);
         float volScale = 1-Vector2.len(soundPosition.x - player.position.x, soundPosition.y - player.position.y) / 640f;
         volScale = (float)Math.pow(Math.max(0, volScale), 1.5f);
         pan = Math.max(-1, pan);
