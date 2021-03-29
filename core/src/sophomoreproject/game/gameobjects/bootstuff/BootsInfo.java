@@ -11,9 +11,6 @@ public class BootsInfo {
     public float speed = 10f;
     public float acceleration = speed * (accelerationToWalkRatio);
 
-    //randomize
-    //scale
-
     public float r = 1;
     public float g = 1;
     public float b = 1;
