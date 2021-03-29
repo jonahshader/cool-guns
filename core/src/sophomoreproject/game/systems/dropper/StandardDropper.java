@@ -30,6 +30,7 @@ public class StandardDropper {
 
             }
         });
+
     }
 
     public boolean tryDropItem(GameServer server, Vector2 pos, float difficulty) {
