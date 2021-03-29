@@ -54,7 +54,7 @@ public final class PlayerController implements InputProcessor {
 
     public final float PLAYER_ACCELERATION = 1500;
     public final float PLAYER_WALK_SPEED = 100;
-    public final float PLAYER_SPRINT_SPEED = 10000;
+    public final float PLAYER_SPRINT_SCALAR = 1.8f;
 //    public final float FRICTION = 420;
 
     private PlayerController() {
@@ -117,10 +117,13 @@ public final class PlayerController implements InputProcessor {
                 desiredSpeed.nor().scl(PLAYER_WALK_SPEED);
             }
             if (shift) {
-                desiredSpeed.nor().scl(PLAYER_SPRINT_SPEED);
+                desiredSpeed.scl(PLAYER_SPRINT_SCALAR);
+                accelerateTowardsTargetVelocity(desiredSpeed, PLAYER_ACCELERATION * PLAYER_SPRINT_SCALAR, player, dt);
+            } else {
+                accelerateTowardsTargetVelocity(desiredSpeed, PLAYER_ACCELERATION, player, dt);
             }
 
-            accelerateTowardsTargetVelocity(desiredSpeed, PLAYER_ACCELERATION, player, dt);
+
 
 //            Vector2 speedDifference = new Vector2(desiredSpeed);
 //
