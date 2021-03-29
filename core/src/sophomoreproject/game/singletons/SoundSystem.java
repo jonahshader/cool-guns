@@ -49,12 +49,12 @@ public final class SoundSystem {
      *
      * @param s              the sound play
      * @param soundPosition  the position of the sound in game world
-     * @param cameraPosition the position of the camera in game world
      * @param volume         the range (0,1) to play the sound in the game
      */
-    public void playSoundInWorld(Sound s, Vector2 soundPosition, Vector2 cameraPosition, float volume, float pitch) {
-        float pan = (soundPosition.x - cameraPosition.x) / 320;
-        float volScale = 1-Vector2.len(soundPosition.x - cameraPosition.x, soundPosition.y - cameraPosition.y) / 640f;
+    public void playSoundInWorld(Sound s, Vector2 soundPosition, float volume, float pitch) {
+        if (player == null) return;
+        float pan = (soundPosition.x - player.position.x) / 320;
+        float volScale = 1-Vector2.len(soundPosition.x - player.position.x, soundPosition.y - player.position.y) / 640f;
         volScale = (float)Math.pow(Math.max(0, volScale), 1.5f);
         pan = Math.max(-1, pan);
         pan = Math.min(1, pan);
@@ -80,13 +80,13 @@ public final class SoundSystem {
         if (player != null) {
             switch (s) {
                 case BULLET:
-                    playSoundInWorld(bulletSounds.get((int) (Math.random() * bulletSounds.size())), soundPosition, player.position, volume, pitch);
+                    playSoundInWorld(bulletSounds.get((int) (Math.random() * bulletSounds.size())), soundPosition, volume, pitch);
                     break;
                 case FOOT_STEP:
-                    playSoundInWorld(footstepSounds.get((int) (Math.random() * footstepSounds.size())), soundPosition, player.position, volume, pitch);
+                    playSoundInWorld(footstepSounds.get((int) (Math.random() * footstepSounds.size())), soundPosition, volume, pitch);
                     break;
                 case ENEMY_BLOB:
-                    playSoundInWorld(enemyBlobSounds.get((int) (Math.random() * enemyBlobSounds.size())), soundPosition, player.position, volume, pitch);
+                    playSoundInWorld(enemyBlobSounds.get((int) (Math.random() * enemyBlobSounds.size())), soundPosition, volume, pitch);
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + s);

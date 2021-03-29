@@ -1,5 +1,6 @@
 package sophomoreproject.game.gameobjects.enemystuff;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -28,6 +29,8 @@ import sophomoreproject.game.utilites.MathUtilities;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static sophomoreproject.game.singletons.CustomAssetManager.ITEM_DROP;
+import static sophomoreproject.game.singletons.CustomAssetManager.SPRITE_PACK;
 import static sophomoreproject.game.utilites.CharacterUtilities.accelerateTowardsTargetVelocity;
 
 public class Enemy extends PhysicsObject implements Renderable, CollisionReceiver {
@@ -51,6 +54,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
 
     private static TextureAtlas texAtl = null;
     private Sprite sprite;
+    private static Sound itemDropSound, deathSound;
 
     private EnemyState state = EnemyState.IDLE_WALK;
     private Vector2 targetVelocity = new Vector2();
@@ -141,7 +145,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                         targetVelocity.rotateRad((float)Math.PI * 2 * LocalRandom.RAND.nextFloat());
                         targetVelocity.scl(info.maxIdleVelocity);
                         // play sound effect
-                        SoundSystem.getInstance().playSoundGroup(SoundSystem.SoundGroup.ENEMY_BLOB, position, .75f, 1f);
+                        SoundSystem.getInstance().playSoundGroup(SoundSystem.SoundGroup.ENEMY_BLOB, position, .7f, 1f);
                     }
                 }
                 break;
@@ -264,7 +268,9 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
 
     private void loadTextures() {
         if (texAtl == null) {
-            texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
+            texAtl = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
+
+            itemDropSound = CustomAssetManager.getInstance().manager.get(ITEM_DROP);
         }
         if (sprite == null) {
             sprite = new Sprite(texAtl.findRegion("enemy"));
@@ -331,6 +337,9 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
             server.spawnAndSendGameObject(new GroundItem(new Vector2(position), server.getGameWorld().getNewNetID(),
                     gunInfo.getTextureName(), new Color(gunInfo.r, gunInfo.g, gunInfo.b, 1), 1f,
                     new CreateInventoryGun(gunInfo, -1, server.getGameWorld().getNewNetID())));
+
+            // play item drop sound
+            SoundSystem.getInstance().playSoundInWorld(itemDropSound, position, .85f, 1f);
         }
     }
 }
