@@ -37,8 +37,8 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     private static final float IDLE_WAIT_VARIANCE = 2f;
     private static final float WALK_DELAY = 2f;
     private static final float WALK_VARIANCE = 2f;
-    private static final float TARGET_UPDATE_DELAY = .75f;
-    private static final float MAX_IDLE_TIME = 20; // 20 seconds
+    private static final float TARGET_UPDATE_DELAY = .35f;
+    private static final float MAX_IDLE_TIME = 80; // 80 seconds
     private static final float ITEM_DROP_CHANCE = 0.1f;
 
     public enum EnemyState {
@@ -70,6 +70,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
 
     private boolean queueDead = false;
     private boolean queueImpactSound = false;
+    private boolean queueIdleSound = false;
 
     private ArrayList<StatsBarRenderer.StatsBarInfo> bars;
     private StatsBarRenderer.StatsBarInfo healthBar;
@@ -112,7 +113,8 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
 
     @Override
     public void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer) {
-        updatePacketBuffer.add(new UpdateEnemy(networkID, health));
+        updatePacketBuffer.add(new UpdateEnemy(networkID, health, queueIdleSound));
+        queueIdleSound = false;
         super.addUpdatePacketToBuffer(updatePacketBuffer);
     }
 
@@ -122,6 +124,11 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
         if (health != packet.health) {
             health = packet.health;
             queueImpactSound = true;
+        }
+
+        if (packet.playIdleSound) {
+            // play sound effect
+            SoundSystem.getInstance().playSoundGroup(SoundSystem.SoundGroup.ENEMY_BLOB, position, .7f, 1f);
         }
 
         if (healthBar != null)
@@ -148,8 +155,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                         targetVelocity.set(1, 0);
                         targetVelocity.rotateRad((float)Math.PI * 2 * LocalRandom.RAND.nextFloat());
                         targetVelocity.scl(info.maxIdleVelocity);
-                        // play sound effect
-                        SoundSystem.getInstance().playSoundGroup(SoundSystem.SoundGroup.ENEMY_BLOB, position, .7f, 1f);
+                        queueIdleSound = true;
                     }
                 }
                 break;
