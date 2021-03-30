@@ -19,6 +19,9 @@ import sophomoreproject.game.utilites.MathUtilities;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static sophomoreproject.game.screens.GameScreen.GAME_HEIGHT;
+import static sophomoreproject.game.screens.GameScreen.GAME_WIDTH;
+
 public class Bullet extends PhysicsObject implements Renderable {
     public enum BulletType {
         STANDARD,
@@ -37,7 +40,7 @@ public class Bullet extends PhysicsObject implements Renderable {
     private float critScalar;
     private float enemyKnockback;
     private Vector2 bulletSpawn;
-    private static final float MAX_RANGE = 500; // world units
+    private static final float MAX_RANGE = (float)Math.sqrt(GAME_WIDTH * GAME_WIDTH + GAME_HEIGHT * GAME_HEIGHT) * 1.25f; // world units
     private static final float MAX_AGE = 10; // seconds
 
     private float spin;
@@ -148,7 +151,7 @@ public class Bullet extends PhysicsObject implements Renderable {
         if (sprite == null) {
             sprite = new Sprite(texAtl.findRegion("bullet"));
             sprite.setOriginCenter();
-            sprite.setScale(bulletSize);
+            sprite.setSize(bulletSize, bulletSize);
         }
     }
 

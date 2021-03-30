@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreatePlayer;
@@ -30,6 +31,7 @@ public class Player extends PhysicsObject implements Renderable{
     private Vector2 lookDirection = new Vector2();
     private Vector2 barPos = new Vector2();
     private ArrayList<Integer> inventory = new ArrayList<>();
+    private Rectangle hitbox;
     private int inventorySize = 8;
 
     private int accountId;
@@ -54,6 +56,7 @@ public class Player extends PhysicsObject implements Renderable{
         for (int i = 0; i < inventorySize; ++i) {
             inventory.add(null);
         }
+        hitbox = new Rectangle(position.x - PLAYER_SIZE.x * 8, position.y - PLAYER_SIZE.y * 8, PLAYER_SIZE.x * 16, PLAYER_SIZE.y * 16);
     }
 
     //Client side constructor
@@ -68,6 +71,7 @@ public class Player extends PhysicsObject implements Renderable{
         inventory.addAll(packet.inventoryItems);
 
         loadTextures();
+        hitbox = new Rectangle(position.x - PLAYER_SIZE.x * 8, position.y - PLAYER_SIZE.y * 8, PLAYER_SIZE.x * 16, PLAYER_SIZE.y * 16);
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
 
         bars = new ArrayList<>();
@@ -79,7 +83,12 @@ public class Player extends PhysicsObject implements Renderable{
         bars.add(shieldBar);
         bars.add(staminaBar);
         bars.add(armorBar);
+    }
 
+    @Override
+    public void updatePhysics(float dt) {
+        super.updatePhysics(dt);
+        hitbox.setPosition(position.x - PLAYER_SIZE.x * 8, position.y - PLAYER_SIZE.y * 8);
     }
 
     @Override
@@ -127,6 +136,11 @@ public class Player extends PhysicsObject implements Renderable{
         return accountId;
     }
 
+    @Override
+    public Rectangle getHitbox() {
+        return hitbox;
+    }
+
     private void loadTextures () {
         if (texAtl == null) {
             texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
@@ -153,5 +167,39 @@ public class Player extends PhysicsObject implements Renderable{
 
     public int getInventorySize() {
         return inventorySize;
+    }
+
+    public void addToInventory(int itemNetID, int itemIndex) {
+        boolean success = false;
+        if (itemIndex > 0) {
+            if (inventory.get(itemIndex) == null) {
+                inventory.set(itemIndex, itemNetID);
+                success = true;
+            }
+        } else {
+            // put in first empty slot
+            for (int i = 0; i < inventory.size(); ++i) {
+                if (inventory.get(i) == null) {
+                    inventory.set(i, itemNetID);
+                    success = true;
+                    break;
+                }
+            }
+        }
+        if (!success)
+            System.out.println("WARNING: failed to put item into player inventory!");
+    }
+
+    public void removeFromInventory(int itemNetID) {
+        boolean success = false;
+        for (int i = 0; i < inventory.size(); ++i) {
+            if (inventory.get(i) != null && inventory.get(i) == itemNetID) {
+                inventory.set(i, null);
+                success = true;
+                break;
+            }
+        }
+        if (!success)
+            System.out.println("WARNING: tried removing inventory item that doesn't exist in player inventory!");
     }
 }

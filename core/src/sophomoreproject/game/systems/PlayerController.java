@@ -2,23 +2,22 @@ package sophomoreproject.game.systems;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.*;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import sophomoreproject.game.gameobjects.PhysicsObject;
+import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.gameobjects.bootstuff.Boots;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.networking.ClientNetwork;
-import sophomoreproject.game.packets.CreateBullet;
-import sophomoreproject.game.packets.UpdatePhysicsObject;
+import sophomoreproject.game.packets.RequestDropInventoryItem;
+import sophomoreproject.game.packets.RequestPickupGroundItem;
 import sophomoreproject.game.singletons.TextDisplay;
 import sophomoreproject.game.utilites.MathUtilities;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static sophomoreproject.game.utilites.CharacterUtilities.accelerateTowardsTargetVelocity;
@@ -49,9 +48,11 @@ public final class PlayerController implements InputProcessor {
 
     private final ArrayList<Object> updatePacketArray = new ArrayList<>();
 
-    public final float PLAYER_ACCELERATION = 1500;
-    public final float PLAYER_WALK_SPEED = 100;
-    public final float PLAYER_SPRINT_SPEED = 10000;
+    public final float BASE_PLAYER_ACCELERATION = 1200;
+    public final float BASE_PLAYER_WALK_SPEED = 80;
+    private float currentPlayerAcceleration = BASE_PLAYER_ACCELERATION;
+    private float currentPlayerWalkSpeed = BASE_PLAYER_WALK_SPEED;
+    public final float PLAYER_SPRINT_SCALAR = 1.8f;
 //    public final float FRICTION = 420;
 
     private PlayerController() {
@@ -90,6 +91,20 @@ public final class PlayerController implements InputProcessor {
     public void run(float dt) {
         fpsString.entry = "FPS: " + Math.round(1/dt);
         if (player != null && cam != null) {
+            // loop through inventory to calculate player stats
+            currentPlayerWalkSpeed = BASE_PLAYER_WALK_SPEED;
+            currentPlayerAcceleration = BASE_PLAYER_ACCELERATION;
+            for (int i = 0; i < player.getInventorySize(); ++i) {
+                if (player.getInventory().get(i) != null) {
+                    Item item = (Item)world.getGameObjectFromID(player.getInventory().get(i));
+                    if (item != null) {
+                        if (item instanceof Boots) {
+                            currentPlayerWalkSpeed += ((Boots)item).getInfo().speed;
+                            currentPlayerAcceleration += ((Boots)item).getInfo().acceleration;
+                        }
+                    }
+                }
+            }
             player.acceleration.set(0,0);
             boolean playerMoving = false;
             Vector2 desiredSpeed = new Vector2();
@@ -111,13 +126,16 @@ public final class PlayerController implements InputProcessor {
                 desiredSpeed.y = -1;
             }
             if (playerMoving) {
-                desiredSpeed.nor().scl(PLAYER_WALK_SPEED);
+                desiredSpeed.nor().scl(currentPlayerWalkSpeed);
             }
             if (shift) {
-                desiredSpeed.nor().scl(PLAYER_SPRINT_SPEED);
+                desiredSpeed.scl(PLAYER_SPRINT_SCALAR);
+                accelerateTowardsTargetVelocity(desiredSpeed, currentPlayerAcceleration * PLAYER_SPRINT_SCALAR, player, dt);
+            } else {
+                accelerateTowardsTargetVelocity(desiredSpeed, currentPlayerAcceleration, player, dt);
             }
 
-            accelerateTowardsTargetVelocity(desiredSpeed, PLAYER_ACCELERATION, player, dt);
+
 
 //            Vector2 speedDifference = new Vector2(desiredSpeed);
 //
@@ -206,6 +224,9 @@ public final class PlayerController implements InputProcessor {
             if (gameObj != null) {
                 Item gameItem = (Item) gameObj;
                 gameItem.setEquipped(true);
+                if (gameItem instanceof Gun) {
+                    System.out.println("Equipped gun score: " + ((Gun) gameItem).getInfo().getGeneralScore());
+                }
             }
         }
 
@@ -272,8 +293,30 @@ public final class PlayerController implements InputProcessor {
                 break;
             case Keys.R:
                 Item gun = (Item) world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
-                gun.manualReload();
+                if (gun != null)
+                    gun.manualReload();
                 keyProc = true;
+                break;
+            case Keys.F:
+                // try pickup
+                int pickupAttempts = 0;
+                int emptySlots = 0;
+                for (int i = 0; i < player.getInventory().size(); ++i) emptySlots += player.getInventory().get(i) == null ? 1 : 0;
+                for (GroundItem g : world.getGroundItems()) {
+                    if (pickupAttempts >= emptySlots)
+                        break;
+                    if (MathUtilities.circleCollisionDetection(player.position.x, player.position.y, 8f, g.position.x, g.position.y, 8f)) {
+                        ClientNetwork.getInstance().sendPacket(new RequestPickupGroundItem(player.getNetworkID(), g.getNetworkID()));
+                        ++pickupAttempts;
+                    }
+                }
+                System.out.println("Tried picking up " + pickupAttempts + " items.");
+                break;
+            case Keys.G:
+                // try drop
+                if (player.getInventory().get(equippedItemIndex) != null) {
+                    ClientNetwork.getInstance().sendPacket(new RequestDropInventoryItem(player.getNetworkID(), player.getInventory().get(equippedItemIndex)));
+                }
                 break;
         }
         return keyProc;
@@ -350,7 +393,7 @@ public final class PlayerController implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        changeEquippedItem(-Math.round(amountY) + equippedItemIndex);
+        changeEquippedItem(Math.round(amountY) + equippedItemIndex);
         return true;
     }
 

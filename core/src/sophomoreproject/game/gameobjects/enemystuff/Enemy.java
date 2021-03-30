@@ -1,27 +1,36 @@
 package sophomoreproject.game.gameobjects.enemystuff;
 
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.gameobjects.gunstuff.AttackInfo;
+import sophomoreproject.game.gameobjects.gunstuff.Gun;
+import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
 import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreateEnemy;
+import sophomoreproject.game.packets.CreateInventoryGun;
 import sophomoreproject.game.packets.UpdateEnemy;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.singletons.LocalRandom;
+import sophomoreproject.game.singletons.SoundSystem;
 import sophomoreproject.game.singletons.StatsBarRenderer;
 import sophomoreproject.game.systems.GameServer;
+import sophomoreproject.game.systems.dropper.StandardDropper;
 import sophomoreproject.game.utilites.MathUtilities;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static sophomoreproject.game.singletons.CustomAssetManager.*;
 import static sophomoreproject.game.utilites.CharacterUtilities.accelerateTowardsTargetVelocity;
 
 public class Enemy extends PhysicsObject implements Renderable, CollisionReceiver {
@@ -29,8 +38,8 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     private static final float IDLE_WAIT_VARIANCE = 2f;
     private static final float WALK_DELAY = 2f;
     private static final float WALK_VARIANCE = 2f;
-    private static final float TARGET_UPDATE_DELAY = .75f;
-    private static final float MAX_IDLE_TIME = 20; // 20 seconds
+    private static final float TARGET_UPDATE_DELAY = .35f;
+    public static final float MAX_IDLE_TIME = 80; // 80 seconds
 
     public enum EnemyState {
         IDLE_WAIT,
@@ -41,9 +50,14 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     }
 
     private EnemyInfo info;
+    private static StandardDropper dropper = new StandardDropper();
 
     private static TextureAtlas texAtl = null;
     private Sprite sprite;
+
+    private static Sound itemDropSound, deathSound, bulletImpactSound;
+    private boolean queueIdleSound = false;
+    private boolean queueItemDropSound = false;
 
     private EnemyState state = EnemyState.IDLE_WALK;
     private Vector2 targetVelocity = new Vector2();
@@ -59,6 +73,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     private int health;
 
     private boolean queueDead = false;
+
 
     private ArrayList<StatsBarRenderer.StatsBarInfo> bars;
     private StatsBarRenderer.StatsBarInfo healthBar;
@@ -101,13 +116,33 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
 
     @Override
     public void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer) {
-        updatePacketBuffer.add(new UpdateEnemy(networkID, health));
+        updatePacketBuffer.add(new UpdateEnemy(networkID, health, queueIdleSound, queueItemDropSound));
+        queueIdleSound = false;
+        queueItemDropSound = false;
         super.addUpdatePacketToBuffer(updatePacketBuffer);
     }
 
     @Override
     public void receiveUpdate(Object updatePacket) {
         UpdateEnemy packet = (UpdateEnemy) updatePacket;
+        // prioritize drop sound
+        if (packet.playDropSound) {
+            // play sound effect
+            SoundSystem.getInstance().playSoundInWorld(itemDropSound, position, .85f, 1f);
+        } else {
+            if (health != packet.health) {
+                SoundSystem.getInstance().playSoundInWorld(bulletImpactSound, position, .8f, 1f);
+            }
+
+            if (packet.playIdleSound) {
+                // play sound effect
+                SoundSystem.getInstance().playSoundGroup(SoundSystem.SoundGroup.ENEMY_BLOB, position, .7f, 1f);
+            }
+        }
+
+
+
+
         health = packet.health;
         if (healthBar != null)
             healthBar.value = health;
@@ -133,6 +168,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                         targetVelocity.set(1, 0);
                         targetVelocity.rotateRad((float)Math.PI * 2 * LocalRandom.RAND.nextFloat());
                         targetVelocity.scl(info.maxIdleVelocity);
+                        queueIdleSound = true;
                     }
                 }
                 break;
@@ -151,7 +187,6 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                         state = EnemyState.IDLE_WAIT;
                         targetVelocity.set(0, 0);
                     }
-
                 }
                 break;
             case APPROACHING_TARGET:
@@ -206,7 +241,11 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                 break;
         }
 
-        if (idleTime > MAX_IDLE_TIME || queueDead) {
+        if (idleTime > MAX_IDLE_TIME) {
+            server.removeObject(networkID);
+        } else if (queueDead) {
+            // drop items
+            dropItem(server);
             server.removeObject(networkID);
         }
 
@@ -251,7 +290,10 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
 
     private void loadTextures() {
         if (texAtl == null) {
-            texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
+            texAtl = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
+
+            itemDropSound = CustomAssetManager.getInstance().manager.get(ITEM_DROP);
+            bulletImpactSound = CustomAssetManager.getInstance().manager.get(BULLET_IMPACT);
         }
         if (sprite == null) {
             sprite = new Sprite(texAtl.findRegion("enemy"));
@@ -294,8 +336,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
             if (health <= 0) {
                 health = 0;
                 queueDead = true;
-                // TODO: random chance to drop item
-                // also give attacker some points corresponding to difficulty
+
                 if (healthBar != null) healthBar.value = health;
                 return healthLeftBeforeDamage;
             } else {
@@ -304,5 +345,12 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
             }
         }
         return 0;
+    }
+
+    private void dropItem(GameServer server) {
+        if (dropper.tryDropItem(server, position, info.difficulty)) {
+            // queue item drop sound
+            queueItemDropSound = true;
+        }
     }
 }

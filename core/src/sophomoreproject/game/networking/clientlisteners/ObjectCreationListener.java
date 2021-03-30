@@ -2,6 +2,8 @@ package sophomoreproject.game.networking.clientlisteners;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import sophomoreproject.game.gameobjects.GroundItem;
+import sophomoreproject.game.gameobjects.bootstuff.Boots;
 import sophomoreproject.game.gameobjects.enemystuff.Enemy;
 import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.Player;
@@ -41,14 +43,17 @@ public class ObjectCreationListener implements Listener {
                 // then tell the game client that this player is to be controlled
                 gameClient.setClientControlledPlayer(newPlayer);
         } else if (o instanceof CreateTestObject) {
-            CreateTestObject packet = (CreateTestObject) o;
-            toQueue = new TestObject(packet);
+            toQueue = new TestObject((CreateTestObject) o);
         } else if (o instanceof CreateBullet) {
             toQueue = new Bullet((CreateBullet) o, true);
         } else if (o instanceof CreateInventoryGun) {
             toQueue = new Gun((CreateInventoryGun) o);
         } else if (o instanceof CreateEnemy) {
             toQueue = new Enemy((CreateEnemy) o);
+        } else if (o instanceof CreateGroundItem) {
+            toQueue = new GroundItem((CreateGroundItem) o);
+        } else if (o instanceof CreateBoots) {
+            toQueue = new Boots((CreateBoots) o);
         }
 
 
@@ -59,6 +64,5 @@ public class ObjectCreationListener implements Listener {
                 world.queueAddObject(toQueue);
             }
         }
-
     }
 }

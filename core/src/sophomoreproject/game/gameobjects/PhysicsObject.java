@@ -1,5 +1,6 @@
 package sophomoreproject.game.gameobjects;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
@@ -55,5 +56,9 @@ public abstract class PhysicsObject extends GameObject {
 
     public int getChunkY() {
         return (int)Math.floor(position.y / MapChunk.CHUNK_SIZE_PIXELS);
+    }
+
+    public Rectangle getHitbox() {
+        return null;
     }
 }

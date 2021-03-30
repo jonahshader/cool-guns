@@ -39,7 +39,7 @@ public class LoginScreen implements Screen {
 
     private Stage stage;
     private Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-    ;
+
 
 
     Label loginLabel = new Label("Username:", skin);
