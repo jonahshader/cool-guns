@@ -36,7 +36,7 @@ public class Player extends PhysicsObject implements Renderable{
 
     private int accountId;
 
-    private int health = 10;
+    private int health = 5;
     private int maxHealth = 20;
 
     private ArrayList<StatsBarRenderer.StatsBarInfo> bars;
@@ -80,9 +80,9 @@ public class Player extends PhysicsObject implements Renderable{
         staminaBar = new StatsBarRenderer.StatsBarInfo(30,50, StatsBarRenderer.STAMINA_BAR_COLOR);
         armorBar = new StatsBarRenderer.StatsBarInfo(6,15, StatsBarRenderer.ARMOR_BAR_COLOR);
         bars.add(healthBar);
-        bars.add(shieldBar);
-        bars.add(staminaBar);
-        bars.add(armorBar);
+//        bars.add(shieldBar);
+//        bars.add(staminaBar);
+//        bars.add(armorBar);
     }
 
     @Override

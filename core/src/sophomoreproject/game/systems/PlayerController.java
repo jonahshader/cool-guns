@@ -180,7 +180,6 @@ public final class PlayerController implements InputProcessor {
                 } else {
                     // inventory item not found!
                     System.out.println("Player inventory item not found! Should never happen!");
-
                 }
             }
         }
