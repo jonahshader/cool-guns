@@ -2,6 +2,8 @@ package sophomoreproject.game.systems.mapstuff;
 
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.gameobjects.enemystuff.Enemy;
+import sophomoreproject.game.singletons.LocalRandom;
 import sophomoreproject.game.systems.GameServer;
 
 import java.util.Collection;
@@ -19,6 +21,7 @@ public class Spawner {
     private float spawnTimer;
     private float spawnRegenTimer;
     private float isSpawningUpdateTimer = IS_SPAWNING_UPDATE_DELAY;
+    private float trickleSpawnTimer = Enemy.MAX_IDLE_TIME * LocalRandom.RAND.nextFloat() * .5f;
     private SpawnAction spawnAction;
     private Player nearestPlayer;
     private Vector2 playerMinusPos = new Vector2();
@@ -44,6 +47,12 @@ public class Spawner {
         if (spawnTimer <= 0 && spawnsBuffered > 0 && isSpawning()) {
             spawn(gameServer);
         }
+        if (trickleSpawnTimer <= 0) {
+            if (LocalRandom.RAND.nextFloat() > .5)
+                spawn(gameServer);
+            trickleSpawnTimer += Enemy.MAX_IDLE_TIME * .5f;
+        }
+        trickleSpawnTimer -= dt;
 
         if (spawnTimer > 0) {
             spawnTimer -= dt;

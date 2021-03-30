@@ -16,7 +16,7 @@ public class GunInfo {
     public float bulletSpeedVariation = .175f;
     public int bulletsPerShot = 1;
     public int shotsPerBurst = 3;
-    public float bulletSize = 1.25f;
+    public float bulletSize = 6f;
     public Bullet.BulletType bulletType = Bullet.BulletType.STANDARD;
     public float bulletDamage = 5.25f;
     public float bulletDamageVariance = 1.5f;
@@ -44,6 +44,7 @@ public class GunInfo {
                 break;
             case RIFLE:
                 firingMode = Gun.FiringMode.SEMI_AUTO;
+                bulletSize = 5;
                 clipSize = 5;
                 fireDelay = 1.0f;
                 reloadDelay = 3f;
@@ -59,17 +60,18 @@ public class GunInfo {
                 bulletSpeed = 85;
                 fireDelay = 5f/60;
                 clipSize = 20;
-                bulletSize = 1f;
+                bulletSize = 4f;
                 reloadDelay = 1.5f;
                 break;
             case LMG:
                 firingMode = Gun.FiringMode.AUTO;
-                bulletDamage = 1f;
-                bulletDamageVariance = 0;
+                bulletDamage = .8f;
+                bulletDamageVariance = .5f;
                 bulletSpeed = 90;
-                spread = .125f;
+                spread = .15f;
                 fireDelay = 2f/60;
-                clipSize = 40;
+                clipSize = 50;
+                bulletSize = 3;
                 reloadDelay = 3;
                 break;
             case SHOTGUN:
@@ -77,8 +79,9 @@ public class GunInfo {
                 bulletDamage = 1.2f;
                 bulletsPerShot = 12;
                 clipSize = 36;
-                bulletSize = .8f;
+                bulletSize = 2f;
                 fireDelay = .2f;
+                playerKnockback = 20;
                 break;
             default:
                 break;

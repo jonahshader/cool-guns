@@ -33,7 +33,7 @@ public class StandardDropper {
             }
         });
 
-        dropper.addDropAction(new DropAction(.93f) {
+        dropper.addDropAction(new DropAction(.03f) {
             @Override
             public void dropItem(GameServer server, Vector2 pos, float difficulty) {
                 BootsInfo bootsInfo = new BootsInfo();

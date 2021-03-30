@@ -7,8 +7,8 @@ import static java.lang.Math.sqrt;
 import static sophomoreproject.game.singletons.LocalRandom.expGaussian;
 
 public class BootsInfo {
-    public float accelerationToWalkRatio = PlayerController.getInstance().PLAYER_ACCELERATION / PlayerController.getInstance().PLAYER_WALK_SPEED;
-    public float speed = 10f;
+    public float accelerationToWalkRatio = PlayerController.getInstance().BASE_PLAYER_ACCELERATION / PlayerController.getInstance().BASE_PLAYER_WALK_SPEED;
+    public float speed = 13f;
     public float acceleration = speed * (accelerationToWalkRatio);
 
     public float r = 1;
@@ -24,7 +24,12 @@ public class BootsInfo {
     }
 
     public void scaleScore(float scalar) {
-        sqrt(Math.pow(speed,2) + Math.pow(((1/accelerationToWalkRatio)*acceleration),2));
+        speed *= Math.sqrt(scalar);
+        acceleration *= Math.sqrt(scalar);
+    }
+
+    public float getGeneralScore() {
+        return (float) sqrt(Math.pow(speed,2) + Math.pow(((1/accelerationToWalkRatio)*acceleration),2));
     }
 
     public String getTextureName() {

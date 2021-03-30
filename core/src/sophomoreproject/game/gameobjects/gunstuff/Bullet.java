@@ -151,7 +151,7 @@ public class Bullet extends PhysicsObject implements Renderable {
         if (sprite == null) {
             sprite = new Sprite(texAtl.findRegion("bullet"));
             sprite.setOriginCenter();
-            sprite.setScale(bulletSize);
+            sprite.setSize(bulletSize, bulletSize);
         }
     }
 

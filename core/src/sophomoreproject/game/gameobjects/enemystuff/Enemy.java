@@ -39,8 +39,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     private static final float WALK_DELAY = 2f;
     private static final float WALK_VARIANCE = 2f;
     private static final float TARGET_UPDATE_DELAY = .35f;
-    private static final float MAX_IDLE_TIME = 80; // 80 seconds
-    private static final float ITEM_DROP_CHANCE = 0.1f;
+    public static final float MAX_IDLE_TIME = 80; // 80 seconds
 
     public enum EnemyState {
         IDLE_WAIT,
@@ -126,21 +125,25 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     @Override
     public void receiveUpdate(Object updatePacket) {
         UpdateEnemy packet = (UpdateEnemy) updatePacket;
-        if (health != packet.health) {
-            health = packet.health;
-            SoundSystem.getInstance().playSoundInWorld(bulletImpactSound, position, .8f, 1f);
-        }
-
-        if (packet.playIdleSound) {
-            // play sound effect
-            SoundSystem.getInstance().playSoundGroup(SoundSystem.SoundGroup.ENEMY_BLOB, position, .7f, 1f);
-        }
-
+        // prioritize drop sound
         if (packet.playDropSound) {
             // play sound effect
             SoundSystem.getInstance().playSoundInWorld(itemDropSound, position, .85f, 1f);
+        } else {
+            if (health != packet.health) {
+                SoundSystem.getInstance().playSoundInWorld(bulletImpactSound, position, .8f, 1f);
+            }
+
+            if (packet.playIdleSound) {
+                // play sound effect
+                SoundSystem.getInstance().playSoundGroup(SoundSystem.SoundGroup.ENEMY_BLOB, position, .7f, 1f);
+            }
         }
 
+
+
+
+        health = packet.health;
         if (healthBar != null)
             healthBar.value = health;
     }
