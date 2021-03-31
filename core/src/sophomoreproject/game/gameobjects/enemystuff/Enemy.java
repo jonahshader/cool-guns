@@ -68,6 +68,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     private float idleWaitTimer = IDLE_WAIT_DELAY;
     private float walkTimer = WALK_DELAY;
     private float targetUpdateTimer = TARGET_UPDATE_DELAY;
+    private float attackTimer = 0;
     private float idleTime = 0;
 
     private int health;
@@ -238,7 +239,11 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                     } else {
                         playerMinusPos.nor().scl(info.maxActiveVelocity);
                         targetVelocity.set(playerMinusPos);
-                        // TODO: determine if enemy is touching player. if true, damage player and set cooldown timer
+                        playerMinusPos.nor().scl(info.knockback);
+                        if (attackTimer <= 0 && MathUtilities.circleCollisionDetection(position, getRadius(), targetPlayer.position, targetPlayer.getRadius())) {
+                            server.processAndSendAttackPlayer(new AttackInfo(Math.round(info.attackDamage), 0, 0, playerMinusPos.x, playerMinusPos.y), targetPlayer.getNetworkID(), networkID);
+                            attackTimer += info.attackDelay;
+                        }
                     }
                 } else {
                     state = EnemyState.IDLE_WAIT;
@@ -250,6 +255,10 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                 idleTime += dt;
                 // unused for now
                 break;
+        }
+
+        if (attackTimer > 0) {
+            attackTimer -= dt;
         }
 
         if (idleTime > MAX_IDLE_TIME) {

@@ -284,4 +284,10 @@ public class GameWorld {
             inventoryChangeQueue.add(ic);
         }
     }
+    // this should be fine, but might need to add a queue array
+    public void handleAttackPlayerPacket(AttackPlayer o) {
+        synchronized (players) {
+            players.get(o.playerId).receiveAttack(o.info, o.attackerId);
+        }
+    }
 }

@@ -7,8 +7,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import sophomoreproject.game.gameobjects.gunstuff.AttackInfo;
+import sophomoreproject.game.gameobjects.gunstuff.Gun;
+import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
+import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.packets.CreatePlayer;
+import sophomoreproject.game.packets.InventoryChange;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.packets.UpdatePlayer;
 import sophomoreproject.game.singletons.CustomAssetManager;
@@ -19,7 +24,7 @@ import sophomoreproject.game.utilites.RendingUtilities;
 
 import java.util.ArrayList;
 
-public class Player extends PhysicsObject implements Renderable{
+public class Player extends PhysicsObject implements Renderable, CollisionReceiver {
 
     private static TextureAtlas texAtl = null;
     private static TextureRegion[] textures = null;
@@ -127,9 +132,38 @@ public class Player extends PhysicsObject implements Renderable{
         // assume object is of type
         UpdatePlayer packet = (UpdatePlayer) updatePacket;
         lookDirection.set(packet.xLook, packet.yLook);
+        health = packet.health;
+        maxHealth = packet.maxHealth;
+        shield = packet.shield;
+        maxShield = packet.maxShield;
+        stamina = packet.stamina;
     }
 
     public void run(float dt, GameServer server) {
+        // die lol
+        if (health <= 0) {
+            // empty inventory
+            for (Integer i : inventory) if (i != null) {
+                server.removeObject(i);
+                server.processAndSendInventoryUpdate(new InventoryChange(networkID, -1, i, false));
+            }
+
+            // reset parameters
+            position.set(0, 0);
+            velocity.set(0, 0);
+            acceleration.set(0, 0);
+            health = BASE_MAX_HEALTH;
+
+            // give starter gun
+            GunInfo starterGunInfo = new GunInfo();
+            starterGunInfo.loadStarterGun();
+            Gun starterGun = new Gun(starterGunInfo, networkID, server.getGameWorld().getNewNetID());
+            server.spawnAndSendGameObject(starterGun);
+            server.processAndSendInventoryUpdate(new InventoryChange(networkID, 0, starterGun.getNetworkID(), true));
+
+            // force update to send new position, velocity, accel, etc
+            server.queueForceUpdate(networkID);
+        }
     }
 
     @Override
@@ -262,5 +296,36 @@ public class Player extends PhysicsObject implements Renderable{
 
     public float getStamina() {
         return stamina;
+    }
+
+    @Override
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    @Override
+    public float getRadius() {
+        return 6;
+    }
+
+    @Override
+    public CollisionGroup getCollisionGroup() {
+        return CollisionGroup.PLAYER;
+    }
+
+    @Override
+    public boolean checkCollidingGroup(CollisionGroup otherCollisionGroup) {
+        return otherCollisionGroup == CollisionGroup.ENEMY;
+    }
+
+    @Override
+    public int receiveAttack(AttackInfo attack, int attackerNetID) {
+        // TODO: shield
+        int healthLeftBeforeDamage = health;
+        health -= Math.round(attack.damage);
+        velocity.add(attack.xKnockback, attack.yKnockback);
+        if (health < 0) health = 0;
+
+        return healthLeftBeforeDamage - health;
     }
 }

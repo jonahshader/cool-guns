@@ -24,6 +24,8 @@ public class ObjectUpdateListener implements Listener {
             world.queueAddUpdatePacket(o);
         } else if (o instanceof InventoryChange) {
             world.handleInventoryChangePacket((InventoryChange) o);
+        } else if (o instanceof AttackPlayer) {
+            world.handleAttackPlayerPacket((AttackPlayer)o);
         }
     }
 }

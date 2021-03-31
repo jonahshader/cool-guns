@@ -15,6 +15,7 @@ public class EnemyInfo {
     public float attackDamage = 1;
     public float attackDelay = 1.5f;
     public int health = 1;
+    public float knockback = 30;
 
     public EnemyInfo() {}
 
@@ -36,9 +37,10 @@ public class EnemyInfo {
         attackDamage *= 1 + sqrtDiff * 0.1;
         attackDelay /= 1 + cbrtDiff * 0.5;
         health *= 1 + (Math.pow(difficulty * .15, 1.0));
+        knockback *= sqrtDiff;
 //        size *= Math.sqrt(health * 5);
 
-        randomize(0.025f);
+        randomize(0.035f);
     }
 
     private void randomize(float ran) {
@@ -50,9 +52,10 @@ public class EnemyInfo {
         attackDamage *= LocalRandom.expGaussian(2, ran);
         attackDelay *= LocalRandom.expGaussian(2, ran);
         health *= LocalRandom.expGaussian(2, ran);
+        knockback *= LocalRandom.expGaussian(2, ran);
 
 
         // recalculate size based on health
-        size *= Math.pow(health, 1/2.5); // somewhere between sqrt and cbrt because in the real world its volume would correspond to health, but cbrt seems too strong
+        size = (float)Math.pow(health, 1/2.5) * .75f; // somewhere between sqrt and cbrt because in the real world its volume would correspond to health, but cbrt seems too strong
     }
 }

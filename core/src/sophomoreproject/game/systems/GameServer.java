@@ -1,12 +1,12 @@
 package sophomoreproject.game.systems;
 
 import com.esotericsoftware.kryonet.Connection;
+import sophomoreproject.game.gameobjects.PhysicsObject;
+import sophomoreproject.game.gameobjects.gunstuff.AttackInfo;
 import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.networking.serverlisteners.RequestListener;
-import sophomoreproject.game.packets.InventoryChange;
-import sophomoreproject.game.packets.RemoveObject;
-import sophomoreproject.game.packets.UpdateSleepState;
+import sophomoreproject.game.packets.*;
 import sophomoreproject.game.systems.gameplaysystems.GameSystem;
 import sophomoreproject.game.systems.gameplaysystems.spawners.TestObjectSpawner;
 import sophomoreproject.game.systems.mapstuff.MapGenerator;
@@ -18,16 +18,16 @@ import java.util.concurrent.locks.ReentrantLock;
 public class GameServer {
     public static final long GAME_SEED = 81528512;
 
-    private GameWorld world;
-    private ServerMap serverMap;
-    private ServerNetwork serverNetwork;
+    private final GameWorld world;
+    private final ServerMap serverMap;
+    private final ServerNetwork serverNetwork;
 
-    private ArrayList<Object> createPackets = new ArrayList<>();
-    private ArrayList<GameSystem> gameSystems = new ArrayList<>();
-    private ArrayList<GameObject> forceUpdateQueue = new ArrayList<>();
-    private ArrayList<Object> forceUpdatePackets = new ArrayList<>();
+    private final ArrayList<Object> createPackets = new ArrayList<>();
+    private final ArrayList<GameSystem> gameSystems = new ArrayList<>();
+    private final ArrayList<GameObject> forceUpdateQueue = new ArrayList<>();
+    private final ArrayList<Object> forceUpdatePackets = new ArrayList<>();
 
-    private ReentrantLock forceUpdateQueueLock = new ReentrantLock();
+    private final ReentrantLock forceUpdateQueueLock = new ReentrantLock();
 
 
 
@@ -117,11 +117,11 @@ public class GameServer {
 
     /**
      * queues gameobject with id to update manually
-     * @param itemID
+     * @param objectId
      */
-    public void queueForceUpdate(int itemID) {
-        GameObject toUpdate = world.getGameObjectFromID(itemID);
-        if (toUpdate!= null) {
+    public void queueForceUpdate(int objectId) {
+        GameObject toUpdate = world.getGameObjectFromID(objectId);
+        if (toUpdate != null) {
             forceUpdateQueueLock.lock();
             forceUpdateQueue.add(toUpdate);
             forceUpdateQueueLock.unlock();
@@ -135,5 +135,11 @@ public class GameServer {
     public void processAndSendInventoryUpdate(InventoryChange ic) {
         world.handleInventoryChangePacket(ic);
         serverNetwork.sendPacketToAll(ic, true);
+    }
+
+    public void processAndSendAttackPlayer(AttackInfo info, int playerId, int attackerId) {
+        AttackPlayer a = new AttackPlayer(info, playerId, attackerId);
+        world.handleAttackPlayerPacket(a);
+        serverNetwork.sendPacketToAll(a, true);
     }
 }

@@ -59,7 +59,7 @@ public class RequestListener implements Listener {
 
                     // make a default gun
                     GunInfo gunInfo = new GunInfo();
-                    gunInfo.bulletDamage = 1; // crap gun
+                    gunInfo.loadStarterGun();
                     Gun gun = new Gun(gunInfo, newPlayer.getNetworkID(), world.getNewNetID());
                     gameServer.spawnAndSendGameObject(gun);
 
