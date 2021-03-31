@@ -27,65 +27,79 @@ default_gun
   index: -1
 enemy
   rotate: false
-  xy: 94, 15
+  xy: 112, 15
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 player_back
   rotate: false
-  xy: 126, 13
+  xy: 144, 13
   size: 12, 18
   orig: 12, 18
   offset: 0, 0
   index: -1
 player_bottom_left
   rotate: false
-  xy: 164, 13
+  xy: 182, 13
   size: 10, 18
   orig: 10, 18
   offset: 0, 0
   index: -1
 player_bottom_right
   rotate: false
-  xy: 140, 13
+  xy: 158, 13
   size: 10, 18
   orig: 10, 18
   offset: 0, 0
   index: -1
 player_front
   rotate: false
-  xy: 112, 13
+  xy: 130, 13
   size: 12, 18
   orig: 12, 18
   offset: 0, 0
   index: -1
 player_left
   rotate: false
-  xy: 188, 13
+  xy: 206, 13
   size: 8, 18
   orig: 8, 18
   offset: 0, 0
   index: -1
 player_right
   rotate: false
-  xy: 198, 13
+  xy: 216, 13
   size: 8, 18
   orig: 8, 18
   offset: 0, 0
   index: -1
 player_top_left
   rotate: false
-  xy: 152, 13
+  xy: 170, 13
   size: 10, 18
   orig: 10, 18
   offset: 0, 0
   index: -1
 player_top_right
   rotate: false
-  xy: 176, 13
+  xy: 194, 13
   size: 10, 18
   orig: 10, 18
+  offset: 0, 0
+  index: -1
+shadow
+  rotate: false
+  xy: 240, 20
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+shield
+  rotate: false
+  xy: 226, 17
+  size: 12, 14
+  orig: 12, 14
   offset: 0, 0
   index: -1
 shotgun
@@ -107,6 +121,13 @@ smoke
   xy: 28, 8
   size: 24, 23
   orig: 24, 23
+  offset: 0, 0
+  index: -1
+speed_shoes
+  rotate: false
+  xy: 94, 15
+  size: 16, 16
+  orig: 16, 16
   offset: 0, 0
   index: -1
 white_pixel

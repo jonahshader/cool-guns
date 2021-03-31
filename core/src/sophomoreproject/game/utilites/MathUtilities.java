@@ -10,6 +10,10 @@ public class MathUtilities {
         return out;
     }
 
+    public static boolean circleCollisionDetection(Vector2 pos1, float r1, Vector2 pos2, float r2) {
+        return circleCollisionDetection(pos1.x, pos1.y, r1, pos2.x, pos2.y, r2);
+    }
+
     public static boolean circleCollisionDetection(float x1, float y1, float r1, float x2, float y2, float r2) {
         return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) <= (r1 + r2) * (r1 + r2);
     }

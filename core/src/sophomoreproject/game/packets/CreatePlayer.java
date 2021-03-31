@@ -11,20 +11,26 @@ public class CreatePlayer {
     public String username;
     public ArrayList<Integer> inventoryItems;
 
+    public int health;
+    public int maxHealth;
+    public int shield;
+    public int maxShield;
+    public float stamina;
+
     public CreatePlayer(Player toSend) {
         u = new UpdatePhysicsObject(toSend.getNetworkID(), toSend.position, toSend.velocity, toSend.acceleration);
         accountId = toSend.getAccountId();
         username = toSend.getUsername();
         inventoryItems = new ArrayList<>();
 
-        // convert inventory to inventory packets
-        for (Integer item : toSend.getInventory()) {
-            if (item == null) {
-                inventoryItems.add(null);
-            } else {
-                inventoryItems.add(item);
-            }
-        }
+        health = toSend.getHealth();
+        maxHealth = toSend.getMaxHealth();
+        shield = toSend.getShield();
+        maxShield = toSend.getMaxShield();
+        stamina = toSend.getStamina();
+
+        // copy inventory
+        inventoryItems.addAll(toSend.getInventory());
     }
 
     public CreatePlayer(){} // no arg constructor for KryoNet internal usage

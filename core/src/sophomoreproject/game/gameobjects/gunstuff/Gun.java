@@ -1,11 +1,13 @@
 package sophomoreproject.game.gameobjects.gunstuff;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.interfaces.Renderable;
@@ -22,7 +24,7 @@ import static sophomoreproject.game.singletons.LocalRandom.*;
 
 //This is owned by a player or it is in an inventory (like a shop).
 
-public class Gun extends Item implements Renderable {
+public class Gun extends Item {
     public enum FiringMode {
         AUTO,
         SEMI_AUTO,
@@ -43,7 +45,7 @@ public class Gun extends Item implements Renderable {
     private static TextureAtlas texAtl = null;
     private final ArrayList<Object> bulletPackets = new ArrayList<>();
     private Sprite gunSprite = null;
-    private TextureRegion gunIcon = null;
+    private Sprite gunIcon = null;
     private float firingTimer;
     private float burstDelayTimer = 0;
     private float reloadTimer = 0;
@@ -174,7 +176,7 @@ public class Gun extends Item implements Renderable {
 
                 float uniqueDam = info.bulletDamage + genTriangleDist()*info.bulletDamageVariance;
 
-                bulletPackets.add(new CreateBullet(new UpdatePhysicsObject(-1, gunSprite.getX(), gunSprite.getY(), uniqueVel.x, uniqueVel.y, 0f, 0f), player.getNetworkID(),
+                bulletPackets.add(new CreateBullet(new UpdatePhysicsObject(-1, position.x, position.y, uniqueVel.x, uniqueVel.y, 0f, 0f), player.getNetworkID(),
                         info.bulletSize, uniqueDam, info.shieldDamage,info.armorDamage, info.critScalar, info.enemyKnockback));
                 currentClip--;
                 ++burstShotsFired;
@@ -207,32 +209,21 @@ public class Gun extends Item implements Renderable {
         }
     }
 
+    @Override
+    public GroundItem toGroundItem(GameServer server) {
+        return new GroundItem(new Vector2(position), server.getGameWorld().getNewNetID(), info.getTextureName(),
+                new Color(info.r, info.g, info.b, 1), 1f,
+                new CreateInventoryGun(info, -1, server.getGameWorld().getNewNetID()));
+    }
 
 
     private void loadTextures () {
         if (texAtl == null) {
             texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
         }
-        String gunTextureName = "default_gun";
         if (gunSprite == null) {
-            switch (info.gunType) {
-                case PISTOL:
-                    break;
-                case SHOTGUN:
-                    gunTextureName = "shotgun";
-                    break;
-                case LMG:
-                case RIFLE:
-                    gunTextureName = "91";
-                    break;
-                case SMG:
-                    gunTextureName = "smg";
-                    break;
-                default:
-                    gunTextureName = "default_gun";
-                    break;
-            }
-            gunIcon = texAtl.findRegion(gunTextureName);
+            gunIcon = new Sprite(texAtl.findRegion(info.getTextureName()));
+            gunIcon.setColor(info.r, info.g, info.b, 1f);
             gunSprite = new Sprite(gunIcon);
             gunSprite.setOriginCenter();
         }
@@ -244,7 +235,11 @@ public class Gun extends Item implements Renderable {
 
     @Override
     public void renderIcon(SpriteBatch sb, float size, float x, float y) {
-        sb.draw(gunIcon, x, y, size, size);
+        float widthToHeight = gunIcon.getRegionHeight() / (float)gunIcon.getRegionWidth();
+        gunIcon.setSize(size, size * widthToHeight);
+        gunIcon.setPosition(x, y);
+        gunIcon.setColor(info.r, info.g, info.b, 1);
+        gunIcon.draw(sb);
     }
 
     public int getOwnerNetId() {

@@ -26,6 +26,4 @@ public class RendingUtilities {
         float height = size.y * t.getRegionHeight();
         sb.draw(t, pos.x - width/2,pos.y - height/2, width, height);
     }
-
-
 }
