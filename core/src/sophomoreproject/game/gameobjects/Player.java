@@ -24,7 +24,10 @@ public class Player extends PhysicsObject implements Renderable{
     private static TextureAtlas texAtl = null;
     private static TextureRegion[] textures = null;
 
-    private final Vector2 PLAYER_SIZE = new Vector2(1.5f, 1.5f);
+    private static final Vector2 PLAYER_SIZE = new Vector2(1.5f, 1.5f);
+    public static final int STAMINA_MAX = 1;
+    public static final float STAMINA_REGEN_PER_SECOND = .1f;
+    public static final int BASE_MAX_HEALTH = 5;
 
     private final String username;
 
@@ -36,8 +39,13 @@ public class Player extends PhysicsObject implements Renderable{
 
     private int accountId;
 
-    private int health = 5;
-    private int maxHealth = 20;
+    private int health = BASE_MAX_HEALTH;
+    private int maxHealth = BASE_MAX_HEALTH;
+    private int shield = 0;
+    private int maxShield = 0;
+    private float stamina = STAMINA_MAX;
+
+
 
     private ArrayList<StatsBarRenderer.StatsBarInfo> bars;
     private StatsBarRenderer.StatsBarInfo healthBar;
@@ -66,6 +74,11 @@ public class Player extends PhysicsObject implements Renderable{
                 packet.u.xAccel, packet.u.yAccel, packet.u.netID);
         this.accountId = packet.accountId;
         this.username = packet.username;
+        this.health = packet.health;
+        this.maxHealth = packet.maxHealth;
+        this.shield = packet.shield;
+        this.maxShield = packet.maxShield;
+        this.stamina = packet.stamina;
 
         // populate inventory from inventory packets
         inventory.addAll(packet.inventoryItems);
@@ -75,13 +88,13 @@ public class Player extends PhysicsObject implements Renderable{
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
 
         bars = new ArrayList<>();
-        healthBar = new StatsBarRenderer.StatsBarInfo(health,maxHealth,StatsBarRenderer.HEALTH_BAR_COLOR);
-        shieldBar = new StatsBarRenderer.StatsBarInfo(10,20, StatsBarRenderer.SHIELD_BAR_COLOR);
-        staminaBar = new StatsBarRenderer.StatsBarInfo(30,50, StatsBarRenderer.STAMINA_BAR_COLOR);
-        armorBar = new StatsBarRenderer.StatsBarInfo(6,15, StatsBarRenderer.ARMOR_BAR_COLOR);
+        healthBar = new StatsBarRenderer.StatsBarInfo(health, maxHealth, StatsBarRenderer.HEALTH_BAR_COLOR);
+        shieldBar = new StatsBarRenderer.StatsBarInfo(shield,maxShield, StatsBarRenderer.SHIELD_BAR_COLOR);
+        staminaBar = new StatsBarRenderer.StatsBarInfo((int)Math.ceil(stamina * 100),STAMINA_MAX * 100, StatsBarRenderer.STAMINA_BAR_COLOR);
+//        armorBar = new StatsBarRenderer.StatsBarInfo(6,15, StatsBarRenderer.ARMOR_BAR_COLOR);
         bars.add(healthBar);
-//        bars.add(shieldBar);
-//        bars.add(staminaBar);
+        bars.add(shieldBar);
+        bars.add(staminaBar);
 //        bars.add(armorBar);
     }
 
@@ -99,7 +112,7 @@ public class Player extends PhysicsObject implements Renderable{
     @Override
     public void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer) {
         super.addUpdatePacketToBuffer(updatePacketBuffer);
-        updatePacketBuffer.add(new UpdatePlayer(networkID, lookDirection.x, lookDirection.y));
+        updatePacketBuffer.add(new UpdatePlayer(networkID, lookDirection.x, lookDirection.y, health, maxHealth, shield, maxShield, stamina));
     }
 
     @Override
@@ -121,6 +134,14 @@ public class Player extends PhysicsObject implements Renderable{
 
     @Override
     public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
+        // update bars
+        healthBar.value = health;
+        healthBar.maxValue = maxHealth;
+        shieldBar.value = shield;
+        shieldBar.maxValue = maxShield;
+        staminaBar.value = (int)Math.ceil(stamina * 100);
+        staminaBar.maxValue = STAMINA_MAX * 100;
+        // render stuff
         RendingUtilities.renderCharacter(position, lookDirection, PLAYER_SIZE, sb, textures);
         TextDisplay.getInstance().drawTextInWorld(sb, username, position.x, position.y - 24, .25f, new Color(1f, 1f, 1f, 1f));
         barPos.set(position);
@@ -201,5 +222,45 @@ public class Player extends PhysicsObject implements Renderable{
         }
         if (!success)
             System.out.println("WARNING: tried removing inventory item that doesn't exist in player inventory!");
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    public void setShield(int shield) {
+        this.shield = shield;
+    }
+
+    public void setMaxShield(int maxShield) {
+        this.maxShield = maxShield;
+    }
+
+    public void setStamina(float stamina) {
+        this.stamina = stamina;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public int getShield() {
+        return shield;
+    }
+
+    public int getMaxShield() {
+        return maxShield;
+    }
+
+    public float getStamina() {
+        return stamina;
     }
 }

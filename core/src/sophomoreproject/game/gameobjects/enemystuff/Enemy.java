@@ -127,6 +127,8 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
         UpdateEnemy packet = (UpdateEnemy) updatePacket;
         // prioritize drop sound
         if (packet.playDropSound) {
+            // cancel some sounds to make this sound pop out
+            bulletImpactSound.stop();
             // play sound effect
             SoundSystem.getInstance().playSoundInWorld(itemDropSound, position, .85f, 1f);
         } else {
@@ -162,13 +164,14 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                     if (targetPlayer != null) {
                         // approach player first
                         state = EnemyState.APPROACHING_TARGET;
+                        queueIdleSound = true;
                     } else {
                         // else, go to idle walk state
                         state = EnemyState.IDLE_WALK;
                         targetVelocity.set(1, 0);
                         targetVelocity.rotateRad((float)Math.PI * 2 * LocalRandom.RAND.nextFloat());
                         targetVelocity.scl(info.maxIdleVelocity);
-                        queueIdleSound = true;
+                        queueIdleSound = LocalRandom.RAND.nextFloat() > .5f;
                     }
                 }
                 break;
@@ -182,10 +185,12 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                     if (targetPlayer != null) {
                         // approach player first
                         state = EnemyState.APPROACHING_TARGET;
+                        queueIdleSound = true;
                     } else {
                         // else, go to idle wait state
                         state = EnemyState.IDLE_WAIT;
                         targetVelocity.set(0, 0);
+                        queueIdleSound = LocalRandom.RAND.nextFloat() > .9f;
                     }
                 }
                 break;
@@ -198,8 +203,14 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                     // go to idle wait or idle walk
                     if (LocalRandom.RAND.nextFloat() > 0.5) {
                         state = EnemyState.IDLE_WAIT;
+                        targetVelocity.set(0, 0);
+                        queueIdleSound = LocalRandom.RAND.nextFloat() > 0.9;
                     } else {
+                        // else, go to idle walk state
                         state = EnemyState.IDLE_WALK;
+                        targetVelocity.set(1, 0);
+                        targetVelocity.rotateRad((float)Math.PI * 2 * LocalRandom.RAND.nextFloat());
+                        targetVelocity.scl(info.maxIdleVelocity);
                     }
                 } else if (radius < info.attackRadius) {
                     // go to attacking target state

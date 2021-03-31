@@ -176,7 +176,7 @@ public class Gun extends Item {
 
                 float uniqueDam = info.bulletDamage + genTriangleDist()*info.bulletDamageVariance;
 
-                bulletPackets.add(new CreateBullet(new UpdatePhysicsObject(-1, gunSprite.getX(), gunSprite.getY(), uniqueVel.x, uniqueVel.y, 0f, 0f), player.getNetworkID(),
+                bulletPackets.add(new CreateBullet(new UpdatePhysicsObject(-1, position.x, position.y, uniqueVel.x, uniqueVel.y, 0f, 0f), player.getNetworkID(),
                         info.bulletSize, uniqueDam, info.shieldDamage,info.armorDamage, info.critScalar, info.enemyKnockback));
                 currentClip--;
                 ++burstShotsFired;
