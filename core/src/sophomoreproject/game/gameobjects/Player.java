@@ -1,6 +1,7 @@
 package sophomoreproject.game.gameobjects;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -12,6 +13,7 @@ import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
 import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.interfaces.Renderable;
+import sophomoreproject.game.interfaces.Shadow;
 import sophomoreproject.game.packets.CreatePlayer;
 import sophomoreproject.game.packets.InventoryChange;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
@@ -24,10 +26,11 @@ import sophomoreproject.game.utilites.RendingUtilities;
 
 import java.util.ArrayList;
 
-public class Player extends PhysicsObject implements Renderable, CollisionReceiver {
+public class Player extends PhysicsObject implements Renderable, CollisionReceiver, Shadow {
 
     private static TextureAtlas texAtl = null;
     private static TextureRegion[] textures = null;
+    private static Sprite shadow;
 
     private static final Vector2 PLAYER_SIZE = new Vector2(1.5f, 1.5f);
     public static final int STAMINA_MAX = 1;
@@ -209,6 +212,11 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
             textures[5] = texAtl.findRegion("player_bottom_left");
             textures[6] = texAtl.findRegion("player_front");
             textures[7] = texAtl.findRegion("player_bottom_right");
+
+            shadow = new Sprite(texAtl.findRegion("shadow"));
+            shadow.setScale(2, 1);
+            shadow.setOriginCenter();
+            shadow.setColor(1, 1, 1, .8f);
         }
     }
 
@@ -305,7 +313,7 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
 
     @Override
     public float getRadius() {
-        return 6;
+        return 8;
     }
 
     @Override
@@ -327,5 +335,11 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
         if (health < 0) health = 0;
 
         return healthLeftBeforeDamage - health;
+    }
+
+    @Override
+    public void drawShadow(SpriteBatch sb) {
+        shadow.setOriginBasedPosition(position.x, position.y - 12);
+        shadow.draw(sb);
     }
 }
