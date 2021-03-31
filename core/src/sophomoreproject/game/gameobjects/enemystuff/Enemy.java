@@ -15,6 +15,7 @@ import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
 import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.interfaces.Renderable;
+import sophomoreproject.game.interfaces.Shadow;
 import sophomoreproject.game.packets.CreateEnemy;
 import sophomoreproject.game.packets.CreateInventoryGun;
 import sophomoreproject.game.packets.UpdateEnemy;
@@ -33,7 +34,7 @@ import java.util.Collection;
 import static sophomoreproject.game.singletons.CustomAssetManager.*;
 import static sophomoreproject.game.utilites.CharacterUtilities.accelerateTowardsTargetVelocity;
 
-public class Enemy extends PhysicsObject implements Renderable, CollisionReceiver {
+public class Enemy extends PhysicsObject implements Renderable, CollisionReceiver, Shadow {
     private static final float IDLE_WAIT_DELAY = 3f;
     private static final float IDLE_WAIT_VARIANCE = 2f;
     private static final float WALK_DELAY = 2f;
@@ -54,6 +55,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
 
     private static TextureAtlas texAtl = null;
     private Sprite sprite;
+    private Sprite shadow;
 
     private static Sound itemDropSound, deathSound, bulletImpactSound;
     private boolean queueIdleSound = false;
@@ -70,6 +72,8 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     private float targetUpdateTimer = TARGET_UPDATE_DELAY;
     private float attackTimer = 0;
     private float idleTime = 0;
+    private float velIntegral = 0;
+    private float heightOffset = 0;
 
     private int health;
 
@@ -142,8 +146,6 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                 SoundSystem.getInstance().playSoundGroup(SoundSystem.SoundGroup.ENEMY_BLOB, position, .7f, 1f);
             }
         }
-
-
 
 
         health = packet.health;
@@ -293,11 +295,19 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
 
     @Override
     public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
-        sprite.setOriginBasedPosition(position.x, position.y);
+        velIntegral += dt * velocity.len();
+        heightOffset = 5 * (float)Math.abs(Math.sin(velIntegral * 10 / info.maxActiveVelocity));
+        sprite.setOriginBasedPosition(position.x, position.y + heightOffset);
         sprite.draw(sb);
         barPos.set(position);
-        barPos.y += (info.size / 2)* sprite.getHeight();
+        barPos.y += ((info.size / 2)* sprite.getHeight()) + heightOffset;
         StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,barPos,bars);
+    }
+
+    @Override
+    public void drawShadow(SpriteBatch sb) {
+        shadow.setOriginBasedPosition(position.x, position.y - 6 * info.size);
+        shadow.draw(sb);
     }
 
     @Override
@@ -319,6 +329,11 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
             sprite = new Sprite(texAtl.findRegion("enemy"));
             sprite.setOriginCenter();
             sprite.setScale(info.size);
+
+            shadow = new Sprite(texAtl.findRegion("shadow"));
+            shadow.setOriginCenter();
+            shadow.setScale(info.size * 2, info.size);
+            shadow.setColor(1, 1, 1, .8f);
         }
     }
 

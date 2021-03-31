@@ -6,10 +6,7 @@ import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.gameobjects.enemystuff.Enemy;
-import sophomoreproject.game.interfaces.CollisionReceiver;
-import sophomoreproject.game.interfaces.GameObject;
-import sophomoreproject.game.interfaces.Item;
-import sophomoreproject.game.interfaces.Renderable;
+import sophomoreproject.game.interfaces.*;
 import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.packets.*;
 
@@ -26,6 +23,7 @@ public class GameWorld {
     private final Map<Integer, GameObject> gameObjects = new ConcurrentHashMap<>();
     private final Map<Integer, GameObject> sleepingGameObjects = new ConcurrentHashMap<>();
     private final List<Renderable> renderables = new ArrayList<>();
+    private final List<Shadow> shadows = new ArrayList<>();
 
     private final ArrayList<Object> serverSendUpdatePacketBuffer = new ArrayList<>();
     private final ArrayList<Object> receiveUpdatePacketBuffer = new ArrayList<>();
@@ -122,7 +120,11 @@ public class GameWorld {
     }
 
     public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
-        // render ground items first
+        // render shadows first
+        for (Shadow s : shadows) {
+            s.drawShadow(sb);
+        }
+        // render ground items next
         for (GroundItem g : groundItems.values()) {
             g.draw(sb);
         }
@@ -191,6 +193,7 @@ public class GameWorld {
     private void addObject(GameObject o) {
         if (o instanceof PhysicsObject) physicsObjects.put(o.getNetworkID(), (PhysicsObject) o);
         if (o instanceof Renderable) renderables.add((Renderable) o);
+        if (o instanceof Shadow) shadows.add((Shadow) o);
         if (o instanceof Player) players.put(o.getNetworkID(), (Player)o);
         if (o instanceof GroundItem) groundItems.put(o.getNetworkID(), (GroundItem)o);
         gameObjects.put(o.getNetworkID(), o);
@@ -199,6 +202,7 @@ public class GameWorld {
     private void removeObject(GameObject o) {
         if (o instanceof PhysicsObject) physicsObjects.remove(o.getNetworkID());
         if (o instanceof Renderable) renderables.remove(o);
+        if (o instanceof Shadow) shadows.remove(o);
         if (o instanceof Player) players.remove(o.getNetworkID());
         if (o instanceof GroundItem) groundItems.remove(o.getNetworkID());
         gameObjects.remove(o.getNetworkID());
