@@ -181,7 +181,7 @@ public class Bullet extends PhysicsObject implements Renderable {
 
     @Override
     public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) {
-        sprite.setPosition(position.x, position.y);
+        sprite.setOriginBasedPosition(position.x, position.y);
         sprite.rotate(spin * dt);
         sprite.draw(sb);
     }

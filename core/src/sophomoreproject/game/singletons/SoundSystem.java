@@ -59,6 +59,7 @@ public final class SoundSystem {
         volScale = (float)Math.pow(Math.max(0, volScale), 1.5f);
         pan = Math.max(-1, pan);
         pan = Math.min(1, pan);
+        if (volScale < 0.01) return; // early return if the sound is barely audible. don't want entire world to emit sounds all the time
         float realVolume = volume * overallVolume * volScale;
         s.play(realVolume, pitch, pan);
     }

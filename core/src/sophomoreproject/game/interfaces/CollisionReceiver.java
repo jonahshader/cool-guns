@@ -13,7 +13,7 @@ public interface CollisionReceiver {
     Vector2 getPosition();
     float getRadius();
     CollisionGroup getCollisionGroup();
-    boolean checkCollidingGroup(CollisionGroup otherCollisionGroup);
+    boolean checkCollidingGroup(CollisionGroup otherCollisionGroup); // who can attack me? return true if otherCollisionGroup can attack me
     int receiveAttack(AttackInfo attack, int attackerNetID);
     int getNetworkID();
 }

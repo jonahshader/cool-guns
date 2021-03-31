@@ -3,9 +3,11 @@ package sophomoreproject.game.packets;
 import com.esotericsoftware.kryo.Kryo;
 import sophomoreproject.game.gameobjects.bootstuff.BootsInfo;
 import sophomoreproject.game.gameobjects.enemystuff.EnemyInfo;
+import sophomoreproject.game.gameobjects.gunstuff.AttackInfo;
 import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
+import sophomoreproject.game.interfaces.CollisionReceiver;
 
 import java.util.ArrayList;
 
@@ -13,7 +15,8 @@ public class RegisterPackets {
     // all packet objects must be registered here so that the client and server are
     // aware of the possible packets that can be sent
     public static void registerPackets(Kryo kryo) {
-
+        kryo.register(AttackInfo.class);
+        kryo.register(AttackPlayer.class);
         kryo.register(BootsInfo.class);
         kryo.register(CreateBoots.class);
         kryo.register(CreateBullet.class);

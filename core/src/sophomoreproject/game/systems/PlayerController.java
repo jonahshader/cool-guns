@@ -35,6 +35,8 @@ public final class PlayerController implements InputProcessor {
     public boolean isMouse1Down, isMouse2Down;
     public boolean isDragged;
     public Vector2 mouseLocation = new Vector2();
+    private static final float STAMINA_REGEN_RESUME_DELAY = 1.5f;
+    private float staminaRegenResumeTimer = 0;
 
     private int equippedItemIndex;
     private float serverUpdateDelayTimer = 0;
@@ -91,20 +93,9 @@ public final class PlayerController implements InputProcessor {
     public void run(float dt) {
         fpsString.entry = "FPS: " + Math.round(1/dt);
         if (player != null && cam != null) {
-            // loop through inventory to calculate player stats
-            currentPlayerWalkSpeed = BASE_PLAYER_WALK_SPEED;
-            currentPlayerAcceleration = BASE_PLAYER_ACCELERATION;
-            for (int i = 0; i < player.getInventorySize(); ++i) {
-                if (player.getInventory().get(i) != null) {
-                    Item item = (Item)world.getGameObjectFromID(player.getInventory().get(i));
-                    if (item != null) {
-                        if (item instanceof Boots) {
-                            currentPlayerWalkSpeed += ((Boots)item).getInfo().speed;
-                            currentPlayerAcceleration += ((Boots)item).getInfo().acceleration;
-                        }
-                    }
-                }
-            }
+
+            updatePlayerStats(dt);
+
             player.acceleration.set(0,0);
             boolean playerMoving = false;
             Vector2 desiredSpeed = new Vector2();
@@ -128,9 +119,11 @@ public final class PlayerController implements InputProcessor {
             if (playerMoving) {
                 desiredSpeed.nor().scl(currentPlayerWalkSpeed);
             }
-            if (shift) {
+            if (shift && player.getStamina() > 0) {
                 desiredSpeed.scl(PLAYER_SPRINT_SCALAR);
                 accelerateTowardsTargetVelocity(desiredSpeed, currentPlayerAcceleration * PLAYER_SPRINT_SCALAR, player, dt);
+                staminaRegenResumeTimer = STAMINA_REGEN_RESUME_DELAY;
+                player.setStamina(player.getStamina() - dt);
             } else {
                 accelerateTowardsTargetVelocity(desiredSpeed, currentPlayerAcceleration, player, dt);
             }
@@ -180,7 +173,6 @@ public final class PlayerController implements InputProcessor {
                 } else {
                     // inventory item not found!
                     System.out.println("Player inventory item not found! Should never happen!");
-
                 }
             }
         }
@@ -231,6 +223,38 @@ public final class PlayerController implements InputProcessor {
         }
 
         System.out.println("Item index " + equippedItemIndex + " equipped.");
+    }
+
+    private void updatePlayerStats(float dt) {
+        // loop through inventory to calculate player stats
+        currentPlayerWalkSpeed = BASE_PLAYER_WALK_SPEED;
+        currentPlayerAcceleration = BASE_PLAYER_ACCELERATION;
+        player.setMaxHealth(Player.BASE_MAX_HEALTH);
+        player.setMaxShield(0);
+        player.setShield(0);
+        for (int i = 0; i < player.getInventorySize(); ++i) {
+            if (player.getInventory().get(i) != null) {
+                Item item = (Item)world.getGameObjectFromID(player.getInventory().get(i));
+                if (item != null) {
+                    if (item instanceof Boots) {
+                        currentPlayerWalkSpeed += ((Boots)item).getInfo().speed;
+                        currentPlayerAcceleration += ((Boots)item).getInfo().acceleration;
+                    } // else if shield, increase shield stuff
+                }
+            }
+        }
+        if (player.getHealth() > player.getMaxHealth()) {
+            player.setHealth(player.getMaxHealth());
+        }
+        if (staminaRegenResumeTimer <= 0) {
+            if (player.getStamina() < Player.STAMINA_MAX) {
+                player.setStamina(player.getStamina() + Player.STAMINA_REGEN_PER_SECOND * dt);
+            }
+        } else {
+            staminaRegenResumeTimer -= dt;
+        }
+
+
     }
 
     // Later we will have adjustable controls.

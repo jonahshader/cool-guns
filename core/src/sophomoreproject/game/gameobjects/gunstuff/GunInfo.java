@@ -88,6 +88,12 @@ public class GunInfo {
         }
     }
 
+    public void loadStarterGun() {
+        loadGunTypeDefaults(Gun.GunType.PISTOL, false);
+        bulletDamage = 1;
+        bulletDamageVariance = 0;
+    }
+
     public void randomize(float randomness) {
         fireDelay *= expGaussian(2f, randomness);
         burstDelay *= expGaussian(2f, randomness);
