@@ -32,11 +32,12 @@ public class EnemyInfo {
         maxActiveVelocity *= 1 + sqrtDiff * .15;
         if (maxIdleVelocity > maxActiveVelocity) maxIdleVelocity = maxActiveVelocity;
 
-        approachRadius *= 1 + cbrtDiff * .3;
-        attackRadius *= 1 + cbrtDiff * .3;
-        attackDamage *= 1 + sqrtDiff * 0.1;
+        approachRadius *= 1 + sqrtDiff * .3;
+        attackRadius *= 1 + sqrtDiff * .3;
+        attackDamage *= 1 + sqrtDiff * 0.3;
         attackDelay /= 1 + cbrtDiff * 0.5;
         health *= 1 + (Math.pow(difficulty * .15, 1.0));
+        health = Math.max(health, 1);
         knockback *= sqrtDiff;
 //        size *= Math.sqrt(health * 5);
 
@@ -52,6 +53,7 @@ public class EnemyInfo {
         attackDamage *= LocalRandom.expGaussian(2, ran);
         attackDelay *= LocalRandom.expGaussian(2, ran);
         health *= LocalRandom.expGaussian(2, ran);
+        health = Math.max(health, 1);
         knockback *= LocalRandom.expGaussian(2, ran);
 
 

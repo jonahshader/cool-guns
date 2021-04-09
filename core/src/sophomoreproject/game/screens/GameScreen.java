@@ -17,6 +17,7 @@ import sophomoreproject.game.singletons.TextDisplay;
 import sophomoreproject.game.systems.GameClient;
 import sophomoreproject.game.systems.PlayerController;
 import sophomoreproject.game.systems.mapstuff.Map;
+import sophomoreproject.game.systems.marker.MarkerSystem;
 
 import static sophomoreproject.game.systems.GameServer.GAME_SEED;
 
@@ -77,6 +78,8 @@ public class GameScreen implements Screen {
         game.shapeRenderer.setProjectionMatrix(worldCamera.combined);
         game.batch.begin();
         gameClient.draw(delta, game.batch, game.shapeRenderer);
+        // render markers
+        MarkerSystem.getInstance().render(game.batch, worldViewport, worldCamera);
         game.batch.end();
 
         // render HUD

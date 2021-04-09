@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.gameobjects.GroundItem;
@@ -26,6 +27,7 @@ import sophomoreproject.game.singletons.SoundSystem;
 import sophomoreproject.game.singletons.StatsBarRenderer;
 import sophomoreproject.game.systems.GameServer;
 import sophomoreproject.game.systems.dropper.StandardDropper;
+import sophomoreproject.game.systems.marker.Marker;
 import sophomoreproject.game.utilites.MathUtilities;
 
 import java.util.ArrayList;
@@ -65,6 +67,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     private Vector2 targetVelocity = new Vector2();
     private Vector2 playerMinusPos = new Vector2();
     private Vector2 barPos = new Vector2();
+    private Marker marker;
     private Player targetPlayer;
 
     private float idleWaitTimer = IDLE_WAIT_DELAY;
@@ -112,6 +115,8 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
 //        bars.add(new StatsBarRenderer.StatsBarInfo(10,20, StatsBarRenderer.SHIELD_BAR_COLOR));
 //        bars.add(new StatsBarRenderer.StatsBarInfo(30,50, StatsBarRenderer.STAMINA_BAR_COLOR));
 //        bars.add(new StatsBarRenderer.StatsBarInfo(6,15, StatsBarRenderer.ARMOR_BAR_COLOR));
+
+
     }
 
     @Override
@@ -326,7 +331,8 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
             bulletImpactSound = CustomAssetManager.getInstance().manager.get(BULLET_IMPACT);
         }
         if (sprite == null) {
-            sprite = new Sprite(texAtl.findRegion("enemy"));
+            TextureRegion enemyTexture = texAtl.findRegion("enemy");
+            sprite = new Sprite(enemyTexture);
             sprite.setOriginCenter();
             sprite.setScale(info.size);
 
@@ -334,6 +340,13 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
             shadow.setOriginCenter();
             shadow.setScale(info.size * 2, info.size);
             shadow.setColor(1, 1, 1, .8f);
+
+            marker = new Marker(enemyTexture, position, 1f) {
+                @Override
+                public boolean isInactive() {
+                    return health <= 0;
+                }
+            };
         }
     }
 
