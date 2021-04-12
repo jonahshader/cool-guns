@@ -13,6 +13,7 @@ import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.menu.Menu;
 import sophomoreproject.game.menu.menuactions.ExitGameAction;
 import sophomoreproject.game.menu.menuactions.OptionsAction;
+import sophomoreproject.game.menu.menuactions.PlayMultiGameAction;
 import sophomoreproject.game.menu.menuactions.PlaySingleGameAction;
 import sophomoreproject.game.singletons.CustomAssetManager;
 
@@ -35,7 +36,8 @@ public class MainMenuScreen implements Screen {
 
         mainMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), mainMenuCamera, 50);
 
-        mainMenu.addMenuItem("Single Player", new PlaySingleGameAction(game));
+        mainMenu.addMenuItem("SinglePlayer", new PlaySingleGameAction(game));
+        mainMenu.addMenuItem("MultiPlayer", new PlayMultiGameAction(game));
         //mainMenu.addMenuItem("Edit Character", new EditAction());
         mainMenu.addMenuItem("Options", new OptionsAction(game));
        //mainMenu.addMenuItem("Credits", new CreditsAction());
