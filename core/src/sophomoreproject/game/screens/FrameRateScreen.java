@@ -96,7 +96,7 @@ public class FrameRateScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new ScreenMenuScreen(game, accountID));
+                game.setScreen(new ScreenMenuScreen(game));
             }
         });
     }

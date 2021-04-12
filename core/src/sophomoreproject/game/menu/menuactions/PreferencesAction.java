@@ -6,15 +6,15 @@ import sophomoreproject.game.screens.PreferencesScreen;
 
 public class PreferencesAction implements MenuAction {
     private CoolGuns game;
-    private int accountID;
 
-    public PreferencesAction(CoolGuns game, int accountID) {
+
+    public PreferencesAction(CoolGuns game) {
         this.game = game;
-        this.accountID = accountID;
+
     }
 
     @Override
     public void execute() {
-        game.setScreen(new PreferencesScreen(game, accountID));
+        game.setScreen(new PreferencesScreen(game));
     }
 }

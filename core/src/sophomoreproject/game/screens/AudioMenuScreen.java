@@ -24,7 +24,7 @@ public class AudioMenuScreen implements Screen {
     private CoolGuns game;
     private Menu audioMenu;
 
-    public AudioMenuScreen(CoolGuns game, int accountID) {
+    public AudioMenuScreen(CoolGuns game) {
         this.game = game;
 
         audioMenuCamera = new OrthographicCamera();
@@ -32,9 +32,9 @@ public class AudioMenuScreen implements Screen {
 
         audioMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), audioMenuCamera, 50);
 
-        audioMenu.addMenuItem("Back", new OptionsAction(game, accountID));
-        audioMenu.addMenuItem("Sound", new SoundScreenAction(game, accountID));
-        audioMenu.addMenuItem("Volume", new VolumeMenuAction(game, accountID));
+        audioMenu.addMenuItem("Back", new OptionsAction(game));
+        audioMenu.addMenuItem("Sound", new SoundScreenAction(game));
+        audioMenu.addMenuItem("Volume", new VolumeMenuAction(game));
 
 
 

@@ -24,7 +24,7 @@ public class ScreenMenuScreen implements Screen {
     private CoolGuns game;
     private Menu screenMenu;
 
-    public ScreenMenuScreen(CoolGuns game, int accountID) {
+    public ScreenMenuScreen(CoolGuns game) {
         this.game = game;
 
 
@@ -33,7 +33,7 @@ public class ScreenMenuScreen implements Screen {
 
         screenMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), screenMenuCamera, 50);
 
-        screenMenu.addMenuItem("Back", new OptionsAction(game, accountID));
+        screenMenu.addMenuItem("Back", new OptionsAction(game));
         screenMenu.addMenuItem("FullScreen", new FullScreenAction());
         screenMenu.addMenuItem("Windowed", new WindowedAction());
 //        screenMenu.addMenuItem("FrameRate", new FrameRateAction(game, accountID));

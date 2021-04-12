@@ -17,7 +17,7 @@ public class VolumeMenuScreen implements Screen {
     private Stage stage;
     private Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
     private CoolGuns game;
-    private int accountID;
+
 
     Label volumeLabel = new Label("Volume (from 1 to 100):", skin);
     TextField volume = new TextField("", skin);
@@ -25,9 +25,9 @@ public class VolumeMenuScreen implements Screen {
     TextButton backButton = new TextButton("Back", skin);
     Label savedMsg = new Label("", skin);
 
-    public VolumeMenuScreen(CoolGuns game, int accountID) {
+    public VolumeMenuScreen(CoolGuns game) {
         this.game = game;
-        this.accountID = accountID;
+
     }
 
     @Override
@@ -78,7 +78,7 @@ public class VolumeMenuScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new AudioMenuScreen(game, accountID));
+                game.setScreen(new AudioMenuScreen(game));
             }
         });
     }

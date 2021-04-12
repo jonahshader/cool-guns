@@ -35,7 +35,7 @@ public class CoolGuns extends Game {
         if (useLocalHost) {
             setScreen(new TempBypassScreen(this, true, localPort));
         } else {
-            setScreen(new ConnectServerScreen(this));
+            setScreen(new MainMenuScreen(this));
         }
 //		setScreen(new MainMenuScreen(this, 0));
 	}

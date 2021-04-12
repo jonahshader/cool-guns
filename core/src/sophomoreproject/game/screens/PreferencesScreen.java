@@ -6,11 +6,11 @@ import sophomoreproject.game.CoolGuns;
 public class PreferencesScreen implements Screen {
 
     private CoolGuns game;
-    private int accountID;
 
-    public PreferencesScreen(CoolGuns game, int accountID) {
+
+    public PreferencesScreen(CoolGuns game) {
         this.game = game;
-        this.accountID = accountID;
+
     }
 
     @Override

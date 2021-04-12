@@ -9,15 +9,15 @@ import sophomoreproject.game.screens.MainMenuScreen;
 public class MainMenuAction implements MenuAction {
 
     private CoolGuns game;
-    private int accountID;
 
-    public MainMenuAction(CoolGuns game, int accountID) {
+
+    public MainMenuAction(CoolGuns game) {
         this.game = game;
-        this.accountID = accountID;
+
     }
 
     @Override
     public void execute() {
-        game.setScreen(new MainMenuScreen(game, accountID));
+        game.setScreen(new MainMenuScreen(game));
     }
 }

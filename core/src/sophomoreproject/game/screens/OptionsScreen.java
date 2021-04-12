@@ -22,7 +22,7 @@ public class OptionsScreen implements Screen {
     private CoolGuns game;
     private Menu optionsMenu;
 
-    public OptionsScreen(CoolGuns game, int accountID) {
+    public OptionsScreen(CoolGuns game) {
         this.game = game;
 
 
@@ -31,10 +31,10 @@ public class OptionsScreen implements Screen {
 
         optionsMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), optionsCamera, 150f);
 
-        optionsMenu.addMenuItem("Back", new MainMenuAction(game, accountID));
-        optionsMenu.addMenuItem("Audio", new AudioMenuAction(game, accountID));
-        optionsMenu.addMenuItem("Screen", new ScreenMenuAction(game, accountID));
-        optionsMenu.addMenuItem("Controls", new ControlsMenuAction(game, accountID));
+        optionsMenu.addMenuItem("Back", new MainMenuAction(game));
+        optionsMenu.addMenuItem("Audio", new AudioMenuAction(game));
+        optionsMenu.addMenuItem("Screen", new ScreenMenuAction(game));
+        optionsMenu.addMenuItem("Controls", new ControlsMenuAction(game));
 
 
     }
