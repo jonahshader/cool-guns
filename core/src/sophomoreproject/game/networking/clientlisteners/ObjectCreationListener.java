@@ -9,6 +9,7 @@ import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.gameobjects.TestObject;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
+import sophomoreproject.game.gameobjects.shieldstuff.Shield;
 import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.packets.*;
 import sophomoreproject.game.systems.GameClient;
@@ -54,6 +55,8 @@ public class ObjectCreationListener implements Listener {
             toQueue = new GroundItem((CreateGroundItem) o);
         } else if (o instanceof CreateBoots) {
             toQueue = new Boots((CreateBoots) o);
+        } else if (o instanceof CreateShield) {
+            toQueue = new Shield((CreateShield));
         }
 
 

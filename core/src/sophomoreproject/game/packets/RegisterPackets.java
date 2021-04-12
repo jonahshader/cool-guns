@@ -24,6 +24,7 @@ public class RegisterPackets {
         kryo.register(CreateGroundItem.class);
         kryo.register(CreateInventoryGun.class);
         kryo.register(CreatePlayer.class);
+        kryo.register(CreateShield.class);
         kryo.register(CreateSleeping.class);
         kryo.register(CreateTestObject.class);
         kryo.register(InventoryChange.class);
