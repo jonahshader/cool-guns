@@ -58,20 +58,24 @@ public class GunInfo {
                 firingMode = Gun.FiringMode.AUTO;
                 bulletDamage = 1.25f;
                 bulletSpeed = 85;
-                fireDelay = 5f/60;
+                fireDelay = 6f/60;
                 clipSize = 20;
-                bulletSize = 4f;
-                reloadDelay = 1.5f;
+                bulletSize = 5f;
+                reloadDelay = 1.3f;
+                enemyKnockback = 30;
                 break;
             case LMG:
                 firingMode = Gun.FiringMode.AUTO;
                 bulletDamage = .8f;
                 bulletDamageVariance = .5f;
+                bulletsPerShot = 2;
+                enemyKnockback = 30;
+                playerKnockback = 20;
                 bulletSpeed = 90;
                 spread = .15f;
-                fireDelay = 2f/60;
-                clipSize = 50;
-                bulletSize = 3;
+                fireDelay = 4f/60;
+                clipSize = 100;
+                bulletSize = 4;
                 reloadDelay = 3;
                 break;
             case SHOTGUN:
@@ -79,7 +83,7 @@ public class GunInfo {
                 bulletDamage = 1.2f;
                 bulletsPerShot = 12;
                 clipSize = 36;
-                bulletSize = 2f;
+                bulletSize = 2.5f;
                 fireDelay = .2f;
                 playerKnockback = 20;
                 break;
@@ -279,6 +283,7 @@ public class GunInfo {
             case RIFLE:
                 return "91";
             case LMG:
+                return "lmg";
             case SMG:
                 return "smg";
             default:
