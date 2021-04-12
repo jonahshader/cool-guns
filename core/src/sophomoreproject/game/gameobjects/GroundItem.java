@@ -10,12 +10,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.gameobjects.bootstuff.Boots;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
+import sophomoreproject.game.gameobjects.shieldstuff.Shield;
 import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.interfaces.Renderable;
-import sophomoreproject.game.packets.CreateBoots;
-import sophomoreproject.game.packets.CreateGroundItem;
-import sophomoreproject.game.packets.CreateInventoryGun;
-import sophomoreproject.game.packets.InventoryChange;
+import sophomoreproject.game.packets.*;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.systems.GameServer;
 
@@ -80,6 +78,9 @@ public class GroundItem extends PhysicsObject {
                         retrievingNetId, gameServer.getGameWorld().getNewNetID());
             } else if(createRealizedObjectPacket instanceof CreateBoots) {
                 realizedObject = new Boots(((CreateBoots) createRealizedObjectPacket).info,
+                        retrievingNetId, gameServer.getGameWorld().getNewNetID());
+            } else if(createRealizedObjectPacket instanceof CreateShield) {
+                realizedObject = new Shield(((CreateShield) createRealizedObjectPacket).info,
                         retrievingNetId, gameServer.getGameWorld().getNewNetID());
             }
 

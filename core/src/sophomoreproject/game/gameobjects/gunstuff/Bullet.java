@@ -113,7 +113,7 @@ public class Bullet extends PhysicsObject implements Renderable {
                             // correct collision.
                             // if collision kills target,
                             // TODO: should this be parameterized? penetration ability?
-                            int damageDealt = collisionReceiver.receiveAttack(new AttackInfo(damage, shieldDamage, armorDamage, knockbackVec.x, knockbackVec.y), creatorNetId);
+                            int damageDealt = collisionReceiver.receiveAttack(new AttackInfo(damage, knockbackVec.x, knockbackVec.y), creatorNetId);
                             System.out.println("Bullet inflicted " + damageDealt + " damage.");
                             if (damageDealt == damage) {
                                 // remove bullet

@@ -56,7 +56,7 @@ public class ObjectCreationListener implements Listener {
         } else if (o instanceof CreateBoots) {
             toQueue = new Boots((CreateBoots) o);
         } else if (o instanceof CreateShield) {
-            toQueue = new Shield((CreateShield));
+            toQueue = new Shield((CreateShield) o);
         }
 
 

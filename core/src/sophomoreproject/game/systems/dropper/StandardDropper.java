@@ -6,8 +6,10 @@ import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.bootstuff.BootsInfo;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
+import sophomoreproject.game.gameobjects.shieldstuff.ShieldInfo;
 import sophomoreproject.game.packets.CreateBoots;
 import sophomoreproject.game.packets.CreateInventoryGun;
+import sophomoreproject.game.packets.CreateShield;
 import sophomoreproject.game.singletons.LocalRandom;
 import sophomoreproject.game.systems.GameServer;
 
@@ -45,6 +47,22 @@ public class StandardDropper {
                 server.spawnAndSendGameObject(new GroundItem(new Vector2(pos), server.getGameWorld().getNewNetID(),
                         bootsInfo.getTextureName(), new Color(bootsInfo.r, bootsInfo.g, bootsInfo.b, 1), 1f,
                         new CreateBoots(bootsInfo, -1, server.getGameWorld().getNewNetID())));
+
+            }
+        });
+
+        dropper.addDropAction(new DropAction(.03f) {
+            @Override
+            public void dropItem(GameServer server, Vector2 pos, float difficulty) {
+                ShieldInfo shieldInfo = new ShieldInfo();
+                shieldInfo.r = (float) Math.sqrt(LocalRandom.RAND.nextFloat());
+                shieldInfo.g = (float) Math.sqrt(LocalRandom.RAND.nextFloat());
+                shieldInfo.b = (float) Math.sqrt(LocalRandom.RAND.nextFloat());
+                shieldInfo.randomize(.5f);
+                shieldInfo.scaleScore((float)Math.sqrt(difficulty * .2));
+                server.spawnAndSendGameObject(new GroundItem(new Vector2(pos), server.getGameWorld().getNewNetID(),
+                        shieldInfo.getTextureName(), new Color(shieldInfo.r, shieldInfo.g, shieldInfo.b, 1), 1f,
+                        new CreateShield(shieldInfo, -1, server.getGameWorld().getNewNetID())));
 
             }
         });

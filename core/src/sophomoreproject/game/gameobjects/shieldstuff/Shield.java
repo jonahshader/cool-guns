@@ -70,7 +70,7 @@ public class Shield extends Item  {
 
     @Override
     public void draw(float dt, SpriteBatch sb, ShapeRenderer sr) { }
-    //Shield position needs to be updated
+
 
     public ShieldInfo getInfo() {
         return info;
@@ -93,11 +93,11 @@ public class Shield extends Item  {
     }
 
 
-//    @Override
-//    public void updateItem(float dt, boolean usedOnce, boolean using, Vector2 angle, Player player) {
-//        position.x = player.position.x;
-//        position.y = player.position.y;
-//    }
+    @Override
+    public void updateItem(float dt, boolean usedOnce, boolean using, Vector2 angle, Player player) {
+        position.x = player.position.x;
+        position.y = player.position.y;
+    }
 
     @Override
     public void manualReload() { }
