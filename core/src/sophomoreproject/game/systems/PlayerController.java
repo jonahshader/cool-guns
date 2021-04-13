@@ -253,8 +253,7 @@ public final class PlayerController implements InputProcessor {
         } else {
             staminaRegenResumeTimer -= dt;
         }
-
-
+        
     }
 
     // Later we will have adjustable controls.

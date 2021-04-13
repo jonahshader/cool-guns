@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
 import java.util.ArrayList;
 
@@ -17,6 +17,7 @@ public final class StatsBarRenderer {
 
         public int value, maxValue;
         public Color color;
+        public TextField barName;
 
         public StatsBarInfo(int value, int maxValue, Color color) {
             this.value = value;
@@ -34,7 +35,6 @@ public final class StatsBarRenderer {
     public static final Color HEALTH_BAR_COLOR = new Color(1,0,0,1);
     public static final Color SHIELD_BAR_COLOR = new Color(0,0,1,1);
     public static final Color STAMINA_BAR_COLOR = new Color(1,1,.2f,1);
-    public static final Color ARMOR_BAR_COLOR = new Color(1,.5f,0,1);
 
     private final Sprite pixel;
 

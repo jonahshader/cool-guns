@@ -306,6 +306,10 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
         return stamina;
     }
 
+    public int getMaxStamina() {
+        return STAMINA_MAX * 100;
+    }
+
     @Override
     public Vector2 getPosition() {
         return position;
