@@ -248,7 +248,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
                         targetVelocity.set(playerMinusPos);
                         playerMinusPos.nor().scl(info.knockback);
                         if (attackTimer <= 0 && MathUtilities.circleCollisionDetection(position, getRadius(), targetPlayer.position, targetPlayer.getRadius())) {
-                            server.processAndSendAttackPlayer(new AttackInfo(Math.round(info.attackDamage), 0, 0, playerMinusPos.x, playerMinusPos.y), targetPlayer.getNetworkID(), networkID);
+                            server.processAndSendAttackPlayer(new AttackInfo(Math.round(info.attackDamage), playerMinusPos.x, playerMinusPos.y), targetPlayer.getNetworkID(), networkID);
                             attackTimer += info.attackDelay;
                         }
                     }

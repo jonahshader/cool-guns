@@ -11,6 +11,7 @@ import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.gameobjects.bootstuff.Boots;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
+import sophomoreproject.game.gameobjects.shieldstuff.Shield;
 import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.networking.ClientNetwork;
 import sophomoreproject.game.packets.RequestDropInventoryItem;
@@ -56,6 +57,10 @@ public final class PlayerController implements InputProcessor {
     private float currentPlayerWalkSpeed = BASE_PLAYER_WALK_SPEED;
     public final float PLAYER_SPRINT_SCALAR = 1.8f;
 //    public final float FRICTION = 420;
+
+    public float shieldRegenTimer = 0;
+    private float shieldFloatBuffer = 0;
+
 
     private PlayerController() {
         accountIDString = new TextDisplay.TextEntry("temp");
@@ -231,7 +236,10 @@ public final class PlayerController implements InputProcessor {
         currentPlayerAcceleration = BASE_PLAYER_ACCELERATION;
         player.setMaxHealth(Player.BASE_MAX_HEALTH);
         player.setMaxShield(0);
-        player.setShield(0);
+        float shieldRegenRate = 0;
+        float shieldDelay = 0;
+        int numShields = 0;
+
         for (int i = 0; i < player.getInventorySize(); ++i) {
             if (player.getInventory().get(i) != null) {
                 Item item = (Item)world.getGameObjectFromID(player.getInventory().get(i));
@@ -239,9 +247,20 @@ public final class PlayerController implements InputProcessor {
                     if (item instanceof Boots) {
                         currentPlayerWalkSpeed += ((Boots)item).getInfo().speed;
                         currentPlayerAcceleration += ((Boots)item).getInfo().acceleration;
-                    } // else if shield, increase shield stuff
+                    }
+                    else if (item instanceof Shield) {
+                        player.setMaxShield(Math.round(player.getMaxShield()+ ((Shield)item).getInfo().capacity));
+                        player.setMaxHealth(Math.round(player.getMaxHealth()+ ((Shield)item).getInfo().health));
+                        shieldRegenRate += ((Shield) item).getInfo().regenRate;
+                        numShields++;
+                        shieldDelay += ((Shield) item).getInfo().regenDelay;
+                    }
                 }
             }
+        }
+
+        if (numShields > 0) {
+            shieldDelay /= numShields;
         }
         if (player.getHealth() > player.getMaxHealth()) {
             player.setHealth(player.getMaxHealth());
@@ -252,6 +271,21 @@ public final class PlayerController implements InputProcessor {
             }
         } else {
             staminaRegenResumeTimer -= dt;
+        }
+
+        if (player.isJustAttacked()) {
+            shieldRegenTimer = 0;
+        }
+        if (shieldRegenTimer < shieldDelay) {
+            shieldRegenTimer += dt;
+        } else {
+            shieldFloatBuffer += shieldRegenRate*dt;
+            int shield = player.getShield();
+            shield += (int) shieldFloatBuffer;
+            shieldFloatBuffer -= (int) shieldFloatBuffer;
+            if (shield > player.getMaxShield())
+                shield = player.getMaxShield();
+            player.setShield(shield);
         }
 
 
