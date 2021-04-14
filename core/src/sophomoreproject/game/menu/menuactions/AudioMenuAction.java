@@ -9,15 +9,15 @@ import sophomoreproject.game.screens.OptionsScreen;
 public class AudioMenuAction implements MenuAction{
 
     private CoolGuns game;
-    private int accountID;
 
-    public AudioMenuAction(CoolGuns game, int accountID) {
+
+    public AudioMenuAction(CoolGuns game) {
         this.game = game;
-        this.accountID = accountID;
+
     }
 
     @Override
     public void execute() {
-        game.setScreen(new AudioMenuScreen(game, accountID));
+        game.setScreen(new AudioMenuScreen(game));
     }
 }

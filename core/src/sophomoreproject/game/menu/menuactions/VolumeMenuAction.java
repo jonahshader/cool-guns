@@ -8,13 +8,13 @@ public class VolumeMenuAction implements MenuAction {
     private CoolGuns game;
     private int accountID;
 
-    public VolumeMenuAction(CoolGuns game, int accountID) {
+    public VolumeMenuAction(CoolGuns game) {
         this.game = game;
-        this.accountID = accountID;
+
     }
 
     @Override
     public void execute() {
-        game.setScreen(new VolumeMenuScreen(game, accountID));
+        game.setScreen(new VolumeMenuScreen(game));
     }
 }

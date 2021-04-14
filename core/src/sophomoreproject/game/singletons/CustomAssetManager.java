@@ -29,6 +29,8 @@ public final class CustomAssetManager {
     public static final String MENU_SOUND = "audio/sounds/menu_mouseover.ogg";
     public static final String ITEM_DROP = "audio/sounds/item_drop.ogg";
     public static final String BULLET_IMPACT = "audio/sounds/bullet_impact.ogg";
+    public static final String GUN_FIRE_NORMAL = "audio/sounds/guns/shot_1.ogg";
+    public static final String GUN_FIRE_SHOTGUN = "audio/sounds/guns/shotgun_1.ogg";
 
 
     // sound lists
@@ -42,6 +44,8 @@ public final class CustomAssetManager {
         manager.load(MENU_SOUND, Sound.class);
         manager.load(ITEM_DROP, Sound.class);
         manager.load(BULLET_IMPACT, Sound.class);
+        manager.load(GUN_FIRE_NORMAL, Sound.class);
+        manager.load(GUN_FIRE_SHOTGUN, Sound.class);
 
         loadSoundList(LIST_ENEMY_BLOB, LIST_ENEMY_BLOB_COUNT, LIST_ENEMY_BLOB_FORMAT);
     }

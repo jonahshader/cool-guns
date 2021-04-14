@@ -10,13 +10,13 @@ public class OptionsAction implements MenuAction {
     private CoolGuns game;
     private int accountID;
 
-    public OptionsAction(CoolGuns game, int accountID) {
+    public OptionsAction(CoolGuns game) {
         this.game = game;
-        this.accountID = accountID;
+
     }
 
     @Override
     public void execute() {
-        game.setScreen(new OptionsScreen(game, accountID));
+        game.setScreen(new OptionsScreen(game));
     }
 }

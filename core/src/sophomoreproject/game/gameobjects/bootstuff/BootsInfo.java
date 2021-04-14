@@ -1,13 +1,12 @@
 package sophomoreproject.game.gameobjects.bootstuff;
 
-
-import sophomoreproject.game.systems.PlayerController;
-
 import static java.lang.Math.sqrt;
 import static sophomoreproject.game.singletons.LocalRandom.expGaussian;
+import static sophomoreproject.game.systems.PlayerController.BASE_PLAYER_ACCELERATION;
+import static sophomoreproject.game.systems.PlayerController.BASE_PLAYER_WALK_SPEED;
 
 public class BootsInfo {
-    public float accelerationToWalkRatio = PlayerController.getInstance().BASE_PLAYER_ACCELERATION / PlayerController.getInstance().BASE_PLAYER_WALK_SPEED;
+    public float accelerationToWalkRatio = BASE_PLAYER_ACCELERATION / BASE_PLAYER_WALK_SPEED;
     public float speed = 13f;
     public float acceleration = speed * (accelerationToWalkRatio);
 

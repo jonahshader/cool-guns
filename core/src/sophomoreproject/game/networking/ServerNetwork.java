@@ -27,6 +27,7 @@ public class ServerNetwork {
         // if that load didn't work, just make a new accounts object
         if (accounts == null) {
             accounts = new Accounts();
+            System.out.println("Made new accounts object");
         }
 
         server = new Server(DEFAULT_WRITE_BUFFER_SIZE * 32, DEFAULT_OBJECT_BUUFER_SIZE * 32);

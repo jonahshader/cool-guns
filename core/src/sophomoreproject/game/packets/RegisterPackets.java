@@ -7,6 +7,7 @@ import sophomoreproject.game.gameobjects.gunstuff.AttackInfo;
 import sophomoreproject.game.gameobjects.gunstuff.Bullet;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
+import sophomoreproject.game.gameobjects.shieldstuff.ShieldInfo;
 import sophomoreproject.game.interfaces.CollisionReceiver;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class RegisterPackets {
         kryo.register(CreateGroundItem.class);
         kryo.register(CreateInventoryGun.class);
         kryo.register(CreatePlayer.class);
+        kryo.register(CreateShield.class);
         kryo.register(CreateSleeping.class);
         kryo.register(CreateTestObject.class);
         kryo.register(InventoryChange.class);
@@ -35,6 +37,7 @@ public class RegisterPackets {
         kryo.register(RequestLogin.class);
         kryo.register(RequestNewAccount.class);
         kryo.register(RequestPickupGroundItem.class);
+        kryo.register(ShieldInfo.class);
         kryo.register(UpdateEnemy.class);
         kryo.register(UpdateItem.class);
         kryo.register(UpdatePhysicsObject.class);

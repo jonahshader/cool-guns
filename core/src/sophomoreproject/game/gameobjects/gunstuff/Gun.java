@@ -1,5 +1,6 @@
 package sophomoreproject.game.gameobjects.gunstuff;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,6 +17,8 @@ import sophomoreproject.game.packets.CreateBullet;
 import sophomoreproject.game.packets.CreateInventoryGun;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.CustomAssetManager;
+import sophomoreproject.game.singletons.LocalRandom;
+import sophomoreproject.game.singletons.SoundSystem;
 import sophomoreproject.game.systems.GameServer;
 
 import java.util.ArrayList;
@@ -46,6 +49,7 @@ public class Gun extends Item {
     private final ArrayList<Object> bulletPackets = new ArrayList<>();
     private Sprite gunSprite = null;
     private Sprite gunIcon = null;
+    private Sound fireSound = null;
     private float firingTimer;
     private float burstDelayTimer = 0;
     private float reloadTimer = 0;
@@ -155,6 +159,7 @@ public class Gun extends Item {
     }
 
     private void shoot(Vector2 angle, Player player) {
+        boolean shot = false;
         firingTimer = firingTimer + info.fireDelay;
         Vector2 baseVelocity = new Vector2(angle);
         baseVelocity.scl(info.bulletSpeed);
@@ -178,6 +183,7 @@ public class Gun extends Item {
 
                 bulletPackets.add(new CreateBullet(new UpdatePhysicsObject(-1, position.x, position.y, uniqueVel.x, uniqueVel.y, 0f, 0f), player.getNetworkID(),
                         info.bulletSize, uniqueDam, info.shieldDamage,info.armorDamage, info.critScalar, info.enemyKnockback));
+                shot = true;
                 currentClip--;
                 ++burstShotsFired;
             } else {
@@ -197,6 +203,13 @@ public class Gun extends Item {
         player.velocity.add(accumulatedKnockback);
         ClientNetwork.getInstance().sendAllPackets(bulletPackets);
         bulletPackets.clear();
+
+        if (shot) {
+            // play fire sound
+            float pitch = LocalRandom.RAND.nextFloat() * 0.12f + .4f + (float) (1.4 / (1 + Math.pow(Math.E, (info.bulletSize - 3.5))));
+            System.out.println(pitch);
+            SoundSystem.getInstance().playSoundInWorld(fireSound, position, .5f, pitch);
+        }
     }
 
     @Override
@@ -226,6 +239,9 @@ public class Gun extends Item {
             gunIcon.setColor(info.r, info.g, info.b, 1f);
             gunSprite = new Sprite(gunIcon);
             gunSprite.setOriginCenter();
+        }
+        if (fireSound == null) {
+            fireSound = info.getSound();
         }
     }
 

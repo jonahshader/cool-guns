@@ -23,7 +23,7 @@ public class ControlsMenuScreen implements Screen {
     private CoolGuns game;
     private Menu controlsMenu;
 
-    public ControlsMenuScreen(CoolGuns game, int accountID) {
+    public ControlsMenuScreen(CoolGuns game) {
         this.game = game;
 
 
@@ -32,8 +32,8 @@ public class ControlsMenuScreen implements Screen {
 
         controlsMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), controlsMenuCamera, 50);
 
-        controlsMenu.addMenuItem("Back", new OptionsAction(game, accountID));
-        controlsMenu.addMenuItem("Preferences", new PreferencesAction(game, accountID));
+        controlsMenu.addMenuItem("Back", new OptionsAction(game));
+        controlsMenu.addMenuItem("Preferences", new PreferencesAction(game));
 
     }
 

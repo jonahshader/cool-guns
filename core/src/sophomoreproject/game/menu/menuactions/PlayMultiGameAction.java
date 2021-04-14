@@ -2,19 +2,17 @@ package sophomoreproject.game.menu.menuactions;
 
 import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.menu.MenuAction;
-import sophomoreproject.game.screens.PreferencesScreen;
+import sophomoreproject.game.screens.ConnectServerScreen;
 
-public class PreferencesAction implements MenuAction {
+public class PlayMultiGameAction implements MenuAction {
     private CoolGuns game;
 
-
-    public PreferencesAction(CoolGuns game) {
+    public PlayMultiGameAction(CoolGuns game) {
         this.game = game;
-
     }
 
     @Override
     public void execute() {
-        game.setScreen(new PreferencesScreen(game));
+        game.setScreen(new ConnectServerScreen(game));
     }
 }

@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.gameobjects.gunstuff.AttackInfo;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
 import sophomoreproject.game.gameobjects.gunstuff.GunInfo;
+import sophomoreproject.game.gameobjects.shieldstuff.Shield;
 import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.interfaces.Renderable;
 import sophomoreproject.game.interfaces.Shadow;
@@ -53,7 +54,7 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
     private int maxShield = 0;
     private float stamina = STAMINA_MAX;
 
-
+    private boolean queueAttacked = false;
 
     private ArrayList<StatsBarRenderer.StatsBarInfo> bars;
     private StatsBarRenderer.StatsBarInfo healthBar;
@@ -310,6 +311,15 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
         return STAMINA_MAX * 100;
     }
 
+    public boolean isJustAttacked() {
+        if (queueAttacked) {
+            queueAttacked = false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public Vector2 getPosition() {
         return position;
@@ -333,12 +343,22 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
     @Override
     public int receiveAttack(AttackInfo attack, int attackerNetID) {
         // TODO: shield
+        int shieldLeftBeforeDamage = shield;
         int healthLeftBeforeDamage = health;
-        health -= Math.round(attack.damage);
-        velocity.add(attack.xKnockback, attack.yKnockback);
-        if (health < 0) health = 0;
 
-        return healthLeftBeforeDamage - health;
+        shield -= Math.round(attack.damage);
+        if (shield < 0) {
+            health += shield;
+            shield = 0;
+        }
+        if (health < 0) {
+            health = 0;
+        }
+
+        queueAttacked = true;
+        velocity.add(attack.xKnockback, attack.yKnockback);
+
+        return (healthLeftBeforeDamage - health) + (shieldLeftBeforeDamage - shield);
     }
 
     @Override

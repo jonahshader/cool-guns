@@ -1,5 +1,7 @@
 package sophomoreproject.game.gameobjects.gunstuff;
 
+import com.badlogic.gdx.audio.Sound;
+import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.singletons.LocalRandom;
 
 import static sophomoreproject.game.singletons.LocalRandom.expGaussian;
@@ -68,12 +70,12 @@ public class GunInfo {
                 firingMode = Gun.FiringMode.AUTO;
                 bulletDamage = .8f;
                 bulletDamageVariance = .5f;
-                bulletsPerShot = 2;
+                bulletsPerShot = 3;
                 enemyKnockback = 30;
                 playerKnockback = 20;
                 bulletSpeed = 90;
                 spread = .15f;
-                fireDelay = 4f/60;
+                fireDelay = 6f/60;
                 clipSize = 100;
                 bulletSize = 4;
                 reloadDelay = 3;
@@ -288,6 +290,15 @@ public class GunInfo {
                 return "smg";
             default:
                 return "default_gun";
+        }
+    }
+
+    public Sound getSound() {
+        switch (gunType) {
+            case SHOTGUN:
+                return CustomAssetManager.getInstance().manager.get(CustomAssetManager.GUN_FIRE_SHOTGUN, Sound.class);
+            default:
+                return CustomAssetManager.getInstance().manager.get(CustomAssetManager.GUN_FIRE_NORMAL, Sound.class);
         }
     }
 }

@@ -5,20 +5,17 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 //import javafx.scene.shape.Rectangle;
 import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.menu.Menu;
-import sophomoreproject.game.menu.MenuAction;
-import sophomoreproject.game.menu.MenuItem;
 import sophomoreproject.game.menu.menuactions.ExitGameAction;
 import sophomoreproject.game.menu.menuactions.OptionsAction;
-import sophomoreproject.game.menu.menuactions.PlayGameAction;
+import sophomoreproject.game.menu.menuactions.PlayMultiGameAction;
+import sophomoreproject.game.menu.menuactions.PlaySingleGameAction;
 import sophomoreproject.game.singletons.CustomAssetManager;
-import sophomoreproject.game.systems.GameClient;
 
 import static sophomoreproject.game.singletons.CustomAssetManager.MENU_FONT;
 
@@ -31,7 +28,7 @@ public class MainMenuScreen implements Screen {
 
 
 
-    public MainMenuScreen(CoolGuns game, int accountID) {
+    public MainMenuScreen(CoolGuns game) {
         this.game = game;
 
         mainMenuCamera = new OrthographicCamera();
@@ -39,9 +36,10 @@ public class MainMenuScreen implements Screen {
 
         mainMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), mainMenuCamera, 50);
 
-        mainMenu.addMenuItem("Play Game", new PlayGameAction(game, accountID));
+        mainMenu.addMenuItem("SinglePlayer", new PlaySingleGameAction(game));
+        mainMenu.addMenuItem("MultiPlayer", new PlayMultiGameAction(game));
         //mainMenu.addMenuItem("Edit Character", new EditAction());
-        mainMenu.addMenuItem("Options", new OptionsAction(game, accountID));
+        mainMenu.addMenuItem("Options", new OptionsAction(game));
        //mainMenu.addMenuItem("Credits", new CreditsAction());
         mainMenu.addMenuItem("Exit", new ExitGameAction());
 

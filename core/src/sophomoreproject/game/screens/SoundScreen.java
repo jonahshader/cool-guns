@@ -14,7 +14,7 @@ public class SoundScreen implements Screen {
     private Stage stage;
     private Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
     private CoolGuns game;
-    private int accountID;
+
 
     Label soundLabel = new Label("Sound (on / off):", skin);
     TextField sound = new TextField("", skin);
@@ -22,9 +22,9 @@ public class SoundScreen implements Screen {
     TextButton backButton = new TextButton("Back", skin);
     Label savedMsg = new Label("", skin);
 
-    public SoundScreen(CoolGuns game, int accountID) {
+    public SoundScreen(CoolGuns game) {
         this.game = game;
-        this.accountID = accountID;
+
     }
 
     @Override
@@ -80,7 +80,7 @@ public class SoundScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new AudioMenuScreen(game, accountID));
+                game.setScreen(new AudioMenuScreen(game));
             }
         });
     }
