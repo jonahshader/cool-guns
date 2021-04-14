@@ -1,5 +1,6 @@
 package sophomoreproject.game.singletons;
 
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -18,6 +19,7 @@ public final class SoundSystem {
     private float overallVolume = 1f;
     private List<Sound> bulletSounds, footstepSounds, enemyBlobSounds;
     private Player player;
+    private Music music;
 
     public enum SoundGroup {
         BULLET,
@@ -27,6 +29,7 @@ public final class SoundSystem {
 
     private SoundSystem() {
         assets = CustomAssetManager.getInstance();
+        music = CustomAssetManager.getInstance().manager.get(GREEN_BIOME_MUSIC, Music.class);
         bulletSounds = new ArrayList<>();
         footstepSounds = new ArrayList<>();
         enemyBlobSounds = assets.getSoundList(LIST_ENEMY_BLOB, LIST_ENEMY_BLOB_COUNT, LIST_ENEMY_BLOB_FORMAT);
@@ -71,7 +74,13 @@ public final class SoundSystem {
 
     public void setOverallVolume(float overallVolume) {
         this.overallVolume = overallVolume;
+        music.setVolume(overallVolume * .1f);
+    }
 
+    public void startMusic() {
+        music.setLooping(true);
+        music.setVolume(overallVolume * .1f);
+        music.play();
     }
 
     public void setPlayer(Player player) {

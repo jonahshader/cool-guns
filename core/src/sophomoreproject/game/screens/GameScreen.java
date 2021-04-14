@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.singletons.HUD;
+import sophomoreproject.game.singletons.SoundSystem;
 import sophomoreproject.game.singletons.TextDisplay;
 import sophomoreproject.game.systems.GameClient;
 import sophomoreproject.game.systems.PlayerController;
@@ -50,6 +51,8 @@ public class GameScreen implements Screen {
 
 
         map = new Map(game, GAME_SEED);
+
+        SoundSystem.getInstance().startMusic();
     }
 
     @Override

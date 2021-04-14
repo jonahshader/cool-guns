@@ -1,6 +1,7 @@
 package sophomoreproject.game.singletons;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -32,6 +33,9 @@ public final class CustomAssetManager {
     public static final String GUN_FIRE_NORMAL = "audio/sounds/guns/shot_1.ogg";
     public static final String GUN_FIRE_SHOTGUN = "audio/sounds/guns/shotgun_1.ogg";
 
+    //Music
+    public static final String GREEN_BIOME_MUSIC = "audio/music/green_biome.ogg";
+
 
     // sound lists
     public static final String LIST_ENEMY_BLOB = "audio/sounds/enemy_blob/enemy_blob_";
@@ -46,6 +50,7 @@ public final class CustomAssetManager {
         manager.load(BULLET_IMPACT, Sound.class);
         manager.load(GUN_FIRE_NORMAL, Sound.class);
         manager.load(GUN_FIRE_SHOTGUN, Sound.class);
+        manager.load(GREEN_BIOME_MUSIC, Music.class);
 
         loadSoundList(LIST_ENEMY_BLOB, LIST_ENEMY_BLOB_COUNT, LIST_ENEMY_BLOB_FORMAT);
     }
