@@ -97,9 +97,9 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
         updateFrequency = ServerUpdateFrequency.SEND_ONLY;
 
         bars = new ArrayList<>();
-        healthBar = new StatsBarRenderer.StatsBarInfo(health, maxHealth, StatsBarRenderer.HEALTH_BAR_COLOR);
-        shieldBar = new StatsBarRenderer.StatsBarInfo(shield,maxShield, StatsBarRenderer.SHIELD_BAR_COLOR);
-        staminaBar = new StatsBarRenderer.StatsBarInfo((int)Math.ceil(stamina * 100),STAMINA_MAX * 100, StatsBarRenderer.STAMINA_BAR_COLOR);
+        healthBar = new StatsBarRenderer.StatsBarInfo(health, maxHealth, StatsBarRenderer.HEALTH_BAR_COLOR, "Health");
+        shieldBar = new StatsBarRenderer.StatsBarInfo(shield,maxShield, StatsBarRenderer.SHIELD_BAR_COLOR, "Shield");
+        staminaBar = new StatsBarRenderer.StatsBarInfo((int)Math.ceil(stamina * 100),STAMINA_MAX * 100, StatsBarRenderer.STAMINA_BAR_COLOR, "Stamina");
 //        armorBar = new StatsBarRenderer.StatsBarInfo(6,15, StatsBarRenderer.ARMOR_BAR_COLOR);
         bars.add(healthBar);
         bars.add(shieldBar);
@@ -184,7 +184,7 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
         TextDisplay.getInstance().drawTextInWorld(sb, username, position.x, position.y - 24, .25f, new Color(1f, 1f, 1f, 1f));
         barPos.set(position);
         barPos.y += (PLAYER_SIZE.y / 2)* textures[6].getRegionHeight();
-        StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,barPos,bars);
+        StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,barPos,bars, false);
     }
 
     public void updateLookDirection(Vector2 lookDirection) {
@@ -305,6 +305,10 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
 
     public float getStamina() {
         return stamina;
+    }
+
+    public int getMaxStamina() {
+        return STAMINA_MAX * 100;
     }
 
     public boolean isJustAttacked() {

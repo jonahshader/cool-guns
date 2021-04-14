@@ -40,7 +40,6 @@ public final class HUD {
     private final StatsBarRenderer.StatsBarInfo healthBar;
     private final StatsBarRenderer.StatsBarInfo shieldBar;
     private final StatsBarRenderer.StatsBarInfo staminaBar;
-    private final StatsBarRenderer.StatsBarInfo armorBar;
 
     private HUD(){
         cam = new OrthographicCamera();
@@ -48,15 +47,14 @@ public final class HUD {
         TextureAtlas atlas = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
         pixel = new Sprite(atlas.findRegion("white_pixel"));
 
+
         bars = new ArrayList<>();
-        healthBar = new StatsBarRenderer.StatsBarInfo(15,20,StatsBarRenderer.HEALTH_BAR_COLOR);
-        shieldBar = new StatsBarRenderer.StatsBarInfo(10,20, StatsBarRenderer.SHIELD_BAR_COLOR);
-        staminaBar = new StatsBarRenderer.StatsBarInfo(30,50, StatsBarRenderer.STAMINA_BAR_COLOR);
-        armorBar = new StatsBarRenderer.StatsBarInfo(6,15, StatsBarRenderer.ARMOR_BAR_COLOR);
+        healthBar = new StatsBarRenderer.StatsBarInfo(0,0,StatsBarRenderer.HEALTH_BAR_COLOR, "Health");
+        shieldBar = new StatsBarRenderer.StatsBarInfo(0,0, StatsBarRenderer.SHIELD_BAR_COLOR, "Shield");
+        staminaBar = new StatsBarRenderer.StatsBarInfo(0,0, StatsBarRenderer.STAMINA_BAR_COLOR, "Stamina");
         bars.add(healthBar);
         bars.add(shieldBar);
         bars.add(staminaBar);
-        bars.add(armorBar);
     }
 
     public static HUD getInstance() {
@@ -76,8 +74,14 @@ public final class HUD {
         sb.setProjectionMatrix(cam.combined);
         sb.begin();
         if (player != null){
-            hudPos.set(HUD_PADDING + StatsBarRenderer.WIDTH/2, HUD_PADDING);
-            StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,hudPos,bars);
+            healthBar.value = PlayerController.getInstance().getPlayer().getHealth();
+            healthBar.maxValue = PlayerController.getInstance().getPlayer().getMaxHealth();
+            shieldBar.value = PlayerController.getInstance().getPlayer().getShield();
+            shieldBar.maxValue = PlayerController.getInstance().getPlayer().getMaxShield();
+            staminaBar.value = (int)Math.ceil(player.getStamina() * 100);
+            staminaBar.maxValue = PlayerController.getInstance().getPlayer().getMaxStamina();
+            hudPos.set(HUD_PADDING + StatsBarRenderer.WIDTH*3/2, HUD_PADDING);
+            StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,hudPos,bars, true, 6);
             drawHotbar(sb);
         }
 
@@ -86,6 +90,7 @@ public final class HUD {
         }
 
         sb.end();
+
     }
 
     public void setConnectionError(boolean connectionError) {
