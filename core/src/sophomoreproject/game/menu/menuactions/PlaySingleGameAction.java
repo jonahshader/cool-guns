@@ -33,38 +33,35 @@ public class PlaySingleGameAction implements MenuAction {
 
     @Override
     public void execute() {
-        Thread serverThread = new Thread() {
-            @Override
-            public void run() {
-                int port = LOCAL_PORT;
+        Thread serverThread = new Thread(() -> {
+            int port = LOCAL_PORT;
 
 
-                if (port != -1) {
-                    // create server
-                    ServerNetwork server = new ServerNetwork(port);
-                    GameServer gameServer = new GameServer(server);
+            if (port != -1) {
+                // create server
+                ServerNetwork server = new ServerNetwork(port);
+                GameServer gameServer = new GameServer(server);
 
-                    // add some listeners here (that can't be added elsewhere)
-                    server.addListener(new AccountListener(server.getAccounts(),
-                            server.getUsersLoggedIn(),
-                            server.getConnectionIdToAccountID(),
-                            gameServer));
+                // add some listeners here (that can't be added elsewhere)
+                server.addListener(new AccountListener(server.getAccounts(),
+                        server.getUsersLoggedIn(),
+                        server.getConnectionIdToAccountID(),
+                        gameServer));
 
-                    server.addListener(new RelaySendOnlyPacketsListener(server,
-                            gameServer));
+                server.addListener(new RelaySendOnlyPacketsListener(server,
+                        gameServer));
 
-                    long lastTime = System.nanoTime();
-                    long time;
-                    while (true) {
-                        do {
-                            time = System.nanoTime();
-                        } while ((time - lastTime) < LOOP_TIME_NANOS);
-                        gameServer.run((float) Math.max(((time - lastTime) * NANOS_TO_SECONDS), LOOP_TIME * 0.00005));
-                        lastTime = time;
-                    }
+                long lastTime = System.nanoTime();
+                long time;
+                while (true) {
+                    do {
+                        time = System.nanoTime();
+                    } while ((time - lastTime) < LOOP_TIME_NANOS);
+                    gameServer.run((float) Math.max(((time - lastTime) * NANOS_TO_SECONDS), LOOP_TIME * 0.00005));
+                    lastTime = time;
                 }
             }
-        };
+        });
         serverThread.start();
         final ReplyAccountEvent[] rEvent = {null};
         ClientNetwork.getInstance().addListener(new Listener(){
@@ -75,6 +72,12 @@ public class PlaySingleGameAction implements MenuAction {
                 }
             }
         });
+
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         if(ClientNetwork.getInstance().tryConnect("localhost", LOCAL_PORT)){
             System.out.println("Successfully connected to internal server!");

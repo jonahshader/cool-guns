@@ -81,7 +81,6 @@ public final class TextDisplay {
         for (int i = 0; i < topText.size(); ++i) {
             drawText(sb, topText.get(i).toString(), hudVp.getWorldWidth() / 2f, hudVp.getWorldHeight() - (TEXT_PADDING + i * font.getLineHeight() * TEXT_OFFSET_PERCENT), .25f, Color.WHITE, Align.center);
         }
-
     }
 
     public void drawTextInWorld(SpriteBatch sb, String text, float x, float y, float scale, Color c) {

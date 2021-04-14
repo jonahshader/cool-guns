@@ -33,7 +33,7 @@ public class AudioMenuScreen implements Screen {
         audioMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), audioMenuCamera, 50);
 
         audioMenu.addMenuItem("Back", new OptionsAction(game));
-        audioMenu.addMenuItem("Sound", new SoundScreenAction(game));
+//        audioMenu.addMenuItem("Sound", new SoundScreenAction(game));
         audioMenu.addMenuItem("Volume", new VolumeMenuAction(game));
 
 

@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import sophomoreproject.game.CoolGuns;
+import sophomoreproject.game.singletons.SoundSystem;
 
 public class VolumeMenuScreen implements Screen {
 
@@ -72,6 +73,7 @@ public class VolumeMenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 String soundText = volume.getText();
                 savedMsg.setText("Volume is set to " + soundText + "%");
+                SoundSystem.getInstance().setOverallVolume(Integer.parseInt(soundText) * 0.01f);
             }
         });
 

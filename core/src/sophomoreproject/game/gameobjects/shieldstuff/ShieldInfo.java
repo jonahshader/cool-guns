@@ -1,8 +1,5 @@
 package sophomoreproject.game.gameobjects.shieldstuff;
 
-import sophomoreproject.game.gameobjects.Player;
-import sophomoreproject.game.systems.PlayerController;
-
 import static java.lang.Math.sqrt;
 import static sophomoreproject.game.singletons.LocalRandom.expGaussian;
 

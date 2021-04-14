@@ -34,7 +34,7 @@ public class OptionsScreen implements Screen {
         optionsMenu.addMenuItem("Back", new MainMenuAction(game));
         optionsMenu.addMenuItem("Audio", new AudioMenuAction(game));
         optionsMenu.addMenuItem("Screen", new ScreenMenuAction(game));
-        optionsMenu.addMenuItem("Controls", new ControlsMenuAction(game));
+//        optionsMenu.addMenuItem("Controls", new ControlsMenuAction(game));
 
 
     }

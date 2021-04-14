@@ -51,8 +51,8 @@ public final class PlayerController implements InputProcessor {
 
     private final ArrayList<Object> updatePacketArray = new ArrayList<>();
 
-    public final float BASE_PLAYER_ACCELERATION = 1200;
-    public final float BASE_PLAYER_WALK_SPEED = 80;
+    public static final float BASE_PLAYER_ACCELERATION = 1200;
+    public static final float BASE_PLAYER_WALK_SPEED = 80;
     private float currentPlayerAcceleration = BASE_PLAYER_ACCELERATION;
     private float currentPlayerWalkSpeed = BASE_PLAYER_WALK_SPEED;
     public final float PLAYER_SPRINT_SCALAR = 1.8f;
