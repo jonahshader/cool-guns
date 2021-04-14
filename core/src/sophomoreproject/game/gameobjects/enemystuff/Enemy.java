@@ -110,7 +110,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
         updateFrequency = ServerUpdateFrequency.CONSTANT;
 
         bars = new ArrayList<>();
-        healthBar = new StatsBarRenderer.StatsBarInfo(health,info.health, StatsBarRenderer.HEALTH_BAR_COLOR);
+        healthBar = new StatsBarRenderer.StatsBarInfo(health,info.health, StatsBarRenderer.HEALTH_BAR_COLOR, "Health");
         bars.add(healthBar);
 //        bars.add(new StatsBarRenderer.StatsBarInfo(10,20, StatsBarRenderer.SHIELD_BAR_COLOR));
 //        bars.add(new StatsBarRenderer.StatsBarInfo(30,50, StatsBarRenderer.STAMINA_BAR_COLOR));
@@ -306,7 +306,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
         sprite.draw(sb);
         barPos.set(position);
         barPos.y += ((info.size / 2)* sprite.getHeight()) + heightOffset;
-        StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,barPos,bars);
+        StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,barPos,bars, false);
     }
 
     @Override

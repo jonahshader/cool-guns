@@ -17,12 +17,13 @@ public final class StatsBarRenderer {
 
         public int value, maxValue;
         public Color color;
-        public TextField barName;
+        public String barName;
 
-        public StatsBarInfo(int value, int maxValue, Color color) {
+        public StatsBarInfo(int value, int maxValue, Color color, String barName) {
             this.value = value;
             this.maxValue = maxValue;
             this.color = color;
+            this.barName = barName;
         }
     }
 
@@ -46,31 +47,36 @@ public final class StatsBarRenderer {
 
     }
 
-    private void drawBar(SpriteBatch sb, Vector2 bottomCenter, StatsBarInfo bar, float scale){
-        pixel.setColor(0,0,0,.5f);
-        pixel.setScale(WIDTH * scale, HEIGHT * scale);
+    private void drawBar(SpriteBatch sb, Vector2 bottomCenter, StatsBarInfo bar, boolean drawLabel){
+        pixel.setColor(0, 0, 0, .5f);
+        pixel.setScale(WIDTH, HEIGHT);
         pixel.setOriginBasedPosition(bottomCenter.x, bottomCenter.y);
         pixel.draw(sb);
         pixel.setColor(bar.color);
-        pixel.setScale(WIDTH*(bar.value/(float)bar.maxValue), HEIGHT);
+        pixel.setScale(WIDTH * (bar.value / (float) bar.maxValue), HEIGHT);
         pixel.setOriginBasedPosition(bottomCenter.x, bottomCenter.y);
         pixel.draw(sb);
-//        TextDisplay.getInstance().drawTextInWorld(sb, ((int)bar.value) + "/" + ((int)bar.maxValue), bottomCenter.x, bottomCenter.y, .15f, Color.WHITE );
-//        sb.draw(pixel, bottomCenter.x, bottomCenter.y, WIDTH/2, 0, WIDTH, HEIGHT, 1,1,0 );
 
+        if (drawLabel) {
+            TextDisplay.getInstance().drawTextInWorld(sb, bar.barName, bottomCenter.x - WIDTH, bottomCenter.y, .1f, Color.WHITE );
+        }
     }
-    public void drawStatsBarsInWorld(SpriteBatch sb, Vector2 pos, ArrayList<StatsBarInfo> bars){
+    public void drawStatsBarsInWorld(SpriteBatch sb, Vector2 pos, ArrayList<StatsBarInfo> bars, boolean drawLabel, float spacing){
         Vector2 posCopy = new Vector2(pos);
         for (StatsBarInfo bar: bars){
             if (bar.maxValue != 0) {
-                drawBar(sb, posCopy, bar, 1);
-                posCopy.y += BAR_INTERVAL;
+                drawBar(sb, posCopy, bar, drawLabel);
+                posCopy.y += spacing;
             }
              
             //bar_interval * scale
             // create hud scale
 
         }
+
+    }
+    public void drawStatsBarsInWorld(SpriteBatch sb, Vector2 pos, ArrayList<StatsBarInfo> bars, boolean drawLabel){
+        drawStatsBarsInWorld(sb,pos,bars,drawLabel, BAR_INTERVAL);
 
     }
 

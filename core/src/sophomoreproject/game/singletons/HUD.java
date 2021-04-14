@@ -49,9 +49,9 @@ public final class HUD {
 
 
         bars = new ArrayList<>();
-        healthBar = new StatsBarRenderer.StatsBarInfo(15,20,StatsBarRenderer.HEALTH_BAR_COLOR);
-        shieldBar = new StatsBarRenderer.StatsBarInfo(10,20, StatsBarRenderer.SHIELD_BAR_COLOR);
-        staminaBar = new StatsBarRenderer.StatsBarInfo(30,50, StatsBarRenderer.STAMINA_BAR_COLOR);
+        healthBar = new StatsBarRenderer.StatsBarInfo(0,0,StatsBarRenderer.HEALTH_BAR_COLOR, "Health");
+        shieldBar = new StatsBarRenderer.StatsBarInfo(0,0, StatsBarRenderer.SHIELD_BAR_COLOR, "Shield");
+        staminaBar = new StatsBarRenderer.StatsBarInfo(0,0, StatsBarRenderer.STAMINA_BAR_COLOR, "Stamina");
         bars.add(healthBar);
         bars.add(shieldBar);
         bars.add(staminaBar);
@@ -80,8 +80,8 @@ public final class HUD {
             shieldBar.maxValue = PlayerController.getInstance().getPlayer().getMaxShield();
             staminaBar.value = (int)Math.ceil(player.getStamina() * 100);
             staminaBar.maxValue = PlayerController.getInstance().getPlayer().getMaxStamina();
-            hudPos.set(HUD_PADDING + StatsBarRenderer.WIDTH/2, HUD_PADDING);
-            StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,hudPos,bars);
+            hudPos.set(HUD_PADDING + StatsBarRenderer.WIDTH*3/2, HUD_PADDING);
+            StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,hudPos,bars, true, 6);
             drawHotbar(sb);
         }
 
