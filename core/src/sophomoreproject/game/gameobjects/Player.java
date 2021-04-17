@@ -23,6 +23,7 @@ import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.singletons.StatsBarRenderer;
 import sophomoreproject.game.singletons.TextDisplay;
 import sophomoreproject.game.systems.GameServer;
+import sophomoreproject.game.systems.marker.Marker;
 import sophomoreproject.game.utilites.RendingUtilities;
 
 import java.util.ArrayList;
@@ -32,6 +33,8 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
     private static TextureAtlas texAtl = null;
     private static TextureRegion[] textures = null;
     private static Sprite shadow;
+
+    private static final Color MARKER_TEXT_COLOR = new Color(1, 1, 1, .5f);
 
     private static final Vector2 PLAYER_SIZE = new Vector2(1.5f, 1.5f);
     public static final int STAMINA_MAX = 1;
@@ -60,7 +63,6 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
     private StatsBarRenderer.StatsBarInfo healthBar;
     private StatsBarRenderer.StatsBarInfo shieldBar;
     private StatsBarRenderer.StatsBarInfo staminaBar;
-    private StatsBarRenderer.StatsBarInfo armorBar;
 
     //Server side constructor
     public Player(Vector2 position, int accountId, int networkID, String username) {
@@ -100,11 +102,9 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
         healthBar = new StatsBarRenderer.StatsBarInfo(health, maxHealth, StatsBarRenderer.HEALTH_BAR_COLOR, "Health");
         shieldBar = new StatsBarRenderer.StatsBarInfo(shield,maxShield, StatsBarRenderer.SHIELD_BAR_COLOR, "Shield");
         staminaBar = new StatsBarRenderer.StatsBarInfo((int)Math.ceil(stamina * 100),STAMINA_MAX * 100, StatsBarRenderer.STAMINA_BAR_COLOR, "Stamina");
-//        armorBar = new StatsBarRenderer.StatsBarInfo(6,15, StatsBarRenderer.ARMOR_BAR_COLOR);
         bars.add(healthBar);
         bars.add(shieldBar);
         bars.add(staminaBar);
-//        bars.add(armorBar);
     }
 
     @Override
@@ -181,7 +181,7 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
         staminaBar.maxValue = STAMINA_MAX * 100;
         // render stuff
         RendingUtilities.renderCharacter(position, lookDirection, PLAYER_SIZE, sb, textures);
-        TextDisplay.getInstance().drawTextInWorld(sb, username, position.x, position.y - 24, .25f, new Color(1f, 1f, 1f, 1f));
+        TextDisplay.getInstance().drawTextInWorld(sb, username, position.x, position.y - 24, .25f, TextDisplay.WHITE);
         barPos.set(position);
         barPos.y += (PLAYER_SIZE.y / 2)* textures[6].getRegionHeight();
         StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,barPos,bars, false);
@@ -215,10 +215,17 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
             textures[7] = texAtl.findRegion("player_bottom_right");
 
             shadow = new Sprite(texAtl.findRegion("shadow"));
-            shadow.setScale(2, 1);
+            shadow.setScale(2.5f, 1.25f);
             shadow.setOriginCenter();
-            shadow.setColor(1, 1, 1, .8f);
+            shadow.setColor(1, 1, 1, .75f);
         }
+
+        new Marker(textures[6], position, 1f, username, MARKER_TEXT_COLOR) {
+            @Override
+            public boolean isInactive() {
+                return !isAwake();
+            }
+        };
     }
 
     public String getUsername() {
@@ -363,7 +370,7 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
 
     @Override
     public void drawShadow(SpriteBatch sb) {
-        shadow.setOriginBasedPosition(position.x, position.y - 12);
+        shadow.setOriginBasedPosition(position.x, position.y - 12.5f);
         shadow.draw(sb);
     }
 }

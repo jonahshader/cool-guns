@@ -27,7 +27,7 @@ import static sophomoreproject.game.utilites.CharacterUtilities.accelerateToward
 // This class will have all of the controls for the player and the gun
 
 public final class PlayerController implements InputProcessor {
-    private static final float SERVER_UPDATE_DELAY = 1/30f;
+    private static final float SERVER_UPDATE_DELAY = 1/10f;
     private static PlayerController instance;
     private Player player = null;
     private GameWorld world = null;

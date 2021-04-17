@@ -87,12 +87,14 @@ public class GameWorld {
         for (GameObject o : sleepingToWakeGameObjectQueue) {
             sleepingGameObjects.remove(o.getNetworkID());
             addObject(o);
+            o.setAwake(true);
             System.out.println("Object with id " + o.getNetworkID() + " is awake now.");
         }
         // move from
         for (GameObject o : wakeToSleepingGameObjectQueue) {
             sleepingGameObjects.put(o.getNetworkID(), o);
             removeObject(o);
+            o.setAwake(false);
             System.out.println("Object with id " + o.getNetworkID() + " is sleeping now.");
         }
         sleepingToWakeGameObjectQueue.clear();
@@ -168,6 +170,7 @@ public class GameWorld {
     }
 
     public void queueAddObject(GameObject o) {
+        o.setAwake(true);
         gameObjectQueueLock.lock();
         gameObjectAddQueue.add(o);
         gameObjectQueueLock.unlock();
@@ -175,6 +178,7 @@ public class GameWorld {
 
     public void addSleepingObject(GameObject o) {
         sleepUpdateLock.lock();
+        o.setAwake(false);
         sleepingGameObjects.put(o.getNetworkID(), o);
         sleepUpdateLock.unlock();
     }

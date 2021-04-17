@@ -40,8 +40,8 @@ public class Bullet extends PhysicsObject implements Renderable {
     private float critScalar;
     private float enemyKnockback;
     private Vector2 bulletSpawn;
-    private static final float MAX_RANGE = (float)Math.sqrt(GAME_WIDTH * GAME_WIDTH + GAME_HEIGHT * GAME_HEIGHT) * 1.25f; // world units
-    private static final float MAX_AGE = 10; // seconds
+    private static final float MAX_RANGE = (float)Math.sqrt(GAME_WIDTH * GAME_WIDTH + GAME_HEIGHT * GAME_HEIGHT) * 1.1f; // world units
+    private static final float MAX_AGE = 7; // seconds
 
     private float spin;
     private float age = 0;

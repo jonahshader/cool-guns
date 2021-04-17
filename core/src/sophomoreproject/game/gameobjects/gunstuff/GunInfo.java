@@ -126,21 +126,20 @@ public class GunInfo {
     }
 
     public void scaleScore(float scalar) {
-        float invScalar = 1/scalar;
-        fireDelay *= Math.sqrt(invScalar);
-        burstDelay *= Math.sqrt(invScalar);
-        reloadDelay *= Math.sqrt(invScalar);
-        spread *= Math.cbrt(invScalar);
+        fireDelay /= Math.sqrt(scalar);
+        burstDelay /= Math.sqrt(scalar);
+        reloadDelay /= Math.sqrt(scalar);
+        spread /= Math.cbrt(scalar);
         clipSize *= Math.sqrt(scalar);
-        bulletSpeed *= Math.cbrt(scalar);
-//        bulletSpeedVariation *= Math.sqrt(invScalar);
+        bulletSpeed *= Math.sqrt(scalar);
+        bulletSpeedVariation /= Math.sqrt(scalar);
         bulletsPerShot *= Math.sqrt(scalar);
         shotsPerBurst *= Math.sqrt(scalar);
         bulletSize *= Math.cbrt(scalar);
         bulletDamage *= Math.cbrt(scalar);
-        bulletDamageVariance *= Math.cbrt(invScalar);
+        bulletDamageVariance /= Math.cbrt(scalar);
         critScalar *= Math.cbrt(scalar);
-        playerKnockback *= Math.cbrt(invScalar);
+        playerKnockback /= Math.cbrt(scalar);
         enemyKnockback *= Math.sqrt(scalar);
         shieldDamage *= Math.sqrt(scalar);
         armorDamage *= Math.sqrt(scalar);

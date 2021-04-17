@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.Disposable;
 import java.util.ArrayList;
 
 public class MapChunk implements Disposable {
-    public static final int CHUNK_SIZE_TILES = 48; // length of side of chunk in tiles
+    public static final int CHUNK_SIZE_TILES = 24; // length of side of chunk in tiles
     public static final int TILE_SIZE = 16; // size in pixels
     public static final int CHUNK_SIZE_PIXELS = CHUNK_SIZE_TILES * TILE_SIZE;
 

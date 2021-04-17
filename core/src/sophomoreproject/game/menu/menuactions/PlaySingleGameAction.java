@@ -17,6 +17,7 @@ import sophomoreproject.game.systems.GameServer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class PlaySingleGameAction implements MenuAction {
     private CoolGuns game;
@@ -63,12 +64,12 @@ public class PlaySingleGameAction implements MenuAction {
             }
         });
         serverThread.start();
-        final ReplyAccountEvent[] rEvent = {null};
+        final AtomicReference<ReplyAccountEvent> rEvent = new AtomicReference<>(null);
         ClientNetwork.getInstance().addListener(new Listener(){
             @Override
             public void received(Connection c, Object o) {
                 if (o instanceof ReplyAccountEvent) {
-                    rEvent[0] = (ReplyAccountEvent) o;
+                    rEvent.set((ReplyAccountEvent) o);
                 }
             }
         });
@@ -87,7 +88,7 @@ public class PlaySingleGameAction implements MenuAction {
 
         ClientNetwork.getInstance().sendPacket(new RequestNewAccount("", ""));
         try {
-            while (rEvent[0] == null) {
+            while (rEvent.get() == null) {
                 Thread.sleep(250);
                 System.out.println(".");
             } // chill until we get a reply from the server
@@ -96,7 +97,7 @@ public class PlaySingleGameAction implements MenuAction {
         }
 
 
-        switch (rEvent[0].event) {
+        switch (rEvent.get().event) {
             case ACCOUNT_CREATED:
                 System.out.println("Account created successfully! Please login");
                 break;
@@ -105,7 +106,7 @@ public class PlaySingleGameAction implements MenuAction {
                 break;
             case ACCOUNT_LOGGED_IN:
                 System.out.println("Logged in successfully!");
-                accountID = rEvent[0].accountID;
+                accountID = rEvent.get().accountID;
 
                 break;
             case ACCOUNT_LOG_IN_FAILED:
@@ -119,7 +120,7 @@ public class PlaySingleGameAction implements MenuAction {
         }
         ClientNetwork.getInstance().sendPacket(new RequestLogin("", ""));
         try {
-            while (rEvent[0] == null) {
+            while (rEvent.get() == null) {
                 Thread.sleep(250);
                 System.out.println(".");
             } // chill until we get a reply from the server
@@ -128,7 +129,7 @@ public class PlaySingleGameAction implements MenuAction {
         }
 
 
-        switch (rEvent[0].event) {
+        switch (rEvent.get().event) {
             case ACCOUNT_CREATED:
                 System.out.println("Account created successfully! Please login");
                 break;
@@ -137,7 +138,7 @@ public class PlaySingleGameAction implements MenuAction {
                 break;
             case ACCOUNT_LOGGED_IN:
                 System.out.println("Logged in successfully!");
-                accountID = rEvent[0].accountID;
+                accountID = rEvent.get().accountID;
 
                 break;
             case ACCOUNT_LOG_IN_FAILED:

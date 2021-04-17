@@ -44,7 +44,7 @@ public final class MarkerSystem {
                     renderPos.set(m.getPosition());
                     renderPos.sub(worldCamera.position.x, worldCamera.position.y);
                     renderPos.nor().scl(minDim * .5f - RING_INSET);
-                    m.drawIcon(sb, renderPos.x + worldCamera.position.x, renderPos.y + worldCamera.position.y, .3f);
+                    m.drawIcon(sb, renderPos.x + worldCamera.position.x, renderPos.y + worldCamera.position.y, .35f);
                 }
             }
         }

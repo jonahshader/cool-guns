@@ -3,7 +3,6 @@ package sophomoreproject.game.singletons;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import sophomoreproject.game.gameobjects.Player;
 
 import java.util.ArrayList;

@@ -67,7 +67,6 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
     private Vector2 targetVelocity = new Vector2();
     private Vector2 playerMinusPos = new Vector2();
     private Vector2 barPos = new Vector2();
-    private Marker marker;
     private Player targetPlayer;
 
     private float idleWaitTimer = IDLE_WAIT_DELAY;
@@ -339,14 +338,14 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
             shadow = new Sprite(texAtl.findRegion("shadow"));
             shadow.setOriginCenter();
             shadow.setScale(info.size * 2, info.size);
-            shadow.setColor(1, 1, 1, .8f);
+            shadow.setColor(1, 1, 1, .7f);
 
-            marker = new Marker(enemyTexture, position, 1f) {
-                @Override
-                public boolean isInactive() {
-                    return health <= 0;
-                }
-            };
+//            new Marker(enemyTexture, position, 1f) {
+//                @Override
+//                public boolean isInactive() {
+//                    return health <= 0;
+//                }
+//            };
         }
     }
 
