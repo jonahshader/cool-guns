@@ -29,7 +29,7 @@ public class ConnectServerScreen implements Screen {
 
 
     Label ipLabel = new Label("IP:", skin);
-    TextField ip = new TextField("18.224.246.231", skin); // default ip
+    TextField ip = new TextField("3.15.224.221", skin); // default ip
     Label portLabel = new Label("Port:", skin);
     TextField port = new TextField("25671", skin); // default port
     TextButton connectButton = new TextButton("Connect", skin);
