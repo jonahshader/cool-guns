@@ -65,7 +65,7 @@ public class Shield extends Item  {
     public GroundItem toGroundItem(GameServer server) {
         return new GroundItem(new Vector2(position), server.getGameWorld().getNewNetID(), info.getTextureName(),
                 new Color(info.r,info.g,info.b,1), 1f,
-                new CreateShield(info, -1, server.getGameWorld().getNewNetID()));
+                new CreateShield(info, -1, server.getGameWorld().getNewNetID()), false);
     }
 
     @Override

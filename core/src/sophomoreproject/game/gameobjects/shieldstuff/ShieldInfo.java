@@ -23,6 +23,7 @@ public class ShieldInfo {
     }
 
     public void scaleScore(float scalar) {
+        scalar = (float)Math.pow(scalar * .75, .8);
         capacity *= Math.sqrt(scalar);
         regenRate *= Math.sqrt(scalar);
         regenDelay /= Math.sqrt(scalar);

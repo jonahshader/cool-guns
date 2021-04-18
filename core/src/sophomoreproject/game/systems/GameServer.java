@@ -18,6 +18,9 @@ import java.util.concurrent.locks.ReentrantLock;
 public class GameServer {
     public static final long GAME_SEED = 81528512;
 
+    private static final float MAP_UPDATE_DELAY = 1f/2;
+    private float mapUpdateTimer = 0;
+
     private final GameWorld world;
     private final ServerMap serverMap;
     private final ServerNetwork serverNetwork;
@@ -60,7 +63,11 @@ public class GameServer {
         forceUpdateQueue.clear();
         forceUpdateQueueLock.unlock();
 
-        serverMap.update();
+        if (mapUpdateTimer <= 0) {
+            mapUpdateTimer += MAP_UPDATE_DELAY;
+            serverMap.update();
+        }
+        mapUpdateTimer -= dt;
         serverMap.run(dt);
     }
 
@@ -140,6 +147,11 @@ public class GameServer {
     public void processAndSendAttackPlayer(AttackInfo info, int playerId, int attackerId) {
         AttackPlayer a = new AttackPlayer(info, playerId, attackerId);
         world.handleAttackPlayerPacket(a);
+        serverNetwork.sendPacketToAll(a, true);
+    }
+
+    public void processAndSendAttackFeedback(AttackFeedback a) {
+        world.handleAttackFeedbackPacket(a);
         serverNetwork.sendPacketToAll(a, true);
     }
 }

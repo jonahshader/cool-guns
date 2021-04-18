@@ -16,6 +16,8 @@ public class CreatePlayer {
     public int shield;
     public int maxShield;
     public float stamina;
+    public int totalDamage;
+    public int damageSinceDeath;
 
     public CreatePlayer(Player toSend) {
         u = new UpdatePhysicsObject(toSend.getNetworkID(), toSend.position, toSend.velocity, toSend.acceleration);
@@ -28,6 +30,8 @@ public class CreatePlayer {
         shield = toSend.getShield();
         maxShield = toSend.getMaxShield();
         stamina = toSend.getStamina();
+        totalDamage = toSend.getTotalDamage();
+        damageSinceDeath = toSend.getDamageSinceDeath();
 
         // copy inventory
         inventoryItems.addAll(toSend.getInventory());

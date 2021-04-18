@@ -394,6 +394,11 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
         return 0;
     }
 
+    @Override
+    public void receiveAttackFeedback(int damage, int attackedNetID) {
+        // enemy doesn't do anything with this
+    }
+
     private void dropItem(GameServer server) {
         if (dropper.tryDropItem(server, position, info.difficulty)) {
             // queue item drop sound

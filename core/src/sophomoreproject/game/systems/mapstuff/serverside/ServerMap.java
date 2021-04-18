@@ -5,7 +5,6 @@ import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.interfaces.CollisionReceiver;
 import sophomoreproject.game.systems.GameServer;
-import sophomoreproject.game.systems.GameWorld;
 import sophomoreproject.game.systems.mapstuff.MapChunk;
 import sophomoreproject.game.systems.mapstuff.MapGenerator;
 

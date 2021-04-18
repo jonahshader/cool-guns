@@ -126,7 +126,8 @@ public class GunInfo {
     }
 
     public void scaleScore(float scalar) {
-        fireDelay /= Math.sqrt(scalar);
+        scalar = (float)Math.pow(scalar * .15, .6);
+        fireDelay /= Math.pow(scalar, 1/3.1);
         burstDelay /= Math.sqrt(scalar);
         reloadDelay /= Math.sqrt(scalar);
         spread /= Math.cbrt(scalar);
@@ -136,7 +137,7 @@ public class GunInfo {
         bulletsPerShot *= Math.sqrt(scalar);
         shotsPerBurst *= Math.sqrt(scalar);
         bulletSize *= Math.cbrt(scalar);
-        bulletDamage *= Math.cbrt(scalar);
+        bulletDamage *= Math.pow(scalar, 1/2.5);
         bulletDamageVariance /= Math.cbrt(scalar);
         critScalar *= Math.cbrt(scalar);
         playerKnockback /= Math.cbrt(scalar);

@@ -32,6 +32,7 @@ public class GameWorld {
     private final ArrayList<GameObject> gameObjectRemoveQueue = new ArrayList<>();
     private final ArrayList<GameObject> wakeToSleepingGameObjectQueue = new ArrayList<>();
     private final ArrayList<GameObject> sleepingToWakeGameObjectQueue = new ArrayList<>();
+    private final List<AttackFeedback> attackFeedbackQueue = Collections.synchronizedList(new ArrayList<>());
     private final List<InventoryChange> inventoryChangeQueue = Collections.synchronizedList(new ArrayList<>());
 
     private final ReentrantLock updatePacketsLock = new ReentrantLock();
@@ -119,6 +120,18 @@ public class GameWorld {
             inventoryChangeQueue.clear();
         }
 
+        // handle attack feedback packets
+        synchronized (attackFeedbackQueue) {
+            for (AttackFeedback a : attackFeedbackQueue) {
+                GameObject attacker = getGameObjectFromID(a.attackerId);
+                if (attacker instanceof CollisionReceiver) {
+                    ((CollisionReceiver)attacker).receiveAttackFeedback(a.damage, a.attackedId);
+                }
+            }
+
+            attackFeedbackQueue.clear();
+        }
+
         for (PhysicsObject p : physicsObjects.values()) { p.updatePhysics(dt); }
     }
 
@@ -129,7 +142,7 @@ public class GameWorld {
         }
         // render ground items next
         for (GroundItem g : groundItems.values()) {
-            g.draw(sb);
+            g.draw(sb, dt);
         }
         // render everything else after
         for (Renderable r : renderables) {
@@ -288,6 +301,8 @@ public class GameWorld {
         return groundItems.values();
     }
 
+    public Collection<GameObject> getSleepingGameObjects() { return sleepingGameObjects.values(); }
+
     public void handleInventoryChangePacket(InventoryChange ic) {
         synchronized (inventoryChangeQueue) {
             inventoryChangeQueue.add(ic);
@@ -297,6 +312,12 @@ public class GameWorld {
     public void handleAttackPlayerPacket(AttackPlayer o) {
         synchronized (players) {
             players.get(o.playerId).receiveAttack(o.info, o.attackerId);
+        }
+    }
+
+    public void handleAttackFeedbackPacket(AttackFeedback o) {
+        synchronized (attackFeedbackQueue) {
+            attackFeedbackQueue.add(o);
         }
     }
 }

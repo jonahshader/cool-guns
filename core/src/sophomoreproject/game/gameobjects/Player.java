@@ -34,7 +34,7 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
     private static TextureRegion[] textures = null;
     private static Sprite shadow;
 
-    private static final Color MARKER_TEXT_COLOR = new Color(1, 1, 1, .5f);
+    public static final Color MARKER_TEXT_COLOR = new Color(1, 1, 1, .5f);
 
     private static final Vector2 PLAYER_SIZE = new Vector2(1.5f, 1.5f);
     public static final int STAMINA_MAX = 1;
@@ -56,6 +56,9 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
     private int shield = 0;
     private int maxShield = 0;
     private float stamina = STAMINA_MAX;
+
+    private int totalDamage = 0;
+    private int damageSinceDeath = 0;
 
     private boolean queueAttacked = false;
 
@@ -90,6 +93,8 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
         this.shield = packet.shield;
         this.maxShield = packet.maxShield;
         this.stamina = packet.stamina;
+        this.totalDamage = packet.totalDamage;
+        this.damageSinceDeath = packet.damageSinceDeath;
 
         // populate inventory from inventory packets
         inventory.addAll(packet.inventoryItems);
@@ -121,7 +126,7 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
     @Override
     public void addUpdatePacketToBuffer(ArrayList<Object> updatePacketBuffer) {
         super.addUpdatePacketToBuffer(updatePacketBuffer);
-        updatePacketBuffer.add(new UpdatePlayer(networkID, lookDirection.x, lookDirection.y, health, maxHealth, shield, maxShield, stamina));
+        updatePacketBuffer.add(new UpdatePlayer(networkID, lookDirection.x, lookDirection.y, health, maxHealth, shield, maxShield, stamina, totalDamage, damageSinceDeath));
     }
 
     @Override
@@ -141,6 +146,8 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
         shield = packet.shield;
         maxShield = packet.maxShield;
         stamina = packet.stamina;
+        totalDamage = packet.totalDamage;
+        damageSinceDeath = packet.damageSinceDeath;
     }
 
     public void run(float dt, GameServer server) {
@@ -157,6 +164,7 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
             velocity.set(0, 0);
             acceleration.set(0, 0);
             health = BASE_MAX_HEALTH;
+            damageSinceDeath = 0;
 
             // give starter gun
             GunInfo starterGunInfo = new GunInfo();
@@ -369,8 +377,22 @@ public class Player extends PhysicsObject implements Renderable, CollisionReceiv
     }
 
     @Override
+    public void receiveAttackFeedback(int damage, int attackedNetID) {
+        totalDamage += damage;
+        damageSinceDeath += damage;
+    }
+
+    @Override
     public void drawShadow(SpriteBatch sb) {
         shadow.setOriginBasedPosition(position.x, position.y - 12.5f);
         shadow.draw(sb);
+    }
+
+    public int getTotalDamage() {
+        return totalDamage;
+    }
+
+    public int getDamageSinceDeath() {
+        return damageSinceDeath;
     }
 }

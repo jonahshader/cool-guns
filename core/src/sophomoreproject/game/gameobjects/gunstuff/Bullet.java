@@ -9,7 +9,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.interfaces.CollisionReceiver;
+import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.interfaces.Renderable;
+import sophomoreproject.game.packets.AttackFeedback;
 import sophomoreproject.game.packets.CreateBullet;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.singletons.LocalRandom;
@@ -114,7 +116,11 @@ public class Bullet extends PhysicsObject implements Renderable {
                             // if collision kills target,
                             // TODO: should this be parameterized? penetration ability?
                             int damageDealt = collisionReceiver.receiveAttack(new AttackInfo(damage, knockbackVec.x, knockbackVec.y), creatorNetId);
-                            System.out.println("Bullet inflicted " + damageDealt + " damage.");
+                            // notify creator that they did damage
+                            GameObject creator = server.getGameWorld().getGameObjectFromID(creatorNetId);
+                            if (creator instanceof CollisionReceiver) {
+                                server.processAndSendAttackFeedback(new AttackFeedback(damageDealt, creatorNetId, collisionReceiver.getNetworkID()));
+                            }
                             if (damageDealt == damage) {
                                 // remove bullet
                                 server.removeObject(networkID);

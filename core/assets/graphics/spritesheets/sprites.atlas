@@ -11,6 +11,13 @@ repeat: none
   orig: 20, 20
   offset: 0, 0
   index: -1
+arrow
+  rotate: false
+  xy: 45, 26
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 bullet
   rotate: false
   xy: 33, 11
@@ -27,7 +34,7 @@ default_gun
   index: -1
 enemy
   rotate: false
-  xy: 1, 1
+  xy: 35, 62
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -128,6 +135,20 @@ smoke
   xy: 1, 77
   size: 24, 23
   orig: 24, 23
+  offset: 0, 0
+  index: -1
+sparkle
+  rotate: false
+  xy: 1, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+spawn_icon
+  rotate: false
+  xy: 43, 44
+  size: 16, 16
+  orig: 16, 16
   offset: 0, 0
   index: -1
 speed_shoes

@@ -35,7 +35,7 @@ public class GreenBiome implements Biome{
         selection.addOctaveFractal(0.001, 1.0, 2.0, 0.5, 2);
 
         terrain = new TwistedOctaveSet(random, 20);
-        terrain.addOctaveFractal(0.007, 1.0, 2.0, 0.5, 5);
+        terrain.addOctaveFractal(0.004, 1.0, 2.0, 0.5, 5);
         terrain.addTwisterOctaveFractal(0.005, 1.0, 2.0, 0.5, 2);
 
         yellowFlowerSelect = new OctaveSet(random);
@@ -48,11 +48,11 @@ public class GreenBiome implements Biome{
         redFlowerSelect.addOctave(13.5937, 1.0);
 
         denseGrassSelect = new TwistedOctaveSet(random, 15);
-        denseGrassSelect.addOctaveFractal(0.05, 1.0, 2.0, 0.5, 2);
+        denseGrassSelect.addOctaveFractal(0.035, 1.0, 2.0, 0.5, 2);
         denseGrassSelect.addTwisterOctaveFractal(0.01, 1.0, 2.0, 0.5, 2);
 
         enemySpawnSelect = new OctaveSet(random);
-        enemySpawnSelect.addOctaveFractal(0.04, 1.0, 2.0, 0.5, 3);
+        enemySpawnSelect.addOctaveFractal(0.025, 1.0, 2.0, 0.5, 3);
 
         enemySpawnHighFreqSelect = new OctaveSet(random);
         enemySpawnHighFreqSelect.addOctave(19.92519, 1.0);

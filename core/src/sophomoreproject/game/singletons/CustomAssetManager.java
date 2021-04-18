@@ -1,9 +1,11 @@
 package sophomoreproject.game.singletons;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.ParticleEffectLoader;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 import java.util.ArrayList;
@@ -19,9 +21,14 @@ public final class CustomAssetManager {
     public static final String SPRITE_PACK = "graphics/spritesheets/sprites.atlas";
     public static final String MAP_PACK = "graphics/spritesheets/terrain.atlas";
 
+    //Particles
+    public static final String SPARKLE_PARTICLE = "graphics/particles/sparkle";
+
     public void loadImages() {
         manager.load(SPRITE_PACK, TextureAtlas.class);
         manager.load(MAP_PACK, TextureAtlas.class);
+
+        loadParticles();
     }
 
     //Sounds
@@ -35,7 +42,6 @@ public final class CustomAssetManager {
 
     //Music
     public static final String GREEN_BIOME_MUSIC = "audio/music/green_biome.ogg";
-
 
     // sound lists
     public static final String LIST_ENEMY_BLOB = "audio/sounds/enemy_blob/enemy_blob_";
@@ -80,17 +86,11 @@ public final class CustomAssetManager {
         manager.load(BOLD_FONT, BitmapFont.class);
     }
 
-
-/*    // Particle Effects
-    public final String somePE = "graphics/effects/PE1";
-
-    public void loadParticleEffects(){
-        ParticleEffectParameter pef = new ParticleEffectParameter();
-        pef.atlasFile = "images/images.pack";
-        manager.load(somePE, ParticleEffect.class, pef);
+    public void loadParticles() {
+        ParticleEffectLoader.ParticleEffectParameter p = new ParticleEffectLoader.ParticleEffectParameter();
+        p.atlasFile = SPRITE_PACK;
+        manager.load(SPARKLE_PARTICLE, ParticleEffect.class, p);
     }
-*/
-
 
     public static CustomAssetManager getInstance() {
         if (instance == null) {

@@ -23,6 +23,7 @@ public class BootsInfo {
     }
 
     public void scaleScore(float scalar) {
+        scalar = (float)Math.pow(scalar * .2, .8);
         speed *= Math.sqrt(scalar);
         acceleration *= Math.sqrt(scalar);
     }

@@ -11,7 +11,10 @@ public class UpdatePlayer {
     public int maxShield;
     public float stamina;
 
-    public UpdatePlayer(int netID, float xLook, float yLook, int health, int maxHealth, int shield, int maxShield, float stamina) {
+    public int totalDamage;
+    public int damageSinceDeath;
+
+    public UpdatePlayer(int netID, float xLook, float yLook, int health, int maxHealth, int shield, int maxShield, float stamina, int totalDamage, int damageSinceDeath) {
         this.netID = netID;
         this.xLook = xLook;
         this.yLook = yLook;
@@ -20,6 +23,8 @@ public class UpdatePlayer {
         this.shield = shield;
         this.maxShield = maxShield;
         this.stamina = stamina;
+        this.totalDamage = totalDamage;
+        this.damageSinceDeath = damageSinceDeath;
     }
 
     public UpdatePlayer() {}

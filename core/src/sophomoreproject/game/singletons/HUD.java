@@ -1,5 +1,7 @@
 package sophomoreproject.game.singletons;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -8,14 +10,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.interfaces.GameObject;
 import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.systems.GameWorld;
 import sophomoreproject.game.systems.PlayerController;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import static sophomoreproject.game.singletons.CustomAssetManager.SPRITE_PACK;
@@ -35,6 +41,11 @@ public final class HUD {
     private static final float HOTBAR_ICON_PAD = 2;
     private static final Color HOTBAR_COLOR = new Color(0.75f, 0.75f, 0.75f, 0.5f);
     private static final Color HOTBAR_COLOR_EQUIPPED = new Color(0.8f, 0.8f, 0.8f, 1);
+
+    private static final float LEADERBOARD_ROW_SPACING = 16;
+    private static final float LEADERBOARD_COLUMN_SPACING = 48;
+    private static final float LEADERBOARD_TEXT_SIZE = .15f;
+    private static final Color ONLINE_COLOR = new Color(0.2f, 1.0f, .1f, 1.0f);
 
     private final ArrayList<StatsBarRenderer.StatsBarInfo> bars;
     private final StatsBarRenderer.StatsBarInfo healthBar;
@@ -83,6 +94,10 @@ public final class HUD {
             hudPos.set(HUD_PADDING + StatsBarRenderer.WIDTH*3/2, HUD_PADDING);
             StatsBarRenderer.getInstance().drawStatsBarsInWorld(sb,hudPos,bars, true, 6);
             drawHotbar(sb);
+
+            if (Gdx.input.isKeyPressed(Input.Keys.TAB)) {
+                drawLeaderboard(sb);
+            }
         }
 
         if (connectionError) {
@@ -138,6 +153,45 @@ public final class HUD {
         if (item != null)
             item.renderIcon(sb, HOTBAR_SPACE_SIZE - HOTBAR_ICON_PAD * 2, x + HOTBAR_ICON_PAD, y + HOTBAR_ICON_PAD);
     }
+
+    private void drawLeaderboard(SpriteBatch sb) {
+        List<Player> playersList = new ArrayList<>(world.getPlayers());
+        for (GameObject o : world.getSleepingGameObjects()) {
+            if (o instanceof Player) playersList.add((Player) o);
+        }
+        Player[] players = new Player[playersList.size()];
+        playersList.toArray(players);
+        Arrays.sort(players, Comparator.comparingInt(player1 -> -player1.getTotalDamage()));
+
+        float lbWidth = LEADERBOARD_COLUMN_SPACING * (3);
+        float lbHeight = (players.length + 1) * LEADERBOARD_ROW_SPACING;
+
+//        pixel.setOrigin(0, 0);
+        pixel.setPosition((viewport.getWorldWidth() / 2) - lbWidth / 2, viewport.getWorldHeight());
+        pixel.setSize(lbWidth, lbHeight);
+        pixel.setColor(HOTBAR_COLOR);
+        pixel.draw(sb);
+
+
+        float xStart = ((viewport.getWorldWidth() / 2) - (lbWidth / 2)) + (LEADERBOARD_COLUMN_SPACING * .5f);
+        float yStart = viewport.getWorldHeight() - LEADERBOARD_ROW_SPACING * .5f;
+        TextDisplay.getInstance().drawTextInWorld(sb, "Name", xStart, yStart, LEADERBOARD_TEXT_SIZE, TextDisplay.WHITE);
+        TextDisplay.getInstance().drawTextInWorld(sb, "Total Damage", xStart + LEADERBOARD_COLUMN_SPACING, yStart, LEADERBOARD_TEXT_SIZE, TextDisplay.WHITE);
+        TextDisplay.getInstance().drawTextInWorld(sb, "Online", xStart + LEADERBOARD_COLUMN_SPACING * 2, yStart, LEADERBOARD_TEXT_SIZE, TextDisplay.WHITE);
+        for (int i = 0; i < players.length; ++i) {
+            TextDisplay.getInstance().drawTextInWorld(sb, players[i].getUsername(), xStart, yStart - LEADERBOARD_ROW_SPACING * (i + 1), LEADERBOARD_TEXT_SIZE, TextDisplay.WHITE);
+            TextDisplay.getInstance().drawTextInWorld(sb, ""+players[i].getTotalDamage(), xStart + LEADERBOARD_COLUMN_SPACING, yStart - LEADERBOARD_ROW_SPACING * (i + 1), LEADERBOARD_TEXT_SIZE, TextDisplay.WHITE);
+            if (world.getGameObjectFromID(players[i].getNetworkID()) != null) {
+                pixel.setColor(ONLINE_COLOR);
+                pixel.setSize(LEADERBOARD_ROW_SPACING * .5f, LEADERBOARD_ROW_SPACING * .5f);
+                pixel.setOriginCenter();
+                pixel.setOriginBasedPosition(xStart + LEADERBOARD_COLUMN_SPACING * 2, yStart - LEADERBOARD_ROW_SPACING * (i + 1));
+                pixel.draw(sb);
+            }
+        }
+    }
+
+
 
     public void setGameWorld(GameWorld world) {
         this.world = world;

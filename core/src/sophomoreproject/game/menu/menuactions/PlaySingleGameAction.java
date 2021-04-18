@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class PlaySingleGameAction implements MenuAction {
     private CoolGuns game;
     private int accountID;
-    private static final double LOOP_TIME = 1 / 40.0;
+    private static final double LOOP_TIME = 1 / 60.0;
     private static final double NANOS_TO_SECONDS = 1e-9;
     private static final int LOCAL_PORT = 25565;
     private static final long LOOP_TIME_NANOS = (long) (LOOP_TIME / NANOS_TO_SECONDS);
@@ -36,8 +36,6 @@ public class PlaySingleGameAction implements MenuAction {
     public void execute() {
         Thread serverThread = new Thread(() -> {
             int port = LOCAL_PORT;
-
-
             if (port != -1) {
                 // create server
                 ServerNetwork server = new ServerNetwork(port);

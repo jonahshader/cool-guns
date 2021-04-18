@@ -10,8 +10,9 @@ public class CreateGroundItem {
     public float scale;
     public String textureName;
     public Object realizedObject;
+    public boolean fresh;
 
-    public CreateGroundItem(float x, float y, int netId, float r, float g, float b, float scale, String textureName, Object realizedObject) {
+    public CreateGroundItem(float x, float y, int netId, float r, float g, float b, float scale, String textureName, Object realizedObject, boolean fresh) {
         this.x = x;
         this.y = y;
         this.netId = netId;
@@ -21,6 +22,7 @@ public class CreateGroundItem {
         this.scale = scale;
         this.textureName = textureName;
         this.realizedObject = realizedObject;
+        this.fresh = fresh;
     }
 
     public CreateGroundItem() {}

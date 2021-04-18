@@ -27,10 +27,10 @@ public class StandardDropper {
                 gunInfo.b = (float) Math.sqrt(LocalRandom.RAND.nextFloat());
                 gunInfo.loadGunTypeDefaults(Gun.GunType.values()[LocalRandom.RAND.nextInt(Gun.GunType.values().length)], true);
                 gunInfo.randomize(.5f);
-                gunInfo.scaleScore((float)Math.sqrt(difficulty * .2));
+                gunInfo.scaleScore(difficulty);
                 server.spawnAndSendGameObject(new GroundItem(new Vector2(pos), server.getGameWorld().getNewNetID(),
                         gunInfo.getTextureName(), new Color(gunInfo.r, gunInfo.g, gunInfo.b, 1), 1f,
-                        new CreateInventoryGun(gunInfo, -1, server.getGameWorld().getNewNetID())));
+                        new CreateInventoryGun(gunInfo, -1, server.getGameWorld().getNewNetID()), true));
 
             }
         });
@@ -43,10 +43,10 @@ public class StandardDropper {
                 bootsInfo.g = (float) Math.sqrt(LocalRandom.RAND.nextFloat());
                 bootsInfo.b = (float) Math.sqrt(LocalRandom.RAND.nextFloat());
                 bootsInfo.randomize(.5f);
-                bootsInfo.scaleScore((float)Math.sqrt(difficulty * .2));
+                bootsInfo.scaleScore(difficulty);
                 server.spawnAndSendGameObject(new GroundItem(new Vector2(pos), server.getGameWorld().getNewNetID(),
                         bootsInfo.getTextureName(), new Color(bootsInfo.r, bootsInfo.g, bootsInfo.b, 1), 1f,
-                        new CreateBoots(bootsInfo, -1, server.getGameWorld().getNewNetID())));
+                        new CreateBoots(bootsInfo, -1, server.getGameWorld().getNewNetID()), true));
 
             }
         });
@@ -59,10 +59,10 @@ public class StandardDropper {
                 shieldInfo.g = (float) Math.sqrt(LocalRandom.RAND.nextFloat());
                 shieldInfo.b = (float) Math.sqrt(LocalRandom.RAND.nextFloat());
                 shieldInfo.randomize(.5f);
-                shieldInfo.scaleScore((float)Math.sqrt(difficulty * .2));
+                shieldInfo.scaleScore(difficulty);
                 server.spawnAndSendGameObject(new GroundItem(new Vector2(pos), server.getGameWorld().getNewNetID(),
                         shieldInfo.getTextureName(), new Color(shieldInfo.r, shieldInfo.g, shieldInfo.b, 1), 1f,
-                        new CreateShield(shieldInfo, -1, server.getGameWorld().getNewNetID())));
+                        new CreateShield(shieldInfo, -1, server.getGameWorld().getNewNetID()), true));
 
             }
         });

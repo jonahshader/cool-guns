@@ -34,12 +34,12 @@ public final class TextDisplay {
 
     private final ArrayList<TextEntry> topLeftText;
     private final ArrayList<TextEntry> topText;
-//    private final ArrayList<String> topRightText;
+    private final ArrayList<TextEntry> topRightText;
 
     public enum TextPosition {
         TOP_LEFT,
         TOP,
-//        TOP_RIGHT
+        TOP_RIGHT
     }
 
 
@@ -48,7 +48,7 @@ public final class TextDisplay {
 
         topLeftText = new ArrayList<>();
         topText = new ArrayList<>();
-//        topRightText = new ArrayList<>();
+        topRightText = new ArrayList<>();
     }
 
     public void addHudText(TextEntry text, TextPosition pos) {
@@ -59,18 +59,18 @@ public final class TextDisplay {
             case TOP:
                 topText.add(text);
                 break;
-//            case TOP_RIGHT:
-//                topRightText.add(text);
-//                break;
+            case TOP_RIGHT:
+                topRightText.add(text);
+                break;
             default:
                 break;
         }
     }
 
-    public void removeHudTextByReference(String textRef) {
+    public void removeHudTextByReference(TextEntry textRef) {
         topLeftText.remove(textRef);
         topText.remove(textRef);
-//        topRightText.remove(textRef);
+        topRightText.remove(textRef);
     }
 
     public void draw(SpriteBatch sb, Viewport hudVp) {
@@ -80,6 +80,9 @@ public final class TextDisplay {
         }
         for (int i = 0; i < topText.size(); ++i) {
             drawText(sb, topText.get(i).toString(), hudVp.getWorldWidth() / 2f, hudVp.getWorldHeight() - (TEXT_PADDING + i * font.getLineHeight() * TEXT_OFFSET_PERCENT), .25f, Color.WHITE, Align.center);
+        }
+        for (int i = 0; i < topRightText.size(); ++i) {
+            drawText(sb, topRightText.get(i).toString(), hudVp.getWorldWidth(), hudVp.getWorldHeight() - (TEXT_PADDING + i * font.getLineHeight() * TEXT_OFFSET_PERCENT), .25f, Color.WHITE, Align.topRight);
         }
     }
 

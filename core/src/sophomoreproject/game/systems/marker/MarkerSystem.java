@@ -1,21 +1,34 @@
 package sophomoreproject.game.systems.marker;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import sophomoreproject.game.singletons.CustomAssetManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static sophomoreproject.game.singletons.CustomAssetManager.SPRITE_PACK;
 
 public final class MarkerSystem {
     private static MarkerSystem instance;
     private static final float RING_INSET = 60;
     private final List<Marker> activeMarkers = Collections.synchronizedList(new ArrayList<>());
     private final Vector2 renderPos = new Vector2();
+    private static final float OPACITY = .35f;
+    private Sprite arrow;
 
-    private MarkerSystem() {}
+    private MarkerSystem() {
+        TextureAtlas atlas = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
+        arrow = new Sprite(atlas.findRegion("arrow"));
+        arrow.setOriginCenter();
+        arrow.setColor(new Color(1, 1, 1, OPACITY));
+    }
 
     public static synchronized MarkerSystem getInstance() {
         if (instance == null) {
@@ -44,7 +57,11 @@ public final class MarkerSystem {
                     renderPos.set(m.getPosition());
                     renderPos.sub(worldCamera.position.x, worldCamera.position.y);
                     renderPos.nor().scl(minDim * .5f - RING_INSET);
-                    m.drawIcon(sb, renderPos.x + worldCamera.position.x, renderPos.y + worldCamera.position.y, .35f);
+                    m.drawIcon(sb, renderPos.x + worldCamera.position.x, renderPos.y + worldCamera.position.y, OPACITY);
+                    arrow.setRotation(renderPos.angleDeg());
+                    renderPos.scl(1.1f);
+                    arrow.setOriginBasedPosition(renderPos.x + worldCamera.position.x, renderPos.y + worldCamera.position.y);
+                    arrow.draw(sb);
                 }
             }
         }

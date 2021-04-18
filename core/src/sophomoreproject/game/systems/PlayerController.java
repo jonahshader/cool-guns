@@ -27,7 +27,7 @@ import static sophomoreproject.game.utilites.CharacterUtilities.accelerateToward
 // This class will have all of the controls for the player and the gun
 
 public final class PlayerController implements InputProcessor {
-    private static final float SERVER_UPDATE_DELAY = 1/10f;
+    private static final float SERVER_UPDATE_DELAY = 1/20f;
     private static PlayerController instance;
     private Player player = null;
     private GameWorld world = null;
@@ -46,6 +46,8 @@ public final class PlayerController implements InputProcessor {
     private TextDisplay.TextEntry accountIDString;
     private TextDisplay.TextEntry playerNetIDString;
     private TextDisplay.TextEntry fpsString;
+    private TextDisplay.TextEntry totalDamageString;
+    private TextDisplay.TextEntry damageSinceDeathString;
     private TextDisplay.TextEntry clipString;
 
 
@@ -63,14 +65,18 @@ public final class PlayerController implements InputProcessor {
 
 
     private PlayerController() {
-        accountIDString = new TextDisplay.TextEntry("temp");
-        playerNetIDString = new TextDisplay.TextEntry("temp");
-        fpsString = new TextDisplay.TextEntry("temp");
-        clipString = new TextDisplay.TextEntry("temp");
+        accountIDString = new TextDisplay.TextEntry("");
+        playerNetIDString = new TextDisplay.TextEntry("");
+        fpsString = new TextDisplay.TextEntry("");
+        totalDamageString = new TextDisplay.TextEntry("");
+        damageSinceDeathString = new TextDisplay.TextEntry("");
+        clipString = new TextDisplay.TextEntry("");
 
         TextDisplay.getInstance().addHudText(accountIDString, TextDisplay.TextPosition.TOP_LEFT);
         TextDisplay.getInstance().addHudText(playerNetIDString, TextDisplay.TextPosition.TOP_LEFT);
         TextDisplay.getInstance().addHudText(fpsString, TextDisplay.TextPosition.TOP_LEFT);
+        TextDisplay.getInstance().addHudText(totalDamageString, TextDisplay.TextPosition.TOP_RIGHT);
+        TextDisplay.getInstance().addHudText(damageSinceDeathString, TextDisplay.TextPosition.TOP_RIGHT);
         TextDisplay.getInstance().addHudText(clipString, TextDisplay.TextPosition.TOP);
     }
 
@@ -97,7 +103,10 @@ public final class PlayerController implements InputProcessor {
 
     public void run(float dt) {
         fpsString.entry = "FPS: " + Math.round(1/dt);
+        clipString.entry = "";
         if (player != null && cam != null) {
+            totalDamageString.entry = "Total Damage: " + player.getTotalDamage();
+            damageSinceDeathString.entry = "Damage Since Death: " + player.getDamageSinceDeath();
 
             updatePlayerStats(dt);
 
