@@ -2,6 +2,9 @@ package sophomoreproject.game.systems;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.PhysicsObject;
 import sophomoreproject.game.gameobjects.Player;
@@ -11,9 +14,14 @@ import sophomoreproject.game.networking.ServerNetwork;
 import sophomoreproject.game.packets.*;
 import sophomoreproject.game.systems.marker.MarkerSystem;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static sophomoreproject.game.networking.clientlisteners.ObjectCreationListener.handleCreationPacket;
 
 public class GameWorld {
     // note: the contents of these arrays are mutually exclusive.
@@ -40,6 +48,23 @@ public class GameWorld {
     private final ReentrantLock sleepUpdateLock = new ReentrantLock();
 
     private int currentMaxNetID = -1;
+
+    public GameWorld() { }
+
+    public GameWorld(String path, Kryo kryo) {
+        // try load
+        try {
+            Input input = new Input(new FileInputStream(path));
+            ArrayList<Object> savedWorld = kryo.readObject(input, ArrayList.class);
+            for (Object o : savedWorld) {
+                handleCreationPacket(o, null, this);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Tried loading world file " + path + " but it doesn't exist.");
+        }
+
+        update(.1f);
+    }
 
     /**
      * this method should be called by both client and server. just does physics for now.
@@ -254,6 +279,23 @@ public class GameWorld {
             worldCopy.add(new CreateSleeping(p));
         }
         return worldCopy;
+    }
+
+    public void saveWorldToFile(String path, Kryo kryo) {
+        ArrayList<Object> worldCopy = createWorldCopy();
+        // make sure all players are sleeping since no players will be awake when the server reboots and loads this file
+        for (int i = 0; i < worldCopy.size(); ++i) {
+            if (worldCopy.get(i) instanceof Player) {
+                worldCopy.set(i, new CreateSleeping(worldCopy.get(i)));
+            }
+        }
+        try {
+            Output output = new Output(new FileOutputStream(path));
+            kryo.writeObject(output, worldCopy);
+            output.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized int getNewNetID() {

@@ -140,4 +140,8 @@ public class Map {
         chunkLoadCenterX = (int) Math.floor(cam.position.x / MapChunk.CHUNK_SIZE_PIXELS);
         chunkLoadCenterY = (int) Math.floor(cam.position.y / MapChunk.CHUNK_SIZE_PIXELS);
     }
+
+    public MapGenerator getMapGen() {
+        return mapGen;
+    }
 }

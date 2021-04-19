@@ -207,7 +207,6 @@ public class Gun extends Item {
         if (shot) {
             // play fire sound
             float pitch = LocalRandom.RAND.nextFloat() * 0.12f + .4f + (float) (1.4 / (1 + Math.pow(Math.E, (info.bulletSize - 3.5))));
-            System.out.println(pitch);
             SoundSystem.getInstance().playSoundInWorld(fireSound, position, .5f, pitch);
         }
     }

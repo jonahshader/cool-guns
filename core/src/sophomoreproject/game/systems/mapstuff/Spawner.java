@@ -15,7 +15,7 @@ public class Spawner {
     private static final float IS_SPAWNING_UPDATE_DELAY = 1;
     private Vector2 position;
     private int spawnsBuffered;
-    private int maxSpawnBuffer;
+    private int spawnRegenAmount;
     private float spawnDelay;
     private float spawnRegenDelay;
     private float spawnTimer;
@@ -27,13 +27,13 @@ public class Spawner {
     private Vector2 playerMinusPos = new Vector2();
 
 
-    public Spawner(Vector2 position, int spawnsBuffered, int maxSpawnBuffer, float spawnDelay, float spawnRegenDelay, SpawnAction spawnAction) {
+    public Spawner(Vector2 position, int spawnsBuffered, float spawnDelay, float spawnRegenDelay, SpawnAction spawnAction) {
         this.position = position;
         this.spawnsBuffered = spawnsBuffered;
-        this.maxSpawnBuffer = maxSpawnBuffer;
         this.spawnDelay = spawnDelay;
         this.spawnRegenDelay = spawnRegenDelay;
         this.spawnAction = spawnAction;
+        spawnRegenAmount = spawnsBuffered;
     }
 
     public void run(float dt, GameServer gameServer) {
@@ -59,8 +59,8 @@ public class Spawner {
         }
         if (spawnRegenTimer > 0) {
             spawnRegenTimer -= dt;
-        } else if (spawnsBuffered < maxSpawnBuffer) {
-            ++spawnsBuffered;
+        } else if (spawnsBuffered < spawnRegenAmount) {
+            spawnsBuffered = spawnRegenAmount;
             spawnRegenTimer += spawnRegenDelay;
         }
     }

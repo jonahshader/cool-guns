@@ -1,17 +1,21 @@
 package sophomoreproject.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.singletons.CustomAssetManager;
 import sophomoreproject.game.singletons.HUD;
 import sophomoreproject.game.singletons.SoundSystem;
 import sophomoreproject.game.singletons.TextDisplay;
@@ -20,6 +24,7 @@ import sophomoreproject.game.systems.PlayerController;
 import sophomoreproject.game.systems.mapstuff.Map;
 import sophomoreproject.game.systems.marker.MarkerSystem;
 
+import static sophomoreproject.game.singletons.CustomAssetManager.SPRITE_PACK;
 import static sophomoreproject.game.systems.GameServer.GAME_SEED;
 
 public class GameScreen implements Screen {
@@ -32,6 +37,7 @@ public class GameScreen implements Screen {
     private CoolGuns game;
     private GameClient gameClient;
     private Map map;
+    private Sprite spawnIcon;
 
     private int accountID;
     private boolean connectionError = false;
@@ -48,11 +54,16 @@ public class GameScreen implements Screen {
         gameClient = new GameClient(accountID);
         Gdx.input.setInputProcessor(PlayerController.getInstance());
         PlayerController.getInstance().setCam(worldCamera);
-
-
         map = new Map(game, GAME_SEED);
+        PlayerController.getInstance().setMapGen(map.getMapGen());
+
+
 
         SoundSystem.getInstance().startMusic();
+
+        TextureAtlas atlas = CustomAssetManager.getInstance().manager.get(SPRITE_PACK);
+        spawnIcon = new Sprite(atlas.findRegion("spawn_icon"));
+        spawnIcon.setOriginCenter();
     }
 
     @Override
@@ -77,9 +88,11 @@ public class GameScreen implements Screen {
         // render sprites
         map.render(worldCamera);
 
+
         game.batch.setProjectionMatrix(worldCamera.combined);
         game.shapeRenderer.setProjectionMatrix(worldCamera.combined);
         game.batch.begin();
+        spawnIcon.draw(game.batch);
         gameClient.draw(delta, game.batch, game.shapeRenderer);
         // render markers
         MarkerSystem.getInstance().render(game.batch, worldViewport, worldCamera);
@@ -96,8 +109,11 @@ public class GameScreen implements Screen {
 
 
 
-        if (Gdx.input.justTouched()) {
-            System.out.println("Just clicked in world coords: " + worldCamera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0f)).toString());
+//        if (Gdx.input.justTouched()) {
+//            System.out.println("Just clicked in world coords: " + worldCamera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0f)).toString());
+//        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            Gdx.app.exit();
         }
     }
 

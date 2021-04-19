@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static sophomoreproject.game.singletons.CustomAssetManager.*;
+import static sophomoreproject.game.systems.mapstuff.MapChunk.TILE_SIZE;
+import static sophomoreproject.game.systems.mapstuff.biomes.SpawnBiome.SPAWN_RADIUS;
 import static sophomoreproject.game.utilites.CharacterUtilities.accelerateTowardsTargetVelocity;
 
 public class Enemy extends PhysicsObject implements Renderable, CollisionReceiver, Shadow {
@@ -267,7 +269,7 @@ public class Enemy extends PhysicsObject implements Renderable, CollisionReceive
             attackTimer -= dt;
         }
 
-        if (idleTime > MAX_IDLE_TIME) {
+        if (idleTime > MAX_IDLE_TIME || position.len2() < SPAWN_RADIUS * SPAWN_RADIUS * TILE_SIZE * TILE_SIZE) {
             server.removeObject(networkID);
         } else if (queueDead) {
             // drop items

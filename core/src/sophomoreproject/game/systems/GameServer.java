@@ -19,7 +19,10 @@ public class GameServer {
     public static final long GAME_SEED = 81528512;
 
     private static final float MAP_UPDATE_DELAY = 1f/2;
+    private static final float SERVER_BACKUP_DELAY = 15f;
     private float mapUpdateTimer = 0;
+//    public static final String SERVER_BACKUP_PATH = "autosave.save";
+    private float serverBackupTimer = SERVER_BACKUP_DELAY;
 
     private final GameWorld world;
     private final ServerMap serverMap;
@@ -36,6 +39,7 @@ public class GameServer {
 
     public GameServer(ServerNetwork serverNetwork) {
         world = new GameWorld();
+//        world = new GameWorld(SERVER_BACKUP_PATH, serverNetwork.getKryo());
         this.serverNetwork = serverNetwork;
         serverMap = new ServerMap(new MapGenerator(null, GAME_SEED), this);
 
@@ -67,6 +71,13 @@ public class GameServer {
             mapUpdateTimer += MAP_UPDATE_DELAY;
             serverMap.update();
         }
+
+//        if (serverBackupTimer <= 0) {
+//            serverBackupTimer += SERVER_BACKUP_DELAY;
+//            world.saveWorldToFile(SERVER_BACKUP_PATH, serverNetwork.getKryo());
+//        }
+//        serverBackupTimer -= dt;
+
         mapUpdateTimer -= dt;
         serverMap.run(dt);
     }

@@ -17,10 +17,14 @@ import sophomoreproject.game.networking.ClientNetwork;
 import sophomoreproject.game.packets.RequestDropInventoryItem;
 import sophomoreproject.game.packets.RequestPickupGroundItem;
 import sophomoreproject.game.singletons.TextDisplay;
+import sophomoreproject.game.systems.mapstuff.Map;
+import sophomoreproject.game.systems.mapstuff.MapGenerator;
 import sophomoreproject.game.utilites.MathUtilities;
 
 import java.util.ArrayList;
 
+import static sophomoreproject.game.systems.mapstuff.MapChunk.TILE_SIZE;
+import static sophomoreproject.game.systems.mapstuff.biomes.SpawnBiome.SPAWN_RADIUS;
 import static sophomoreproject.game.utilites.CharacterUtilities.accelerateTowardsTargetVelocity;
 
 // TODO: https://www.gamedevelopment.blog/full-libgdx-game-tutorial-input-controller/
@@ -30,6 +34,7 @@ public final class PlayerController implements InputProcessor {
     private static final float SERVER_UPDATE_DELAY = 1/20f;
     private static PlayerController instance;
     private Player player = null;
+    private MapGenerator mapGen = null;
     private GameWorld world = null;
     private Camera cam = null;
     public boolean left,right,up,down,shift;
@@ -133,14 +138,15 @@ public final class PlayerController implements InputProcessor {
             if (playerMoving) {
                 desiredSpeed.nor().scl(currentPlayerWalkSpeed);
             }
+            float accel = currentPlayerAcceleration;
             if (shift && player.getStamina() > 0) {
                 desiredSpeed.scl(PLAYER_SPRINT_SCALAR);
-                accelerateTowardsTargetVelocity(desiredSpeed, currentPlayerAcceleration * PLAYER_SPRINT_SCALAR, player, dt);
+                accel *= PLAYER_SPRINT_SCALAR;
                 staminaRegenResumeTimer = STAMINA_REGEN_RESUME_DELAY;
                 player.setStamina(player.getStamina() - dt);
-            } else {
-                accelerateTowardsTargetVelocity(desiredSpeed, currentPlayerAcceleration, player, dt);
             }
+            desiredSpeed.scl(mapGen.getSpeedMultiplier((int)Math.floor(player.position.x / TILE_SIZE), (int)Math.floor(player.position.y / TILE_SIZE)));
+            accelerateTowardsTargetVelocity(desiredSpeed, accel, player, dt);
 
 
 
@@ -271,7 +277,8 @@ public final class PlayerController implements InputProcessor {
         if (numShields > 0) {
             shieldDelay /= numShields;
         }
-        if (player.getHealth() > player.getMaxHealth()) {
+
+        if (player.getHealth() > player.getMaxHealth() || player.position.len2() < SPAWN_RADIUS * SPAWN_RADIUS * TILE_SIZE * TILE_SIZE) {
             player.setHealth(player.getMaxHealth());
         }
         if (staminaRegenResumeTimer <= 0) {
@@ -296,6 +303,7 @@ public final class PlayerController implements InputProcessor {
                 shield = player.getMaxShield();
             player.setShield(shield);
         }
+
 
 
     }
@@ -483,6 +491,10 @@ public final class PlayerController implements InputProcessor {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public void setMapGen(MapGenerator mapGen) {
+        this.mapGen = mapGen;
     }
 }
 

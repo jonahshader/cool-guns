@@ -50,7 +50,6 @@ public class RequestListener implements Listener {
                 int playerNetID = world.getSleepingPlayerNetIDFromAccountID(playerAccountID);
                 if (playerNetID >= 0) {
                     gameServer.setAndSendSleepState(playerNetID, false);
-//                    world.handleSetSleepStatePacket(new UpdateSleepState(playerNetID, false));
                     System.out.println("Waking up player with accountID " + playerAccountID + " and netID " + playerNetID + "!");
                 } else {
                     // create player
@@ -63,44 +62,8 @@ public class RequestListener implements Listener {
                     Gun gun = new Gun(gunInfo, newPlayer.getNetworkID(), world.getNewNetID());
                     gameServer.spawnAndSendGameObject(gun);
 
-                    // make more guns
-//                    GunInfo smgGunInfo = new GunInfo();
-//                    smgGunInfo.loadGunTypeDefaults(Gun.GunType.SMG, false);
-//                    Gun smgGun = new Gun(smgGunInfo, newPlayer.getNetworkID(), world.getNewNetID());
-//                    gameServer.spawnAndSendGameObject(smgGun);
-//
-//                    GunInfo shotgunInfo = new GunInfo();
-//                    shotgunInfo.loadGunTypeDefaults(Gun.GunType.SHOTGUN, false);
-//                    Gun shotgun = new Gun(shotgunInfo, newPlayer.getNetworkID(), world.getNewNetID());
-//                    gameServer.spawnAndSendGameObject(shotgun);
-//
-//                    GunInfo sniperInfo = new GunInfo();
-//                    sniperInfo.loadGunTypeDefaults(Gun.GunType.RIFLE, false);
-//                    Gun sniper = new Gun(sniperInfo, newPlayer.getNetworkID(), world.getNewNetID());
-//                    gameServer.spawnAndSendGameObject(sniper);
-
-//                    GunInfo superNovaInfo = new GunInfo();
-//                    superNovaInfo.gunType = Gun.GunType.PISTOL;
-//                    superNovaInfo.clipSize = 2048;
-//                    superNovaInfo.bulletsPerShot = 2048;
-//                    superNovaInfo.playerKnockback = 1;
-//                    superNovaInfo.enemyKnockback = 75;
-//                    superNovaInfo.reloadDelay = 20;
-//                    superNovaInfo.bulletSpeedVariation = 0;
-//                    superNovaInfo.bulletSpeed = 80;
-//                    superNovaInfo.spread = 20f;
-//                    superNovaInfo.bulletDamage = 2;
-//                    superNovaInfo.bulletDamageVariance = 0;
-//                    superNovaInfo.bulletSize = 3;
-//                    Gun superNova = new Gun(superNovaInfo, newPlayer.getNetworkID(), world.getNewNetID());
-//                    gameServer.spawnAndSendGameObject(superNova);
-
                     // put gun in player inventory
                     newPlayer.getInventory().set(0, gun.getNetworkID()); // first slot
-//                    newPlayer.getInventory().set(1, smgGun.getNetworkID()); // second slot
-//                    newPlayer.getInventory().set(2, shotgun.getNetworkID());
-//                    newPlayer.getInventory().set(3, sniper.getNetworkID());
-//                    newPlayer.getInventory().set(4, superNova.getNetworkID());
 
                     // register with world and distribute
                     gameServer.spawnAndSendGameObject(newPlayer);
@@ -119,7 +82,6 @@ public class RequestListener implements Listener {
             GroundItem groundItem = (GroundItem)world.getGameObjectFromID(packet.groundItemId);
             if (groundItem != null) {
                 groundItem.tryPickup(gameServer, packet.playerId);
-                System.out.println("Server: Try pickup");
             } else {
                 System.out.println("Server: Tried picking up null item!");
             }

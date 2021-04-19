@@ -26,23 +26,30 @@ public class ObjectCreationListener implements Listener {
 
     @Override
     public void received(Connection c, Object o) {
+        handleCreationPacket(o, gameClient, world);
+    }
+
+    public static void handleCreationPacket(Object o, GameClient gameClient, GameWorld world) {
         if (o instanceof CreateSleeping) {
-            handlePacket(c, ((CreateSleeping)o).packet, true);
+            handlePacket(gameClient, world, ((CreateSleeping)o).packet, true);
         } else {
-            handlePacket(c, o, false);
+            handlePacket(gameClient, world, o, false);
         }
     }
 
-    private void handlePacket(Connection c, Object o, boolean sleepingObj) {
+    private static void handlePacket(GameClient gameClient, GameWorld world,  Object o, boolean sleepingObj) {
         GameObject toQueue = null;
         if (o instanceof CreatePlayer) {
             CreatePlayer packet = (CreatePlayer) o;
             Player newPlayer = new Player(packet);
             toQueue = newPlayer;
-            // if this player is owned by this client,
-            if (newPlayer.getAccountId() == gameClient.getAccountID())
-                // then tell the game client that this player is to be controlled
-                gameClient.setClientControlledPlayer(newPlayer);
+            if (gameClient != null) {
+                // if this player is owned by this client,
+                if (newPlayer.getAccountId() == gameClient.getAccountID())
+                    // then tell the game client that this player is to be controlled
+                    gameClient.setClientControlledPlayer(newPlayer);
+            }
+
         } else if (o instanceof CreateTestObject) {
             toQueue = new TestObject((CreateTestObject) o);
         } else if (o instanceof CreateBullet) {

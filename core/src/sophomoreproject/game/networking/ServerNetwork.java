@@ -1,5 +1,6 @@
 package sophomoreproject.game.networking;
 
+import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
@@ -80,5 +81,9 @@ public class ServerNetwork {
 
     public HashMap<Integer, Integer> getConnectionIdToAccountID() {
         return connectionIdToAccountID;
+    }
+
+    public Kryo getKryo() {
+        return server.getKryo();
     }
 }
