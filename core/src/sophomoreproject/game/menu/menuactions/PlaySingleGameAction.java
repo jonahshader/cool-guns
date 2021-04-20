@@ -22,13 +22,15 @@ import java.util.concurrent.atomic.AtomicReference;
 public class PlaySingleGameAction implements MenuAction {
     private CoolGuns game;
     private int accountID;
+    private boolean tutorial;
     private static final double LOOP_TIME = 1 / 60.0;
     private static final double NANOS_TO_SECONDS = 1e-9;
     private static final int LOCAL_PORT = 25565;
     private static final long LOOP_TIME_NANOS = (long) (LOOP_TIME / NANOS_TO_SECONDS);
 
-    public PlaySingleGameAction(CoolGuns game) {
+    public PlaySingleGameAction(CoolGuns game, boolean tutorial) {
         this.game = game;
+        this.tutorial = tutorial;
 
     }
 
@@ -148,6 +150,6 @@ public class PlaySingleGameAction implements MenuAction {
             default:
                 break;
         }
-        game.setScreen(new GameScreen(game, accountID));
+        game.setScreen(new GameScreen(game, accountID, tutorial));
     }
 }

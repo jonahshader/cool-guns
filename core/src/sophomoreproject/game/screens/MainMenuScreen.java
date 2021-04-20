@@ -17,7 +17,7 @@ import sophomoreproject.game.menu.menuactions.PlayMultiGameAction;
 import sophomoreproject.game.menu.menuactions.PlaySingleGameAction;
 import sophomoreproject.game.singletons.CustomAssetManager;
 
-import static sophomoreproject.game.singletons.CustomAssetManager.MENU_FONT;
+import static sophomoreproject.game.singletons.CustomAssetManager.NORMAL_FONT;
 
 public class MainMenuScreen implements Screen {
 
@@ -32,11 +32,12 @@ public class MainMenuScreen implements Screen {
         this.game = game;
 
         mainMenuCamera = new OrthographicCamera();
-        mainMenuViewport = new FitViewport(1000, 600, mainMenuCamera);
+        mainMenuViewport = new FitViewport(400, 620, mainMenuCamera);
 
-        mainMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), mainMenuCamera, 50);
+        mainMenu = new Menu(CustomAssetManager.getInstance().manager.get(NORMAL_FONT), mainMenuCamera, 170);
 
-        mainMenu.addMenuItem("SinglePlayer", new PlaySingleGameAction(game));
+        mainMenu.addMenuItem("Tutorial", new PlaySingleGameAction(game, true));
+        mainMenu.addMenuItem("SinglePlayer", new PlaySingleGameAction(game, false));
         mainMenu.addMenuItem("MultiPlayer", new PlayMultiGameAction(game));
         //mainMenu.addMenuItem("Edit Character", new EditAction());
         mainMenu.addMenuItem("Options", new OptionsAction(game));

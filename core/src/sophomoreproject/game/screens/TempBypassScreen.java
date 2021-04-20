@@ -119,7 +119,7 @@ public class TempBypassScreen implements Screen {
     @Override
     public void render(float delta) {
         if (loggedIn) {
-            game.setScreen(new GameScreen(game, accountID));
+            game.setScreen(new GameScreen(game, accountID, false));
         }
     }
 

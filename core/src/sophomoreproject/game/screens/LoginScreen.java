@@ -198,7 +198,7 @@ public class LoginScreen implements Screen {
                 errorMsg.setText("Logged in successfully!");
                 accountID = rEvent.get().accountID;
                 loggedIn = true;
-                game.setScreen(new GameScreen(game, accountID));
+                game.setScreen(new GameScreen(game, accountID, false));
                 break;
             case ACCOUNT_LOG_IN_FAILED:
                 errorMsg.setText("Log in failed! Account does not exists!");

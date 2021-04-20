@@ -11,11 +11,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.menu.Menu;
 import sophomoreproject.game.menu.menuactions.OptionsAction;
-import sophomoreproject.game.menu.menuactions.SoundScreenAction;
 import sophomoreproject.game.menu.menuactions.VolumeMenuAction;
 import sophomoreproject.game.singletons.CustomAssetManager;
 
-import static sophomoreproject.game.singletons.CustomAssetManager.MENU_FONT;
+import static sophomoreproject.game.singletons.CustomAssetManager.NORMAL_FONT;
 
 public class AudioMenuScreen implements Screen {
 
@@ -30,7 +29,7 @@ public class AudioMenuScreen implements Screen {
         audioMenuCamera = new OrthographicCamera();
         audioMenuViewport = new FitViewport(1000, 600, audioMenuCamera);
 
-        audioMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), audioMenuCamera, 50);
+        audioMenu = new Menu(CustomAssetManager.getInstance().manager.get(NORMAL_FONT), audioMenuCamera, 50);
 
         audioMenu.addMenuItem("Back", new OptionsAction(game));
 //        audioMenu.addMenuItem("Sound", new SoundScreenAction(game));

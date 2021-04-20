@@ -13,7 +13,7 @@ import sophomoreproject.game.menu.menuactions.*;
 import sophomoreproject.game.singletons.CustomAssetManager;
 import com.badlogic.gdx.Screen;
 
-import static sophomoreproject.game.singletons.CustomAssetManager.MENU_FONT;
+import static sophomoreproject.game.singletons.CustomAssetManager.NORMAL_FONT;
 
 public class OptionsScreen implements Screen {
 
@@ -29,7 +29,7 @@ public class OptionsScreen implements Screen {
         optionsCamera = new OrthographicCamera();
         optionsViewport = new FitViewport(1000, 600, optionsCamera);
 
-        optionsMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), optionsCamera, 150f);
+        optionsMenu = new Menu(CustomAssetManager.getInstance().manager.get(NORMAL_FONT), optionsCamera, 150f);
 
         optionsMenu.addMenuItem("Back", new MainMenuAction(game));
         optionsMenu.addMenuItem("Audio", new AudioMenuAction(game));

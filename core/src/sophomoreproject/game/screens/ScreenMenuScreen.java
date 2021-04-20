@@ -10,13 +10,12 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import sophomoreproject.game.CoolGuns;
 import sophomoreproject.game.menu.Menu;
-import sophomoreproject.game.menu.menuactions.FrameRateAction;
 import sophomoreproject.game.menu.menuactions.FullScreenAction;
 import sophomoreproject.game.menu.menuactions.OptionsAction;
 import sophomoreproject.game.menu.menuactions.WindowedAction;
 import sophomoreproject.game.singletons.CustomAssetManager;
 
-import static sophomoreproject.game.singletons.CustomAssetManager.MENU_FONT;
+import static sophomoreproject.game.singletons.CustomAssetManager.NORMAL_FONT;
 
 public class ScreenMenuScreen implements Screen {
     private Camera screenMenuCamera;
@@ -31,7 +30,7 @@ public class ScreenMenuScreen implements Screen {
         screenMenuCamera = new OrthographicCamera();
         screenMenuViewport = new FitViewport(1000, 600, screenMenuCamera);
 
-        screenMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), screenMenuCamera, 50);
+        screenMenu = new Menu(CustomAssetManager.getInstance().manager.get(NORMAL_FONT), screenMenuCamera, 50);
 
         screenMenu.addMenuItem("Back", new OptionsAction(game));
         screenMenu.addMenuItem("FullScreen", new FullScreenAction());

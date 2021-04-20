@@ -14,7 +14,7 @@ import sophomoreproject.game.menu.menuactions.OptionsAction;
 import sophomoreproject.game.menu.menuactions.PreferencesAction;
 import sophomoreproject.game.singletons.CustomAssetManager;
 
-import static sophomoreproject.game.singletons.CustomAssetManager.MENU_FONT;
+import static sophomoreproject.game.singletons.CustomAssetManager.NORMAL_FONT;
 
 public class ControlsMenuScreen implements Screen {
 
@@ -30,7 +30,7 @@ public class ControlsMenuScreen implements Screen {
         controlsMenuCamera = new OrthographicCamera();
         controlsMenuViewport = new FitViewport(1000, 600, controlsMenuCamera);
 
-        controlsMenu = new Menu(CustomAssetManager.getInstance().manager.get(MENU_FONT), controlsMenuCamera, 50);
+        controlsMenu = new Menu(CustomAssetManager.getInstance().manager.get(NORMAL_FONT), controlsMenuCamera, 50);
 
         controlsMenu.addMenuItem("Back", new OptionsAction(game));
         controlsMenu.addMenuItem("Preferences", new PreferencesAction(game));
