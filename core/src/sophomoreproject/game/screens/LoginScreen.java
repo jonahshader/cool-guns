@@ -42,8 +42,6 @@ public class LoginScreen implements Screen {
     private Stage stage;
     private Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-
-
     Label loginLabel = new Label("Username:", skin);
     TextField username = new TextField("", skin);
     Label passwordLabel = new Label("Password:", skin);
@@ -218,6 +216,7 @@ public class LoginScreen implements Screen {
         Gdx.gl.glClearColor(0, 0.5f, 0.5f, 1);
         // apply clear color to screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         stage.draw();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {

@@ -77,8 +77,8 @@ public final class PlayerController implements InputProcessor {
         damageSinceDeathString = new TextDisplay.TextEntry("");
         clipString = new TextDisplay.TextEntry("");
 
-        TextDisplay.getInstance().addHudText(accountIDString, TextDisplay.TextPosition.TOP_LEFT);
-        TextDisplay.getInstance().addHudText(playerNetIDString, TextDisplay.TextPosition.TOP_LEFT);
+//        TextDisplay.getInstance().addHudText(accountIDString, TextDisplay.TextPosition.TOP_LEFT);
+//        TextDisplay.getInstance().addHudText(playerNetIDString, TextDisplay.TextPosition.TOP_LEFT);
         TextDisplay.getInstance().addHudText(fpsString, TextDisplay.TextPosition.TOP_LEFT);
         TextDisplay.getInstance().addHudText(totalDamageString, TextDisplay.TextPosition.TOP_RIGHT);
         TextDisplay.getInstance().addHudText(damageSinceDeathString, TextDisplay.TextPosition.TOP_RIGHT);

@@ -26,8 +26,6 @@ public class ConnectServerScreen implements Screen {
     private Stage stage;
     private Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-
-
     Label ipLabel = new Label("IP:", skin);
     TextField ip = new TextField("3.15.224.221", skin); // default ip
     Label portLabel = new Label("Port:", skin);
@@ -37,7 +35,6 @@ public class ConnectServerScreen implements Screen {
 
     public ConnectServerScreen(CoolGuns game) {
         this.game = game;
-
     }
 
     @Override
@@ -125,6 +122,7 @@ public class ConnectServerScreen implements Screen {
         Gdx.gl.glClearColor(0, 0.5f, 0.5f, 1);
         // apply clear color to screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         stage.draw();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
