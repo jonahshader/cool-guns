@@ -32,7 +32,7 @@ public class MainMenuScreen implements Screen {
         this.game = game;
 
         mainMenuCamera = new OrthographicCamera();
-        mainMenuViewport = new FitViewport(400, 620, mainMenuCamera);
+        mainMenuViewport = new FitViewport(480, 620, mainMenuCamera);
 
         mainMenu = new Menu(CustomAssetManager.getInstance().manager.get(NORMAL_FONT), mainMenuCamera, 170);
 

@@ -26,7 +26,7 @@ public class Menu {
         MenuItem newItem;
         if (items.size() == 0) {
           //Call first menu item constructor
-            newItem = new MenuItem(action, MenuItem.MENU_PADDING, MenuItem.MENU_PADDING + yOffset, 400f, 100f, label, font, camera);
+            newItem = new MenuItem(action, MenuItem.MENU_PADDING, MenuItem.MENU_PADDING + yOffset, 455f, 90f, label, font, camera);
         } else {
           //Call other items constructor
             newItem = new MenuItem(action, label, items.get(items.size() - 1), font, camera);
