@@ -19,7 +19,7 @@ public class TempBypassScreen implements Screen {
     private int accountID = -1;
     boolean loggedIn = false;
 
-    public TempBypassScreen(CoolGuns game, boolean useLocalHost) {
+    public TempBypassScreen(CoolGuns game, boolean useLocalHost, int localPort) {
         this.game = game;
 
         Scanner scanner = new Scanner(System.in);
@@ -27,9 +27,7 @@ public class TempBypassScreen implements Screen {
 
         if (useLocalHost) {
             while (!connected) {
-                String ip = "localhost";
-                int port = 1234;
-                if (ClientNetwork.getInstance().tryConnect(ip, port)) {
+                if (ClientNetwork.getInstance().tryConnect("localhost", localPort)) {
                     connected = true;
                 } else {
                     System.out.println("Connection failed!");
@@ -49,9 +47,6 @@ public class TempBypassScreen implements Screen {
                 }
             }
         }
-
-//        if (!ClientNetwork.getInstance().tryConnect("127.0.0.1", 1234)) System.exit(-1);
-//        connected = true;
 
         final ReplyAccountEvent[] rEvent = {null};
         ClientNetwork.getInstance().addListener(new Listener(){
@@ -124,7 +119,7 @@ public class TempBypassScreen implements Screen {
     @Override
     public void render(float delta) {
         if (loggedIn) {
-            game.setScreen(new GameScreen(game, accountID));
+            game.setScreen(new GameScreen(game, accountID, false));
         }
     }
 

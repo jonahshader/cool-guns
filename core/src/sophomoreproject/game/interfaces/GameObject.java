@@ -9,6 +9,8 @@ import java.util.ArrayList;
  */
 
 public abstract class GameObject implements Comparable<GameObject>{
+
+
     public enum ServerUpdateFrequency {
         CONSTANT,
         ONCE,
@@ -16,6 +18,7 @@ public abstract class GameObject implements Comparable<GameObject>{
     }
     protected int networkID;
     protected ServerUpdateFrequency updateFrequency;
+    private volatile boolean awake = true;
 
     public int getNetworkID() { return networkID; }
     public ServerUpdateFrequency getUpdateFrequency() { return updateFrequency; }
@@ -24,6 +27,9 @@ public abstract class GameObject implements Comparable<GameObject>{
     public abstract void addCreatePacketToBuffer(ArrayList<Object> createPacketBuffer);
     public abstract void receiveUpdate(Object updatePacket);
     public abstract void run(float dt, GameServer server);
+
+    public void setAwake(boolean awake) { this.awake = awake; }
+    public boolean isAwake() { return awake; }
 
     @Override
     public int compareTo(GameObject o) {

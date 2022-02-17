@@ -9,4 +9,5 @@ public interface Biome {
     double getSelectValue(int x, int y);
     boolean isEnemySpawn(int x, int y);
     Spawner makeSpawner(int x, int y);
+    float getSpeedMultiplier(int x, int y);
 }

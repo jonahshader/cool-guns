@@ -1,6 +1,7 @@
 package sophomoreproject.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -23,22 +24,18 @@ public class ConnectServerScreen implements Screen {
 
 
     private Stage stage;
-    private Skin skin = new Skin(Gdx.files.internal("uiskin.json"));;
-
-
+    private Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
     Label ipLabel = new Label("IP:", skin);
-    TextField ip = new TextField("", skin);
-    TextField port = new TextField("", skin);
+    TextField ip = new TextField("3.15.224.221", skin); // default ip
     Label portLabel = new Label("Port:", skin);
+    TextField port = new TextField("25671", skin); // default port
     TextButton connectButton = new TextButton("Connect", skin);
     Label errorMsg = new Label("", skin);
 
     public ConnectServerScreen(CoolGuns game) {
         this.game = game;
-
     }
-
 
     @Override
     public void show() {
@@ -87,17 +84,7 @@ public class ConnectServerScreen implements Screen {
             connectButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    int p = Integer.parseInt(port.getText());
-                    String i = ip.getText();
-                    System.out.println(p);
-                    System.out.println(i);
-                    if (ClientNetwork.getInstance().tryConnect(i, p)) {
-                        System.out.println("Connect Success");
-                        game.setScreen( new LoginScreen(game));
-                    }
-
-                    else
-                        errorMsg.setText("Connect Unsuccessful");
+                    connect();
                 }
             });
 
@@ -117,14 +104,30 @@ public class ConnectServerScreen implements Screen {
 
     }
 
+    private void connect() {
+        int p = Integer.parseInt(port.getText());
+        String i = ip.getText();
+        if (ClientNetwork.getInstance().tryConnect(i, p)) {
+            System.out.println("Connect Successful");
+            game.setScreen( new LoginScreen(game));
+        }
+        else
+            errorMsg.setText("Connect Unsuccessful");
+    }
+
 
     @Override
     public void render(float delta) {
         // set clear color
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0.5f, 0.5f, 1);
         // apply clear color to screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         stage.draw();
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            connect();
+        }
     }
 
     @Override

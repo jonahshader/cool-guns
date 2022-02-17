@@ -32,15 +32,15 @@ public class RelaySendOnlyPacketsListener implements Listener {
     public void received(Connection c, Object o) {
         if (o instanceof UpdatePhysicsObject) {
             world.queueAddUpdatePacket(o);
-            serverNetwork.sendPacketToAllExcept(c, o);
+            serverNetwork.sendPacketToAllExcept(c, o, true);
         } else if (o instanceof UpdateSleepState) {
             gameServer.setAndSendSleepState((UpdateSleepState) o);
         } else if (o instanceof UpdateItem) {
             world.queueAddUpdatePacket(o);
-            serverNetwork.sendPacketToAllExcept(c, o);
+            serverNetwork.sendPacketToAllExcept(c, o, true);
         } else if (o instanceof UpdatePlayer) {
             world.queueAddUpdatePacket(o);
-            serverNetwork.sendPacketToAllExcept(c, o);
+            serverNetwork.sendPacketToAllExcept(c, o, true);
         }
     }
 }

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class OctaveSet {
-    private ArrayList<Octave> octaves;
+    private final ArrayList<Octave> octaves;
     private double totalMagnitude = 0.0;
-    private Random ran;
+    protected Random ran;
 
     public OctaveSet(Random ran) {
         octaves = new ArrayList<>();
@@ -27,7 +27,7 @@ public class OctaveSet {
         }
     }
 
-    public double getValue(int x, int y) {
+    public double getValue(float x, float y) {
         double val = 0;
         for (Octave octave : octaves) {
             val += octave.getValue(x, y);

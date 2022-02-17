@@ -2,9 +2,7 @@ package sophomoreproject.game.networking.clientlisteners;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import sophomoreproject.game.packets.UpdateItem;
-import sophomoreproject.game.packets.UpdatePhysicsObject;
-import sophomoreproject.game.packets.UpdatePlayer;
+import sophomoreproject.game.packets.*;
 import sophomoreproject.game.systems.GameWorld;
 
 public class ObjectUpdateListener implements Listener {
@@ -22,6 +20,14 @@ public class ObjectUpdateListener implements Listener {
             world.queueAddUpdatePacket(o);
         } else if (o instanceof UpdatePlayer) {
             world.queueAddUpdatePacket(o);
+        } else if (o instanceof UpdateEnemy) {
+            world.queueAddUpdatePacket(o);
+        } else if (o instanceof InventoryChange) {
+            world.handleInventoryChangePacket((InventoryChange) o);
+        } else if (o instanceof AttackPlayer) {
+            world.handleAttackPlayerPacket((AttackPlayer)o);
+        } else if (o instanceof AttackFeedback) {
+            world.handleAttackFeedbackPacket((AttackFeedback) o);
         }
     }
 }

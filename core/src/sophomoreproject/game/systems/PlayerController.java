@@ -2,61 +2,86 @@ package sophomoreproject.game.systems;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.*;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import sophomoreproject.game.gameobjects.PhysicsObject;
+import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.Player;
+import sophomoreproject.game.gameobjects.bootstuff.Boots;
 import sophomoreproject.game.gameobjects.gunstuff.Gun;
+import sophomoreproject.game.gameobjects.shieldstuff.Shield;
 import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.networking.ClientNetwork;
-import sophomoreproject.game.packets.CreateBullet;
-import sophomoreproject.game.packets.UpdatePhysicsObject;
+import sophomoreproject.game.packets.RequestDropInventoryItem;
+import sophomoreproject.game.packets.RequestPickupGroundItem;
 import sophomoreproject.game.singletons.TextDisplay;
+import sophomoreproject.game.systems.mapstuff.Map;
+import sophomoreproject.game.systems.mapstuff.MapGenerator;
 import sophomoreproject.game.utilites.MathUtilities;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+
+import static sophomoreproject.game.systems.mapstuff.MapChunk.TILE_SIZE;
+import static sophomoreproject.game.systems.mapstuff.biomes.SpawnBiome.SPAWN_RADIUS;
+import static sophomoreproject.game.utilites.CharacterUtilities.accelerateTowardsTargetVelocity;
 
 // TODO: https://www.gamedevelopment.blog/full-libgdx-game-tutorial-input-controller/
 // This class will have all of the controls for the player and the gun
 
 public final class PlayerController implements InputProcessor {
+    private static final float SERVER_UPDATE_DELAY = 1/20f;
     private static PlayerController instance;
     private Player player = null;
+    private MapGenerator mapGen = null;
     private GameWorld world = null;
     private Camera cam = null;
     public boolean left,right,up,down,shift;
     public boolean isMouse1Down, isMouse2Down;
     public boolean isDragged;
     public Vector2 mouseLocation = new Vector2();
+    private static final float STAMINA_REGEN_RESUME_DELAY = 1.5f;
+    private float staminaRegenResumeTimer = 0;
+
     private int equippedItemIndex;
+    private float serverUpdateDelayTimer = 0;
+
 
     private TextDisplay.TextEntry accountIDString;
     private TextDisplay.TextEntry playerNetIDString;
     private TextDisplay.TextEntry fpsString;
+    private TextDisplay.TextEntry totalDamageString;
+    private TextDisplay.TextEntry damageSinceDeathString;
     private TextDisplay.TextEntry clipString;
 
 
     private final ArrayList<Object> updatePacketArray = new ArrayList<>();
 
-    public final float PLAYER_ACCELERATION = 1500;
-    public final float PLAYER_WALK_SPEED = 100;
-    public final float PLAYER_SPRINT_SPEED = 10000;
+    public static final float BASE_PLAYER_ACCELERATION = 1200;
+    public static final float BASE_PLAYER_WALK_SPEED = 80;
+    private float currentPlayerAcceleration = BASE_PLAYER_ACCELERATION;
+    private float currentPlayerWalkSpeed = BASE_PLAYER_WALK_SPEED;
+    public final float PLAYER_SPRINT_SCALAR = 1.8f;
 //    public final float FRICTION = 420;
 
-    private PlayerController() {
-        accountIDString = new TextDisplay.TextEntry("temp");
-        playerNetIDString = new TextDisplay.TextEntry("temp");
-        fpsString = new TextDisplay.TextEntry("temp");
-        clipString = new TextDisplay.TextEntry("temp");
+    public float shieldRegenTimer = 0;
+    private float shieldFloatBuffer = 0;
 
-        TextDisplay.getInstance().addHudText(accountIDString, TextDisplay.TextPosition.TOP_LEFT);
-        TextDisplay.getInstance().addHudText(playerNetIDString, TextDisplay.TextPosition.TOP_LEFT);
+
+    private PlayerController() {
+        accountIDString = new TextDisplay.TextEntry("");
+        playerNetIDString = new TextDisplay.TextEntry("");
+        fpsString = new TextDisplay.TextEntry("");
+        totalDamageString = new TextDisplay.TextEntry("");
+        damageSinceDeathString = new TextDisplay.TextEntry("");
+        clipString = new TextDisplay.TextEntry("");
+
+//        TextDisplay.getInstance().addHudText(accountIDString, TextDisplay.TextPosition.TOP_LEFT);
+//        TextDisplay.getInstance().addHudText(playerNetIDString, TextDisplay.TextPosition.TOP_LEFT);
         TextDisplay.getInstance().addHudText(fpsString, TextDisplay.TextPosition.TOP_LEFT);
+        TextDisplay.getInstance().addHudText(totalDamageString, TextDisplay.TextPosition.TOP_RIGHT);
+        TextDisplay.getInstance().addHudText(damageSinceDeathString, TextDisplay.TextPosition.TOP_RIGHT);
         TextDisplay.getInstance().addHudText(clipString, TextDisplay.TextPosition.TOP);
     }
 
@@ -83,7 +108,13 @@ public final class PlayerController implements InputProcessor {
 
     public void run(float dt) {
         fpsString.entry = "FPS: " + Math.round(1/dt);
+        clipString.entry = "";
         if (player != null && cam != null) {
+            totalDamageString.entry = "Total Damage: " + player.getTotalDamage();
+            damageSinceDeathString.entry = "Damage Since Death: " + player.getDamageSinceDeath();
+
+            updatePlayerStats(dt);
+
             player.acceleration.set(0,0);
             boolean playerMoving = false;
             Vector2 desiredSpeed = new Vector2();
@@ -105,43 +136,43 @@ public final class PlayerController implements InputProcessor {
                 desiredSpeed.y = -1;
             }
             if (playerMoving) {
-                desiredSpeed.nor().scl(PLAYER_WALK_SPEED);
+                desiredSpeed.nor().scl(currentPlayerWalkSpeed);
             }
-            if (shift) {
-                desiredSpeed.nor().scl(PLAYER_SPRINT_SPEED);
+            float accel = currentPlayerAcceleration;
+            if (shift && player.getStamina() > 0) {
+                desiredSpeed.scl(PLAYER_SPRINT_SCALAR);
+                accel *= PLAYER_SPRINT_SCALAR;
+                staminaRegenResumeTimer = STAMINA_REGEN_RESUME_DELAY;
+                player.setStamina(player.getStamina() - dt);
             }
+            desiredSpeed.scl(mapGen.getSpeedMultiplier((int)Math.floor(player.position.x / TILE_SIZE), (int)Math.floor(player.position.y / TILE_SIZE)));
+            accelerateTowardsTargetVelocity(desiredSpeed, accel, player, dt);
 
 
-            Vector2 speedDifference = new Vector2(desiredSpeed);
-            Vector2 tempVel = new Vector2(player.velocity);
 
-            speedDifference.sub(player.velocity);
-            speedDifference.nor().scl(PLAYER_ACCELERATION);
-
-            if (!playerMoving && speedDifference.len()*dt > player.velocity.len()) {
-                player.acceleration.set(0,0);
-                player.velocity.set(0,0);
-            } else {
-                player.acceleration.set(speedDifference);
-            }
+//            Vector2 speedDifference = new Vector2(desiredSpeed);
+//
+//            speedDifference.sub(player.velocity);
+//            speedDifference.nor().scl(PLAYER_ACCELERATION);
+//
+//            if (!playerMoving && speedDifference.len()*dt > player.velocity.len()) {
+//                player.acceleration.set(0,0);
+//                player.velocity.set(0,0);
+//            } else {
+//                player.acceleration.set(speedDifference);
+//            }
 
             cam.position.x = player.position.x;
             cam.position.y = player.position.y;
 
 
-            sendUpdatePacketToServer();
-/*
-            if (Gdx.input.justTouched()) {
-                Vector3 mouseWorldCoords = cam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0f));
-                Vector2 mouseWorldCoords2D = new Vector2(mouseWorldCoords.x, mouseWorldCoords.y);
-                Vector2 playerToMouse = mouseWorldCoords2D.sub(player.position);
-                playerToMouse.nor();
-                playerToMouse.scl(500);
-                CreateBullet b = new CreateBullet(new UpdatePhysicsObject(-1, player.position.x, player.position.y, playerToMouse.x, playerToMouse.y,
-                        0f, 0f), player.getNetworkID(), 3f);
-                ClientNetwork.getInstance().sendPacket(b);
+            // update server periodically
+            if (serverUpdateDelayTimer > 0) serverUpdateDelayTimer -= dt;
+            if (serverUpdateDelayTimer <= 0) {
+                sendUpdatePacketToServer();
+                serverUpdateDelayTimer += SERVER_UPDATE_DELAY;
             }
-*/
+
 
             Vector3 mouseWorldCoords = cam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0f));
             Vector2 mouseWorldCoords2D = new Vector2(mouseWorldCoords.x, mouseWorldCoords.y);
@@ -162,7 +193,6 @@ public final class PlayerController implements InputProcessor {
                 } else {
                     // inventory item not found!
                     System.out.println("Player inventory item not found! Should never happen!");
-
                 }
             }
         }
@@ -206,12 +236,77 @@ public final class PlayerController implements InputProcessor {
             if (gameObj != null) {
                 Item gameItem = (Item) gameObj;
                 gameItem.setEquipped(true);
+                if (gameItem instanceof Gun) {
+                    System.out.println("Equipped gun score: " + ((Gun) gameItem).getInfo().getGeneralScore());
+                }
             }
         }
 
         System.out.println("Item index " + equippedItemIndex + " equipped.");
     }
 
+    private void updatePlayerStats(float dt) {
+        // loop through inventory to calculate player stats
+        currentPlayerWalkSpeed = BASE_PLAYER_WALK_SPEED;
+        currentPlayerAcceleration = BASE_PLAYER_ACCELERATION;
+        player.setMaxHealth(Player.BASE_MAX_HEALTH);
+        player.setMaxShield(0);
+        float shieldRegenRate = 0;
+        float shieldDelay = 0;
+        int numShields = 0;
+
+        for (int i = 0; i < player.getInventorySize(); ++i) {
+            if (player.getInventory().get(i) != null) {
+                Item item = (Item)world.getGameObjectFromID(player.getInventory().get(i));
+                if (item != null) {
+                    if (item instanceof Boots) {
+                        currentPlayerWalkSpeed += ((Boots)item).getInfo().speed;
+                        currentPlayerAcceleration += ((Boots)item).getInfo().acceleration;
+                    }
+                    else if (item instanceof Shield) {
+                        player.setMaxShield(Math.round(player.getMaxShield()+ ((Shield)item).getInfo().capacity));
+                        player.setMaxHealth(Math.round(player.getMaxHealth()+ ((Shield)item).getInfo().health));
+                        shieldRegenRate += ((Shield) item).getInfo().regenRate;
+                        numShields++;
+                        shieldDelay += ((Shield) item).getInfo().regenDelay;
+                    }
+                }
+            }
+        }
+
+        if (numShields > 0) {
+            shieldDelay /= numShields;
+        }
+
+        if (player.getHealth() > player.getMaxHealth() || player.position.len2() < SPAWN_RADIUS * SPAWN_RADIUS * TILE_SIZE * TILE_SIZE) {
+            player.setHealth(player.getMaxHealth());
+        }
+        if (staminaRegenResumeTimer <= 0) {
+            if (player.getStamina() < Player.STAMINA_MAX) {
+                player.setStamina(player.getStamina() + Player.STAMINA_REGEN_PER_SECOND * dt);
+            }
+        } else {
+            staminaRegenResumeTimer -= dt;
+        }
+
+        if (player.isJustAttacked()) {
+            shieldRegenTimer = 0;
+        }
+        if (shieldRegenTimer < shieldDelay) {
+            shieldRegenTimer += dt;
+        } else {
+            shieldFloatBuffer += shieldRegenRate*dt;
+            int shield = player.getShield();
+            shield += (int) shieldFloatBuffer;
+            shieldFloatBuffer -= (int) shieldFloatBuffer;
+            if (shield > player.getMaxShield())
+                shield = player.getMaxShield();
+            player.setShield(shield);
+        }
+
+
+
+    }
 
     // Later we will have adjustable controls.
     @Override
@@ -270,6 +365,33 @@ public final class PlayerController implements InputProcessor {
             case Keys.NUM_8:
                 changeEquippedItem(7);
                 keyProc = true;
+                break;
+            case Keys.R:
+                Item gun = (Item) world.getGameObjectFromID(player.getInventory().get(equippedItemIndex));
+                if (gun != null)
+                    gun.manualReload();
+                keyProc = true;
+                break;
+            case Keys.F:
+                // try pickup
+                int pickupAttempts = 0;
+                int emptySlots = 0;
+                for (int i = 0; i < player.getInventory().size(); ++i) emptySlots += player.getInventory().get(i) == null ? 1 : 0;
+                for (GroundItem g : world.getGroundItems()) {
+                    if (pickupAttempts >= emptySlots)
+                        break;
+                    if (MathUtilities.circleCollisionDetection(player.position.x, player.position.y, 8f, g.position.x, g.position.y, 8f)) {
+                        ClientNetwork.getInstance().sendPacket(new RequestPickupGroundItem(player.getNetworkID(), g.getNetworkID()));
+                        ++pickupAttempts;
+                    }
+                }
+                System.out.println("Tried picking up " + pickupAttempts + " items.");
+                break;
+            case Keys.G:
+                // try drop
+                if (player.getInventory().get(equippedItemIndex) != null) {
+                    ClientNetwork.getInstance().sendPacket(new RequestDropInventoryItem(player.getNetworkID(), player.getInventory().get(equippedItemIndex)));
+                }
                 break;
         }
         return keyProc;
@@ -346,13 +468,33 @@ public final class PlayerController implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        changeEquippedItem(-Math.round(amountY) + equippedItemIndex);
+        changeEquippedItem(Math.round(amountY) + equippedItemIndex);
         return true;
     }
 
     @Override
     public boolean keyTyped(char character) {
         return false;
+    }
+
+    public int getInventorySize() {
+        return player.getInventorySize();
+    }
+
+    public boolean playerIsNull() {
+        return player == null;
+    }
+
+    public int getEquippedItemIndex() {
+        return equippedItemIndex;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setMapGen(MapGenerator mapGen) {
+        this.mapGen = mapGen;
     }
 }
 

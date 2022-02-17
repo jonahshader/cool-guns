@@ -13,10 +13,12 @@ public class Menu {
     private ArrayList<MenuItem> items = new ArrayList<>();
     private BitmapFont font;
     private Camera camera;
+    private float yOffset;
 
-    public Menu(BitmapFont font, Camera camera) {
+    public Menu(BitmapFont font, Camera camera, float yOffset) {
         this.font = font;
         this.camera = camera;
+        this.yOffset = yOffset;
     }
 
     public void addMenuItem(String label, MenuAction action) {
@@ -24,7 +26,7 @@ public class Menu {
         MenuItem newItem;
         if (items.size() == 0) {
           //Call first menu item constructor
-            newItem = new MenuItem(action, MenuItem.MENU_PADDING, MenuItem.MENU_PADDING, 325f, 100f, label, font, camera);
+            newItem = new MenuItem(action, MenuItem.MENU_PADDING, MenuItem.MENU_PADDING + yOffset, 455f, 90f, label, font, camera);
         } else {
           //Call other items constructor
             newItem = new MenuItem(action, label, items.get(items.size() - 1), font, camera);

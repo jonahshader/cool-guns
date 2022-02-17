@@ -1,10 +1,14 @@
 package sophomoreproject.game.gameobjects.gunstuff;
 
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import sophomoreproject.game.gameobjects.GroundItem;
 import sophomoreproject.game.gameobjects.Player;
 import sophomoreproject.game.interfaces.Item;
 import sophomoreproject.game.interfaces.Renderable;
@@ -13,6 +17,8 @@ import sophomoreproject.game.packets.CreateBullet;
 import sophomoreproject.game.packets.CreateInventoryGun;
 import sophomoreproject.game.packets.UpdatePhysicsObject;
 import sophomoreproject.game.singletons.CustomAssetManager;
+import sophomoreproject.game.singletons.LocalRandom;
+import sophomoreproject.game.singletons.SoundSystem;
 import sophomoreproject.game.systems.GameServer;
 
 import java.util.ArrayList;
@@ -21,7 +27,7 @@ import static sophomoreproject.game.singletons.LocalRandom.*;
 
 //This is owned by a player or it is in an inventory (like a shop).
 
-public class Gun extends Item implements Renderable {
+public class Gun extends Item {
     public enum FiringMode {
         AUTO,
         SEMI_AUTO,
@@ -37,11 +43,13 @@ public class Gun extends Item implements Renderable {
         SHOTGUN
     }
 
-    private GunInfo info;
+    private final GunInfo info;
 
     private static TextureAtlas texAtl = null;
     private final ArrayList<Object> bulletPackets = new ArrayList<>();
     private Sprite gunSprite = null;
+    private Sprite gunIcon = null;
+    private Sound fireSound = null;
     private float firingTimer;
     private float burstDelayTimer = 0;
     private float reloadTimer = 0;
@@ -151,11 +159,13 @@ public class Gun extends Item implements Renderable {
     }
 
     private void shoot(Vector2 angle, Player player) {
+        boolean shot = false;
         firingTimer = firingTimer + info.fireDelay;
         Vector2 baseVelocity = new Vector2(angle);
         baseVelocity.scl(info.bulletSpeed);
 
         Vector2 accumulatedKnockback = new Vector2();
+        Vector2 inheritedVelocity = new Vector2(player.velocity).scl(.5f);
 
         for (int b = 0; b < info.bulletsPerShot; b++) {
             if (currentClip > 0) {
@@ -166,12 +176,14 @@ public class Gun extends Item implements Renderable {
                 Vector2 uniqueKnockback = new Vector2(uniqueVel).nor().scl(-info.playerKnockback);
                 accumulatedKnockback.add(uniqueKnockback);
 
-                uniqueVel.add(player.velocity); // inherit velocity from player
+
+                uniqueVel.add(inheritedVelocity); // inherit velocity from player
 
                 float uniqueDam = info.bulletDamage + genTriangleDist()*info.bulletDamageVariance;
 
-                bulletPackets.add(new CreateBullet(new UpdatePhysicsObject(-1, gunSprite.getX(), gunSprite.getY(), uniqueVel.x, uniqueVel.y, 0f, 0f), player.getNetworkID(),
+                bulletPackets.add(new CreateBullet(new UpdatePhysicsObject(-1, position.x, position.y, uniqueVel.x, uniqueVel.y, 0f, 0f), player.getNetworkID(),
                         info.bulletSize, uniqueDam, info.shieldDamage,info.armorDamage, info.critScalar, info.enemyKnockback));
+                shot = true;
                 currentClip--;
                 ++burstShotsFired;
             } else {
@@ -191,15 +203,44 @@ public class Gun extends Item implements Renderable {
         player.velocity.add(accumulatedKnockback);
         ClientNetwork.getInstance().sendAllPackets(bulletPackets);
         bulletPackets.clear();
+
+        if (shot) {
+            // play fire sound
+            float pitch = LocalRandom.RAND.nextFloat() * 0.12f + .4f + (float) (1.4 / (1 + Math.pow(Math.E, (info.bulletSize - 3.5))));
+            SoundSystem.getInstance().playSoundInWorld(fireSound, position, .5f, pitch);
+        }
     }
+
+    @Override
+    public void manualReload() {
+        if (reloadTimer <= 0) {
+            reloadTimer += info.reloadDelay;
+            currentClip = info.clipSize;
+            bursting = false;
+            burstShotsFired = 0;
+        }
+    }
+
+    @Override
+    public GroundItem toGroundItem(GameServer server) {
+        return new GroundItem(new Vector2(position), server.getGameWorld().getNewNetID(), info.getTextureName(),
+                new Color(info.r, info.g, info.b, 1), 1f,
+                new CreateInventoryGun(info, -1, server.getGameWorld().getNewNetID()), false);
+    }
+
 
     private void loadTextures () {
         if (texAtl == null) {
             texAtl = CustomAssetManager.getInstance().manager.get("graphics/spritesheets/sprites.atlas");
         }
         if (gunSprite == null) {
-            gunSprite = new Sprite(texAtl.findRegion("default_gun"));
+            gunIcon = new Sprite(texAtl.findRegion(info.getTextureName()));
+            gunIcon.setColor(info.r, info.g, info.b, 1f);
+            gunSprite = new Sprite(gunIcon);
             gunSprite.setOriginCenter();
+        }
+        if (fireSound == null) {
+            fireSound = info.getSound();
         }
     }
 
@@ -209,7 +250,11 @@ public class Gun extends Item implements Renderable {
 
     @Override
     public void renderIcon(SpriteBatch sb, float size, float x, float y) {
-
+        float widthToHeight = gunIcon.getRegionHeight() / (float)gunIcon.getRegionWidth();
+        gunIcon.setSize(size, size * widthToHeight);
+        gunIcon.setPosition(x, y);
+        gunIcon.setColor(info.r, info.g, info.b, 1);
+        gunIcon.draw(sb);
     }
 
     public int getOwnerNetId() {

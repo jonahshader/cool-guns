@@ -1,6 +1,7 @@
 package sophomoreproject.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,6 +21,7 @@ import sophomoreproject.game.packets.RequestLogin;
 import sophomoreproject.game.packets.RequestNewAccount;
 
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -39,23 +41,21 @@ public class LoginScreen implements Screen {
 
     private Stage stage;
     private Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-    ;
 
-
-    Label loginLabel = new Label("username:", skin);
+    Label loginLabel = new Label("Username:", skin);
     TextField username = new TextField("", skin);
     Label passwordLabel = new Label("Password:", skin);
     TextField password = new TextField("", skin);
     TextButton loginButton = new TextButton("Login", skin);
     TextButton registerButton = new TextButton("Register", skin);
     Label errorMsg = new Label("", skin);
+    final AtomicReference<ReplyAccountEvent> rEvent = new AtomicReference<>(null);
 
     public LoginScreen(CoolGuns game) {
         this.game = game;
+        password.setPasswordCharacter('*');
+        password.setPasswordMode(true);
     }
-
-    Scanner scanner = new Scanner(System.in);
-    boolean connected = false;
 
     @Override
     public void show() {
@@ -107,12 +107,12 @@ public class LoginScreen implements Screen {
         stage.addActor(errorMsg);
 
 
-        final ReplyAccountEvent[] rEvent = {null};
+
         ClientNetwork.getInstance().addListener(new Listener() {
             @Override
             public void received(Connection c, Object o) {
                 if (o instanceof ReplyAccountEvent) {
-                    rEvent[0] = (ReplyAccountEvent) o;
+                    rEvent.set((ReplyAccountEvent) o);
                 }
             }
         });
@@ -127,7 +127,7 @@ public class LoginScreen implements Screen {
                 ClientNetwork.getInstance().sendPacket(new RequestNewAccount(u, p));
 
                 try {
-                    while (rEvent[0] == null) {
+                    while (rEvent.get() == null) {
                         Thread.sleep(250);
                         System.out.println(".");
                     } // chill until we get a reply from the server
@@ -135,7 +135,7 @@ public class LoginScreen implements Screen {
                     e.printStackTrace();
                 }
 
-                switch (rEvent[0].event) {
+                switch (rEvent.get().event) {
                     case ACCOUNT_CREATED:
                         errorMsg.setText("Account created successfully! Please login");
                         break;
@@ -144,7 +144,7 @@ public class LoginScreen implements Screen {
                         break;
                     case ACCOUNT_LOGGED_IN:
                         errorMsg.setText("Logged in successfully!");
-                        accountID = rEvent[0].accountID;
+                        accountID = rEvent.get().accountID;
                         loggedIn = true;
                         break;
                     case ACCOUNT_LOG_IN_FAILED:
@@ -156,7 +156,7 @@ public class LoginScreen implements Screen {
                     default:
                         break;
                 }
-                rEvent[0] = null; // clear this so that we wait for the next packet again (if nessesary)
+                rEvent.set(null); // clear this so that we wait for the next packet again (if nessesary)
 
             }
 
@@ -165,58 +165,63 @@ public class LoginScreen implements Screen {
         loginButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                String u = username.getText();
-                String p = password.getText();
-
-                ClientNetwork.getInstance().sendPacket(new RequestLogin(u, p));
-
-                try {
-                    while (rEvent[0] == null) {
-                        Thread.sleep(250);
-                        System.out.println(".");
-                    } // chill until we get a reply from the server
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                switch (rEvent[0].event) {
-                    case ACCOUNT_CREATED:
-                        errorMsg.setText("Account created successfully! Please login");
-                        break;
-                    case ACCOUNT_CREATE_FAILED:
-                        errorMsg.setText("Account create failed! Account already exists!");
-                        break;
-                    case ACCOUNT_LOGGED_IN:
-                        errorMsg.setText("Logged in successfully!");
-                        accountID = rEvent[0].accountID;
-                        loggedIn = true;
-                        game.setScreen(new MainMenuScreen(game, accountID));
-                        break;
-                    case ACCOUNT_LOG_IN_FAILED:
-                        errorMsg.setText("Log in failed! Account does not exists!");
-                        break;
-                    case ACCOUNT_ALREADY_LOGGED_IN:
-                        errorMsg.setText("Log in failed! Account current in use!");
-                        break;
-                    default:
-                        break;
-                }
-                rEvent[0] = null; // clear this so that we wait for the next packet again (if nessesary)
-
+                login();
             }
-
         });
+    }
 
+    private void login() {
+        String u = username.getText();
+        String p = password.getText();
 
+        ClientNetwork.getInstance().sendPacket(new RequestLogin(u, p));
+
+        try {
+            while (rEvent.get() == null) {
+                Thread.sleep(50);
+                System.out.println(".");
+            } // chill until we get a reply from the server
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        switch (rEvent.get().event) {
+            case ACCOUNT_CREATED:
+                errorMsg.setText("Account created successfully! Please login");
+                break;
+            case ACCOUNT_CREATE_FAILED:
+                errorMsg.setText("Account create failed! Account already exists!");
+                break;
+            case ACCOUNT_LOGGED_IN:
+                errorMsg.setText("Logged in successfully!");
+                accountID = rEvent.get().accountID;
+                loggedIn = true;
+                game.setScreen(new GameScreen(game, accountID, false));
+                break;
+            case ACCOUNT_LOG_IN_FAILED:
+                errorMsg.setText("Log in failed! Account does not exists!");
+                break;
+            case ACCOUNT_ALREADY_LOGGED_IN:
+                errorMsg.setText("Log in failed! Account current in use!");
+                break;
+            default:
+                break;
+        }
+        rEvent.set(null); // clear this so that we wait for the next packet again (if nessesary)
     }
 
     @Override
     public void render(float delta) {
         // set clear color
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0.5f, 0.5f, 1);
         // apply clear color to screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         stage.draw();
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            login();
+        }
     }
 
     @Override
